@@ -42,7 +42,7 @@ struct NativeAdSlot: View {
                 MHCard {
                     NativeAdRepresentable(nativeAd: ad)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 290)
+                        .frame(height: 144)
                 }
                 .padding(.horizontal, 16)
             }
@@ -82,12 +82,14 @@ private struct NativeAdRepresentable: UIViewRepresentable {
         let media = MediaView()
         media.clipsToBounds = true
         media.contentMode = .scaleAspectFill
+        media.layer.cornerRadius = 2
 
-        let cta = UIButton(type: .system)
-        cta.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
-        cta.setTitleColor(UIColor(Color.mhOnAccent), for: .normal)
-        cta.backgroundColor = UIColor(Color.mhAccent)
-        cta.layer.cornerRadius = 2
+        var ctaConfig = UIButton.Configuration.filled()
+        ctaConfig.baseBackgroundColor = UIColor(Color.mhAccent)
+        ctaConfig.baseForegroundColor = UIColor(Color.mhOnAccent)
+        ctaConfig.background.cornerRadius = 2
+        ctaConfig.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12)
+        let cta = UIButton(configuration: ctaConfig)
         cta.isUserInteractionEnabled = false  // タップはNativeAdViewが処理する
 
         for view in [badge, headline, body, media, cta] {
@@ -95,29 +97,29 @@ private struct NativeAdRepresentable: UIViewRepresentable {
             adView.addSubview(view)
         }
 
+        // 結果カードに馴染むコンパクト横並び(左: メディア100pt角 / 右: バッジ+見出し・本文・CTA)
         NSLayoutConstraint.activate([
+            media.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 12),
+            media.centerYAnchor.constraint(equalTo: adView.centerYAnchor),
+            media.widthAnchor.constraint(equalToConstant: 120),
+            media.heightAnchor.constraint(equalToConstant: 120),
+
             badge.topAnchor.constraint(equalTo: adView.topAnchor, constant: 12),
-            badge.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 14),
+            badge.leadingAnchor.constraint(equalTo: media.trailingAnchor, constant: 12),
             badge.widthAnchor.constraint(equalToConstant: 34),
             badge.heightAnchor.constraint(equalToConstant: 16),
 
             headline.centerYAnchor.constraint(equalTo: badge.centerYAnchor),
             headline.leadingAnchor.constraint(equalTo: badge.trailingAnchor, constant: 8),
-            headline.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -14),
+            headline.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -12),
 
-            media.topAnchor.constraint(equalTo: badge.bottomAnchor, constant: 10),
-            media.leadingAnchor.constraint(equalTo: adView.leadingAnchor),
-            media.trailingAnchor.constraint(equalTo: adView.trailingAnchor),
-            media.heightAnchor.constraint(equalToConstant: 150),
+            body.topAnchor.constraint(equalTo: badge.bottomAnchor, constant: 6),
+            body.leadingAnchor.constraint(equalTo: media.trailingAnchor, constant: 12),
+            body.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -12),
 
-            body.topAnchor.constraint(equalTo: media.bottomAnchor, constant: 10),
-            body.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 14),
-            body.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -14),
-
-            cta.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 14),
-            cta.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -14),
+            cta.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -12),
             cta.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -12),
-            cta.heightAnchor.constraint(equalToConstant: 40),
+            cta.heightAnchor.constraint(equalToConstant: 28),
         ])
 
         adView.headlineView = headline
@@ -132,7 +134,10 @@ private struct NativeAdRepresentable: UIViewRepresentable {
         (adView.bodyView as? UILabel)?.text = nativeAd.body
         adView.mediaView?.mediaContent = nativeAd.mediaContent
         if let cta = adView.callToActionView as? UIButton {
-            cta.setTitle(nativeAd.callToAction, for: .normal)
+            cta.configuration?.title = nativeAd.callToAction
+            cta.configuration?.attributedTitle = AttributedString(
+                nativeAd.callToAction ?? "",
+                attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 12, weight: .semibold)]))
         }
         adView.nativeAd = nativeAd
     }
