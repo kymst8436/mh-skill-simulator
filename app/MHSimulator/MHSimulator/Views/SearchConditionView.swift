@@ -59,13 +59,10 @@ struct SearchConditionView: View {
                 }
             }
             .mhNavigationTitle("検索条件")
-            .safeAreaInset(edge: .bottom) { AdBannerView() }
+            .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.searchBannerUnitId) }
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("リセット") { viewModel.reset() }
-                        .foregroundStyle(Color.mhAccent)
-                        .disabled(!viewModel.canReset)
-                        .opacity(viewModel.canReset ? 1 : 0.35)
+                MHToolbarButton(title: "リセット", isEnabled: viewModel.canReset) {
+                    viewModel.reset()
                 }
             }
             .sheet(isPresented: $showsSkillPicker) {

@@ -1,20 +1,26 @@
 import SwiftUI
 
-/// 3タブ構成(画面設計§2)。タブごとに独立したNavigationStackを持つ
+/// 3タブ構成(画面設計§2)。タブバーは自作MHTabBar(DESIGN.md §4)
 struct MainTabView: View {
     let dependencies: AppDependencies
+    @State private var selection: MHTab = .search
 
     var body: some View {
-        TabView {
+        TabView(selection: $selection) {
             SearchConditionView(dependencies: dependencies)
-                .tabItem { Label("検索", systemImage: "magnifyingglass") }
+                .tag(MHTab.search)
+                .toolbar(.hidden, for: .tabBar)
 
             CharmListView(dependencies: dependencies)
-                .tabItem { Label("護石", systemImage: "seal") }
+                .tag(MHTab.charms)
+                .toolbar(.hidden, for: .tabBar)
 
             InfoView(dependencies: dependencies)
-                .tabItem { Label("情報", systemImage: "info.circle") }
+                .tag(MHTab.info)
+                .toolbar(.hidden, for: .tabBar)
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            MHTabBar(selection: $selection)
         }
     }
 }
-

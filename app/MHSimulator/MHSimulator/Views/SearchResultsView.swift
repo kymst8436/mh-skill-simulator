@@ -23,7 +23,9 @@ struct SearchResultsView: View {
             content
         }
         .mhNavigationTitle("検索結果")
-        .safeAreaInset(edge: .bottom) { AdBannerView() }
+        .navigationBarBackButtonHidden(true)
+        .toolbar { MHBackButton { path.removeLast() } }
+        .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.searchBannerUnitId) }
         .task { viewModel.start() }
         .onDisappear { viewModel.cancel() }
         .sheet(item: $entryTarget) { target in

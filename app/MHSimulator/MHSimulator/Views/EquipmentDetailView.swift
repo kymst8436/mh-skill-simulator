@@ -7,6 +7,7 @@ struct EquipmentDetailView: View {
     let item: EquipmentSetItem
     let condition: SearchCondition
     let weapon: Weapon?
+    @Environment(\.dismiss) private var dismiss
 
     private var equipment: EquipmentSet { item.set }
     private var master: MasterDatabase { dependencies.master }
@@ -35,6 +36,8 @@ struct EquipmentDetailView: View {
             }
         }
         .mhNavigationTitle("装備詳細")
+        .navigationBarBackButtonHidden(true)
+        .toolbar { MHBackButton { dismiss() } }
     }
 
     // MARK: - 部品

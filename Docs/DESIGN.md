@@ -72,7 +72,9 @@ SwiftUIでは `Color` 拡張としてコード定義する(単一テーマのた
 | セクション見出し | 12pt tracking 1 `mhTextTertiary`、左32(インセットグループ風の位置) |
 | タップ領域 | 最小44pt(リスト行は48pt基準) |
 | ナビバー | `mhBackgroundElevated` + 下ヘアライン。タイトルは`MHFont.screenTitle`+左に4pt菱形(`mhAccent`) |
-| タブバー | `mhBackgroundElevated` + 上ヘアライン。活性 `mhAccent` / 非活性 `mhTextTertiary` |
+| ナビバーのボタン | **OS標準スタイルは使わない**(iOS 26のガラスカプセルが角丸規約と衝突するため。2026-08-24改訂)。テキストは`MHToolbarButton`(無地・`mhAccent`)、戻るは`MHBackButton`(無地シェブロン)で統一 |
+| タブバー | **OS標準TabBarは使わない**(浮遊カプセル形状のため。2026-08-24改訂)。`MHTabBar`(全幅フラット・`mhBackgroundElevated`+上ヘアライン)。活性 `mhAccent` / 非活性 `mhTextTertiary` |
+| 広告バナー | 各タブの**ナビバー直下・本文の上**に固定(2026-08-24改訂。検索タブ・護石タブのみ。情報タブには置かない)。読み込み失敗時は畳む |
 | シート | `mhBackgroundElevated`。グラバーは `mhHairline` |
 
 ## 5. 共通コンポーネント(SwiftUI実装名)
@@ -88,7 +90,10 @@ SwiftUIでは `Color` 拡張としてコード定義する(単一テーマのた
 | `ConditionBadge` | 「★条件」。`mhAccentWash`面+`mhAccentSoft`文字 |
 | `MHSectionHeader` | §4のセクション見出し。右端にアクション(「+ 追加」等 `mhAccent`)を置ける |
 | `MHEmptyState` | アイコン(`mhTextTertiary`)+見出し15pt+誘導文13pt+主アクション。ContentUnavailableViewは使わず自前(トーン統一のため) |
-| `AdBannerView` | 高さ50固定・`mhBackgroundElevated`面。読み込み失敗時は高さ0に畳む |
+| `AdBannerView` | 高さ50固定・`mhBackgroundElevated`面・下ヘアライン。ナビバー直下に配置し、読み込み失敗時は高さ0に畳む。タブごとの広告ユニットIDを引数で受ける |
+| `MHToolbarButton` | ナビバー用テキストボタン(ToolbarContent)。無地・`mhAccent`・無効時opacity 0.35。iOS 26ではガラスカプセルを無効化する |
+| `MHBackButton` | カスタム戻るボタン(無地シェブロン`mhAccent`)。標準戻るは使わない。スワイプバックは維持する |
+| `MHTabBar` | 自作タブバー。全幅・上ヘアライン・アイコン24pt+ラベル10pt。選択中 `mhAccent` |
 | `MHStepper` | −/+の正方ボタン(30pt・`mhHairline`枠)。iOS標準Stepperは使わない |
 
 選択状態の行: 背景 `mhAccentWash` + チェックマーク `mhAccent`。
@@ -112,6 +117,7 @@ SwiftUIでは `Color` 拡張としてコード定義する(単一テーマのた
 
 - 本編UIのスクリーンショット・素材・配色コードの写し取り(原則3)
 - iOS標準の青(#007AFF)・標準角丸(10pt超)・影付きカードの使用
+- OS標準のタブバー・ツールバーボタン・ガラス(Liquid Glass)面の使用(2026-08-24改訂。角丸と質感の統一を壊すため。`MHTabBar`/`MHToolbarButton`/`MHBackButton`を使う)
 - 明朝体の本文使用、モチーフの複数使用、金色面の多用(アンバー面は主ボタンとR8バッジのみ)
 - ライトモード対応(単一テーマ方針に反する)
 

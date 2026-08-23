@@ -61,7 +61,6 @@ struct InfoView: View {
                 }
             }
             .mhNavigationTitle("情報")
-            .safeAreaInset(edge: .bottom) { AdBannerView() }
         }
     }
 

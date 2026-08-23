@@ -30,18 +30,11 @@ struct CharmEntryView: View {
             }
             .mhNavigationTitle(viewModel.isEditing ? "護石を編集" : "護石を登録")
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("キャンセル") {
-                        if viewModel.isDirty { showsDiscardDialog = true } else { dismiss() }
-                    }
-                    .foregroundStyle(Color.mhAccent)
+                MHToolbarButton(title: "キャンセル", placement: .topBarLeading) {
+                    if viewModel.isDirty { showsDiscardDialog = true } else { dismiss() }
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("保存") { attemptSave() }
-                        .fontWeight(.semibold)
-                        .foregroundStyle(Color.mhAccent)
-                        .disabled(!viewModel.canSave)
-                        .opacity(viewModel.canSave ? 1 : 0.35)
+                MHToolbarButton(title: "保存", isEnabled: viewModel.canSave, isProminent: true) {
+                    attemptSave()
                 }
             }
         }
@@ -246,6 +239,8 @@ struct CharmSkillCandidateView: View {
             }
         }
         .mhNavigationTitle(title)
+        .navigationBarBackButtonHidden(true)
+        .toolbar { MHBackButton { dismiss() } }
     }
 
     private var filteredCandidates: [CharmRules.GroupEntry] {

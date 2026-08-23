@@ -20,12 +20,9 @@ struct CharmListView: View {
                 content
             }
             .mhNavigationTitle("護石")
-            .safeAreaInset(edge: .bottom) { AdBannerView() }
+            .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.charmBannerUnitId) }
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("+ 追加") { entryTarget = .new }
-                        .foregroundStyle(Color.mhAccent)
-                }
+                MHToolbarButton(title: "+ 追加") { entryTarget = .new }
             }
             .task { viewModel.load() }
             .sheet(item: $entryTarget) { target in

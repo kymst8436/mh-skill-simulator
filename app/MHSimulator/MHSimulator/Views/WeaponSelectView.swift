@@ -25,6 +25,8 @@ struct WeaponSelectView: View {
             }
         }
         .mhNavigationTitle("武器を選択")
+        .navigationBarBackButtonHidden(true)
+        .toolbar { MHBackButton { dismiss() } }
     }
 
     private var visibleWeapons: [Weapon] {

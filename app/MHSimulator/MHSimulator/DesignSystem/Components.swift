@@ -132,6 +132,108 @@ struct MHSectionHeader: View {
     }
 }
 
+/// ナビバー用テキストボタン(DESIGN.md §5。OS標準のガラスカプセルは使わない)
+struct MHToolbarButton: ToolbarContent {
+    let title: String
+    var placement: ToolbarItemPlacement = .topBarTrailing
+    var isEnabled: Bool = true
+    var isProminent: Bool = false
+    let action: () -> Void
+
+    var body: some ToolbarContent {
+        if #available(iOS 26.0, *) {
+            ToolbarItem(placement: placement) { button }
+                .sharedBackgroundVisibility(.hidden)
+        } else {
+            ToolbarItem(placement: placement) { button }
+        }
+    }
+
+    private var button: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 16, weight: isProminent ? .semibold : .regular))
+                .foregroundStyle(Color.mhAccent)
+        }
+        .disabled(!isEnabled)
+        .opacity(isEnabled ? 1 : 0.35)
+    }
+}
+
+/// カスタム戻るボタン(無地シェブロン。DESIGN.md §5)。
+/// 使う画面では .navigationBarBackButtonHidden(true) とセットで指定する
+struct MHBackButton: ToolbarContent {
+    let action: () -> Void
+
+    var body: some ToolbarContent {
+        if #available(iOS 26.0, *) {
+            ToolbarItem(placement: .topBarLeading) { button }
+                .sharedBackgroundVisibility(.hidden)
+        } else {
+            ToolbarItem(placement: .topBarLeading) { button }
+        }
+    }
+
+    private var button: some View {
+        Button(action: action) {
+            Image(systemName: "chevron.left")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(Color.mhAccent)
+        }
+    }
+}
+
+/// 標準戻るボタン非表示でもエッジスワイプバックを維持する(DESIGN.md §5 MHBackButton)
+extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        interactivePopGestureRecognizer?.delegate = self
+    }
+
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        viewControllers.count > 1
+    }
+}
+
+/// アプリのタブ
+enum MHTab: Hashable {
+    case search, charms, info
+}
+
+/// 自作タブバー(全幅フラット。OS標準TabBarは使わない。DESIGN.md §4)
+struct MHTabBar: View {
+    @Binding var selection: MHTab
+
+    var body: some View {
+        HStack(spacing: 0) {
+            item(.search, icon: "magnifyingglass", label: "検索")
+            item(.charms, icon: "seal", label: "護石")
+            item(.info, icon: "info.circle", label: "情報")
+        }
+        .padding(.top, 7)
+        .padding(.bottom, 2)
+        .background(Color.mhBackgroundElevated.ignoresSafeArea(edges: .bottom))
+        .overlay(alignment: .top) {
+            Rectangle().fill(Color.mhHairline).frame(height: 1)
+        }
+    }
+
+    private func item(_ tab: MHTab, icon: String, label: String) -> some View {
+        Button {
+            selection = tab
+        } label: {
+            VStack(spacing: 3) {
+                Image(systemName: icon)
+                    .font(.system(size: 20, weight: .regular))
+                Text(label)
+                    .font(.system(size: 10))
+            }
+            .foregroundStyle(selection == tab ? Color.mhAccent : Color.mhTextTertiary)
+            .frame(maxWidth: .infinity, minHeight: 44)
+        }
+    }
+}
+
 /// −/+の正方ボタン(iOS標準Stepperは使わない。DESIGN.md §5)
 struct MHStepper: View {
     var canDecrement: Bool
