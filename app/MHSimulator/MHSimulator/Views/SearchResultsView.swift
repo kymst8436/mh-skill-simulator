@@ -147,7 +147,7 @@ struct SearchResultsView: View {
         let visibleOthers = others.prefix(max(0, 5 - conditionSkills.count))
         let hasMore = others.count > visibleOthers.count
 
-        return HStack(spacing: 6) {
+        return MHFlowLayout(spacing: 6) {
             ForEach(conditionSkills, id: \.key) { entry in
                 SkillChip(text: MHFormat.skillLine(viewModel.skillName(entry.key), entry.value), isCondition: true)
             }
