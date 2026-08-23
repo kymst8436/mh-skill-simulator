@@ -277,17 +277,17 @@ struct MHTabBar: View {
 /// 武器種の横スクロールチップリスト(検索条件・武器選択の上部)。
 /// 抽出アイコン導入(Phase 5-2)までは武器種名のテキストチップで表現する
 struct WeaponKindChips: View {
-    var includeAll = true
-    /// 現在選択中の武器種(nil = すべて/未選択)
+    /// アーティア(カスタム武器)枠のチップ識別子
+    static let artianKind = "artian"
+
+    /// 現在選択中の武器種(nil = 未選択)
     var selectedKind: String?
-    let onTap: (String?) -> Void
+    let onTap: (String) -> Void
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                if includeAll {
-                    chip(label: "すべて", kind: nil, isSelected: selectedKind == nil)
-                }
+                chip(label: "アーティア", kind: Self.artianKind, isSelected: selectedKind == Self.artianKind)
                 ForEach(MHFormat.weaponKinds, id: \.self) { kind in
                     chip(label: MHFormat.weaponKindLabel(kind), kind: kind, isSelected: selectedKind == kind)
                 }
@@ -296,7 +296,7 @@ struct WeaponKindChips: View {
         }
     }
 
-    private func chip(label: String, kind: String?, isSelected: Bool) -> some View {
+    private func chip(label: String, kind: String, isSelected: Bool) -> some View {
         Button {
             onTap(kind)
         } label: {

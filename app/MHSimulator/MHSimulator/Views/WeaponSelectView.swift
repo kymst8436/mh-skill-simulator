@@ -1,7 +1,9 @@
 import SwiftUI
 import MHSimulatorCore
 
-/// 武器選択(画面設計4.3)。検索に反映する武器を1つ選ぶ、または解除する
+/// 武器選択(画面設計4.3。2026-08-24改訂)。
+/// 上部の武器種チップで武器種を切り替える。「アーティア」選択時は
+/// 武器一覧の代わりにカスタム武器設定フォームを表示する
 struct WeaponSelectView: View {
     @Environment(\.dismiss) private var dismiss
     let conditionViewModel: SearchConditionViewModel
@@ -17,13 +19,28 @@ struct WeaponSelectView: View {
         _kindFilter = State(initialValue: initialKind)
     }
 
+    private var isArtianMode: Bool { kindFilter == WeaponKindChips.artianKind }
+
     var body: some View {
         ZStack {
             Color.mhBackground.ignoresSafeArea()
             VStack(spacing: 0) {
-                controls
-                    .padding(16)
-                weaponList
+                // 武器種チップ(この画面内でも切替可能。アーティア=カスタム武器設定)
+                WeaponKindChips(selectedKind: kindFilter) { kind in
+                    kindFilter = (kindFilter == kind) ? nil : kind
+                }
+                .padding(.vertical, 12)
+
+                if isArtianMode {
+                    CustomWeaponForm(conditionViewModel: conditionViewModel) {
+                        dismiss()
+                    }
+                } else {
+                    searchField
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 10)
+                    weaponList
+                }
             }
         }
         .mhNavigationTitle("武器を選択")
@@ -43,32 +60,24 @@ struct WeaponSelectView: View {
             }
     }
 
-    private var controls: some View {
-        VStack(spacing: 10) {
-            // 武器種チップ(この画面内でも武器種を変更できる。2026-08-24改訂)
-            WeaponKindChips(selectedKind: kindFilter) { kind in
-                kindFilter = kind
-            }
-            .padding(.horizontal, -16)
-
-            HStack(spacing: 8) {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 15))
-                    .foregroundStyle(Color.mhTextTertiary)
-                TextField("", text: $searchText,
-                          prompt: Text("武器名で検索").foregroundStyle(Color.mhTextTertiary))
-                    .font(.system(size: 16))
-                    .foregroundStyle(Color.mhTextPrimary)
-                Text("\(visibleWeapons.count)本")
-                    .font(.system(size: 13))
-                    .foregroundStyle(Color.mhTextTertiary)
-            }
-            .padding(.horizontal, 10)
-            .frame(minHeight: 38)
-            .background(Color.mhSurfaceSubtle)
-            .clipShape(RoundedRectangle(cornerRadius: 2))
-            .overlay(RoundedRectangle(cornerRadius: 2).stroke(Color.mhHairline, lineWidth: 1))
+    private var searchField: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 15))
+                .foregroundStyle(Color.mhTextTertiary)
+            TextField("", text: $searchText,
+                      prompt: Text("武器名で検索").foregroundStyle(Color.mhTextTertiary))
+                .font(.system(size: 16))
+                .foregroundStyle(Color.mhTextPrimary)
+            Text("\(visibleWeapons.count)本")
+                .font(.system(size: 13))
+                .foregroundStyle(Color.mhTextTertiary)
         }
+        .padding(.horizontal, 10)
+        .frame(minHeight: 38)
+        .background(Color.mhSurfaceSubtle)
+        .clipShape(RoundedRectangle(cornerRadius: 2))
+        .overlay(RoundedRectangle(cornerRadius: 2).stroke(Color.mhHairline, lineWidth: 1))
     }
 
     @ViewBuilder
@@ -82,8 +91,6 @@ struct WeaponSelectView: View {
             ScrollView {
                 LazyVStack(spacing: 0) {
                     clearRow
-                    separator
-                    customWeaponRow
                     separator
                     ForEach(visibleWeapons, id: \.id) { weapon in
                         weaponRow(weapon)
@@ -109,29 +116,6 @@ struct WeaponSelectView: View {
                         .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(Color.mhAccent)
                 }
-            }
-            .padding(.horizontal, 16)
-            .frame(minHeight: 48)
-        }
-    }
-
-    private var customWeaponRow: some View {
-        Button {
-            path.append(.customWeapon)
-        } label: {
-            HStack(spacing: 8) {
-                Text("カスタム武器(スロット・スキルを指定)")
-                    .font(.system(size: 16))
-                    .foregroundStyle(Color.mhTextPrimary)
-                Spacer()
-                if conditionViewModel.customWeaponConfig != nil {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(Color.mhAccent)
-                }
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Color.mhTextTertiary)
             }
             .padding(.horizontal, 16)
             .frame(minHeight: 48)

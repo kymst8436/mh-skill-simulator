@@ -5,8 +5,7 @@ import MHSimulatorCore
 nonisolated enum SearchRoute: Hashable {
     case results
     case detail(EquipmentSetItem)
-    case weaponSelect(String?)  // 引数: 武器種フィルタの初期値(nil=すべて)
-    case customWeapon
+    case weaponSelect(String?)  // 引数: 武器種フィルタの初期値(nil=全一覧/"artian"=カスタム武器設定)
 }
 
 /// EquipmentSetをナビゲーション引数にするためのIdラッパ
@@ -83,17 +82,15 @@ struct SearchConditionView: View {
                         condition: viewModel.makeCondition())
                 case .weaponSelect(let kind):
                     WeaponSelectView(conditionViewModel: viewModel, path: $path, initialKind: kind)
-                case .customWeapon:
-                    CustomWeaponView(conditionViewModel: viewModel, path: $path)
                 }
             }
         }
     }
 
-    /// チップのハイライト対象(カスタム武器は該当なし)
+    /// チップのハイライト対象(カスタム武器=アーティア枠)
     private var selectedWeaponKind: String? {
-        guard let kind = viewModel.selectedWeapon?.kind, kind != "custom" else { return nil }
-        return kind
+        guard let kind = viewModel.selectedWeapon?.kind else { return nil }
+        return kind == "custom" ? WeaponKindChips.artianKind : kind
     }
 
     /// 画面下部固定の検索ボタン(2026-08-24改訂)
@@ -128,7 +125,7 @@ struct SearchConditionView: View {
                             .font(.system(size: 14))
                             .foregroundStyle(Color.mhTextSecondary)
                     } else {
-                        Text("指定なし(全武器から自動選択)")
+                        Text("すべての武器から検索")
                             .font(.system(size: 15))
                             .foregroundStyle(Color.mhTextSecondary)
                         Spacer()

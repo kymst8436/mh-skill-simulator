@@ -1,19 +1,21 @@
 import SwiftUI
 import MHSimulatorCore
 
-/// カスタム武器設定(仕様3.1 2026-08-24改訂)。
+/// カスタム武器(アーティア)設定フォーム(仕様3.1 2026-08-24改訂)。
+/// 武器選択画面の「アーティア」チップ選択時にインライン表示される。
 /// TU追加武器(巨撃アーティア等)がデータ未収録の間、スロットと
 /// シリーズ/グループスキルを手動で仮定して検索に反映する
-struct CustomWeaponView: View {
+struct CustomWeaponForm: View {
     let conditionViewModel: SearchConditionViewModel
-    @Binding var path: [SearchRoute]
+    /// 「この構成で設定」確定時に呼ばれる(親が画面を閉じる)
+    let onApplied: () -> Void
     @State private var config: CustomWeaponConfig
 
     private var master: MasterDatabase { conditionViewModel.dependencies.master }
 
-    init(conditionViewModel: SearchConditionViewModel, path: Binding<[SearchRoute]>) {
+    init(conditionViewModel: SearchConditionViewModel, onApplied: @escaping () -> Void) {
         self.conditionViewModel = conditionViewModel
-        _path = path
+        self.onApplied = onApplied
         _config = State(initialValue: conditionViewModel.customWeaponConfig ?? CustomWeaponConfig())
     }
 
@@ -28,62 +30,56 @@ struct CustomWeaponView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.mhBackground.ignoresSafeArea()
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    MHSectionHeader(title: "スロット")
-                        .padding(.top, 16)
-                    MHCard {
-                        VStack(spacing: 0) {
-                            ForEach(0..<3, id: \.self) { index in
-                                slotRow(index)
-                                if index < 2 { separator }
-                            }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                MHSectionHeader(title: "スロット")
+                    .padding(.top, 4)
+                MHCard {
+                    VStack(spacing: 0) {
+                        ForEach(0..<3, id: \.self) { index in
+                            slotRow(index)
+                            if index < 2 { separator }
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 6)
-
-                    MHSectionHeader(title: "シリーズスキル(1部位分として加算)")
-                        .padding(.top, 20)
-                    MHCard {
-                        skillMenuRow(
-                            selection: config.setSkillId,
-                            skills: setSkills) { config.setSkillId = $0 }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 6)
-
-                    MHSectionHeader(title: "グループスキル(1部位分として加算)")
-                        .padding(.top, 20)
-                    MHCard {
-                        skillMenuRow(
-                            selection: config.groupSkillId,
-                            skills: groupSkills) { config.groupSkillId = $0 }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 6)
-
-                    Text("巨撃アーティア等、データ未収録の武器を仮定するための機能です")
-                        .font(.system(size: 12))
-                        .foregroundStyle(Color.mhTextTertiary)
-                        .padding(.horizontal, 32)
-                        .padding(.top, 10)
-
-                    MHPrimaryButton(title: "この構成で設定", isEnabled: hasContent) {
-                        conditionViewModel.selectCustomWeapon(config)
-                        path.removeLast(2)  // カスタム武器→武器選択を抜けて検索条件へ
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 24)
                 }
-                .padding(.bottom, 24)
+                .padding(.horizontal, 16)
+                .padding(.top, 6)
+
+                MHSectionHeader(title: "シリーズスキル(1部位分として加算)")
+                    .padding(.top, 20)
+                MHCard {
+                    skillMenuRow(
+                        selection: config.setSkillId,
+                        skills: setSkills) { config.setSkillId = $0 }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 6)
+
+                MHSectionHeader(title: "グループスキル(1部位分として加算)")
+                    .padding(.top, 20)
+                MHCard {
+                    skillMenuRow(
+                        selection: config.groupSkillId,
+                        skills: groupSkills) { config.groupSkillId = $0 }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 6)
+
+                Text("巨撃アーティア等、データ未収録の武器を仮定するための機能です")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Color.mhTextTertiary)
+                    .padding(.horizontal, 32)
+                    .padding(.top, 10)
+
+                MHPrimaryButton(title: "この構成で設定", isEnabled: hasContent) {
+                    conditionViewModel.selectCustomWeapon(config)
+                    onApplied()
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 24)
             }
+            .padding(.bottom, 24)
         }
-        .mhNavigationTitle("カスタム武器")
-        .navigationBarBackButtonHidden(true)
-        .toolbar { MHBackButton { path.removeLast() } }
     }
 
     private var hasContent: Bool {
