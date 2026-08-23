@@ -274,6 +274,13 @@ public final class SearchEngine {
                 for (skillId, level) in weapon.skills where prepared.additiveNeeds[skillId] != nil {
                     have[skillId, default: 0] += level
                 }
+                // 武器付与のシリーズ/グループスキルは発動部位数に加算する
+                // (TUで追加されたアーティア武器等。levelを部位数分として数える)
+                for bonus in prepared.bonusNeeds {
+                    if let level = weapon.skills[bonus.skillId] {
+                        bonusCount[bonus.skillId, default: 0] += level
+                    }
+                }
                 emptySlotCount = weapon.slots.count
             }
         }
@@ -381,7 +388,13 @@ public final class SearchEngine {
         func add(_ skills: [SkillId: Int]) {
             for (skillId, level) in skills { active[skillId, default: 0] += level }
         }
-        if let weapon = prepared.weapon { add(weapon.skills) }
+        if let weapon = prepared.weapon {
+            // set/groupスキルは部位数カウント側で扱うため加算集計から除外
+            add(weapon.skills.filter { id, _ in
+                let kind = master.skills[id]?.kind
+                return kind != .set && kind != .group
+            })
+        }
         for piece in state.pieces { add(piece.skills) }
         add(charm.skills)
         for entry in assignment { add(entry.decoration.skills) }
@@ -392,6 +405,14 @@ public final class SearchEngine {
             guard let series = master.armorSeries[piece.seriesId] else { continue }
             for bonus in [series.setBonus, series.groupBonus].compactMap({ $0 }) {
                 allBonusCount[bonus.skillId, default: [:]][piece.seriesId, default: 0] += 1
+            }
+        }
+        // 武器付与のシリーズ/グループスキル(seriesId=0枠で加算)
+        var weaponBonusLevels: [SkillId: Int] = [:]
+        if let weapon = prepared.weapon {
+            for (skillId, level) in weapon.skills where master.skills[skillId]?.kind == .set || master.skills[skillId]?.kind == .group {
+                allBonusCount[skillId, default: [:]][0, default: 0] += level
+                weaponBonusLevels[skillId] = level
             }
         }
         for (skillId, bySeries) in allBonusCount {

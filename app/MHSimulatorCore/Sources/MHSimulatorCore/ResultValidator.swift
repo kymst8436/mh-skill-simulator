@@ -68,7 +68,12 @@ public struct ResultValidator {
         func add(_ skills: [SkillId: Int]) {
             for (skillId, level) in skills { recomputed[skillId, default: 0] += level }
         }
-        if let weapon { add(weapon.skills) }
+        if let weapon {
+            add(weapon.skills.filter { id, _ in
+                let kind = master.skills[id]?.kind
+                return kind != .set && kind != .group
+            })
+        }
         for piece in set.pieces.values { add(piece.skills) }
         add(set.charm.skills)
         for entry in set.decorations { add(entry.decoration.skills) }
@@ -81,6 +86,17 @@ public struct ResultValidator {
             for bonus in [series.setBonus, series.groupBonus].compactMap({ $0 }) {
                 bonusCount[bonus.skillId, default: 0] += 1
                 thresholds[bonus.skillId, default: [:]].merge(bonus.ranksByPieces) { max($0, $1) }
+            }
+        }
+        // 武器付与のシリーズ/グループスキルも部位数として加算(エンジンと同一意味論)
+        if let weapon {
+            for (skillId, level) in weapon.skills where master.skills[skillId]?.kind == .set || master.skills[skillId]?.kind == .group {
+                bonusCount[skillId, default: 0] += level
+                for series in master.armorSeries.values {
+                    for bonus in [series.setBonus, series.groupBonus].compactMap({ $0 }) where bonus.skillId == skillId {
+                        thresholds[skillId, default: [:]].merge(bonus.ranksByPieces) { max($0, $1) }
+                    }
+                }
             }
         }
         for (skillId, count) in bonusCount {

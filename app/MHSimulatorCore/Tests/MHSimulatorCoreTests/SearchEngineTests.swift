@@ -92,6 +92,26 @@ final class SearchEngineTests: XCTestCase {
         XCTAssertTrue(result.sets.isEmpty)
     }
 
+    func testWeaponContributesToSetBonus() throws {
+        // 武器付与のシリーズスキルは発動部位数に加算される
+        // (TU追加のアーティア武器等を想定。現データに実物が無いため合成武器で検証)
+        let skill = TestSupport.skill(named: "兇爪竜の力")  // 2部位でLv1発動
+        let weapon = Weapon(
+            id: 999_999, kind: "great-sword", name: "テスト武器(シリーズスキル付き)",
+            rarity: 8, slots: [], skills: [skill.id: 1])
+        let condition = SearchCondition(requiredSkills: [skill.id: 1])
+        let result = try engine.search(condition: condition, weapon: weapon)
+        XCTAssertFalse(result.sets.isEmpty)
+        assertAllValid(result, condition: condition, weapon: weapon)
+        // 武器が1部位分を担うため、該当ボーナス持ちの防具は1部位で足りる組み合わせが存在する
+        let minPieces = result.sets.map { set in
+            set.pieces.values.filter { piece in
+                master.armorSeries[piece.seriesId]?.setBonus?.skillId == skill.id
+            }.count
+        }.min() ?? .max
+        XCTAssertEqual(minPieces, 1)
+    }
+
     // MARK: - 武器スキルと護石
 
     func testWeaponSkillWithoutWeaponOrCharmIsImpossible() throws {
