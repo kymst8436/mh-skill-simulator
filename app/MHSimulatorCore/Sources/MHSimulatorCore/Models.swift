@@ -4,22 +4,22 @@ import Foundation
 
 public typealias SkillId = Int32
 
-public enum SkillKind: String {
+public enum SkillKind: String, Sendable {
     case armor, weapon, set, group
 }
 
-public struct Skill {
+public struct Skill: Sendable {
     public let id: SkillId
     public let name: String
     public let kind: SkillKind
     public let maxLevel: Int
 }
 
-public enum ArmorPieceKind: String, CaseIterable {
+public enum ArmorPieceKind: String, CaseIterable, Sendable {
     case head, chest, arms, waist, legs
 }
 
-public struct ArmorPiece {
+public struct ArmorPiece: Sendable {
     public let id: Int64
     public let seriesId: Int32
     public let kind: ArmorPieceKind
@@ -30,7 +30,7 @@ public struct ArmorPiece {
     public let skills: [SkillId: Int]
 }
 
-public struct ArmorSeriesBonus {
+public struct ArmorSeriesBonus: Sendable {
     public let skillId: SkillId
     /// 部位数 → 発動レベル(例 [2:1, 4:2])
     public let ranksByPieces: [Int: Int]
@@ -41,7 +41,7 @@ public struct ArmorSeriesBonus {
     }
 }
 
-public struct ArmorSeries {
+public struct ArmorSeries: Sendable {
     public let id: Int32
     public let name: String
     public let rarity: Int
@@ -49,11 +49,11 @@ public struct ArmorSeries {
     public let groupBonus: ArmorSeriesBonus?  // 3部位
 }
 
-public enum DecorationTarget: String {
+public enum DecorationTarget: String, Sendable {
     case weapon, armor
 }
 
-public struct Decoration {
+public struct Decoration: Sendable {
     public let id: Int32
     public let name: String
     public let slotSize: Int
@@ -62,8 +62,8 @@ public struct Decoration {
 }
 
 /// 検索エンジンが扱う護石(固定護石・所持鑑定護石を統一した形)
-public struct Charm {
-    public enum Source: Equatable {
+public struct Charm: Sendable {
+    public enum Source: Equatable, Sendable {
         case none                 // 護石なし
         case fixed(Int32, Int)    // 固定護石(系統ID, ランク)
         case owned(UUID)          // 所持鑑定護石
@@ -85,7 +85,7 @@ public struct Charm {
     }
 }
 
-public struct Weapon {
+public struct Weapon: Sendable {
     public let id: Int64
     public let kind: String
     public let name: String
@@ -96,7 +96,7 @@ public struct Weapon {
 
 // MARK: - 検索条件と結果
 
-public struct SearchCondition {
+public struct SearchCondition: Sendable {
     /// スキルID → 目標レベル。Dictionaryのため同一スキルの重複指定は構造的に起きない(仕様3.1)
     public let requiredSkills: [SkillId: Int]
 
@@ -105,8 +105,8 @@ public struct SearchCondition {
     }
 }
 
-public struct DecorationAssignment {
-    public enum SlotOwner: Hashable {
+public struct DecorationAssignment: Sendable {
+    public enum SlotOwner: Hashable, Sendable {
         case weapon
         case armor(ArmorPieceKind)
         case charmWeapon
@@ -117,7 +117,7 @@ public struct DecorationAssignment {
     public let decoration: Decoration
 }
 
-public struct EquipmentSet {
+public struct EquipmentSet: Sendable {
     public let pieces: [ArmorPieceKind: ArmorPiece]
     public let charm: Charm
     public let decorations: [DecorationAssignment]
@@ -130,13 +130,13 @@ public struct EquipmentSet {
     public let emptyArmorSlots: [Int]
 }
 
-public struct SearchResult {
+public struct SearchResult: Sendable {
     public let sets: [EquipmentSet]
     /// 上限件数(仕様Q-3: 100件)で打ち切られたか
     public let truncated: Bool
 }
 
-public enum SearchError: Error, Equatable {
+public enum SearchError: Error, Equatable, Sendable {
     case emptyCondition                   // 条件スキル0個
     case levelExceedsMax(SkillId)         // 目標レベルが上限超
     case unknownSkill(SkillId)

@@ -5,13 +5,13 @@ import Foundation
 /// 抽選規則上あり得る護石の要求条件を「入手しやすさ(レア度昇順)」で提示する(仕様3.2)。
 public final class CharmOracle {
     /// 「この護石があれば組める」候補
-    public struct CharmSuggestion: Hashable {
+    public struct CharmSuggestion: Hashable, Sendable {
         public let requirement: CharmRules.Requirement
         /// この要求を満たす護石が出現し得る最小レア度
         public let minimumRarity: Int
     }
 
-    public enum Outcome: Equatable {
+    public enum Outcome: Equatable, Sendable {
         /// 護石候補(最大N件。仕様Q-4: 仮10件)
         case charms([CharmSuggestion])
         /// 護石では埋まらない → 外せば組めるスキルの代替提示(仕様3.2 手順5)
@@ -20,7 +20,7 @@ public final class CharmOracle {
         case none
     }
 
-    public struct Options {
+    public struct Options: Sendable {
         public var maxSuggestions: Int
         /// 緩和探索で訪問する葉の上限(発散防止)
         public var leafBudget: Int

@@ -132,6 +132,36 @@ struct MHSectionHeader: View {
     }
 }
 
+/// −/+の正方ボタン(iOS標準Stepperは使わない。DESIGN.md §5)
+struct MHStepper: View {
+    var canDecrement: Bool
+    var canIncrement: Bool
+    let onDecrement: () -> Void
+    let onIncrement: () -> Void
+
+    var body: some View {
+        HStack(spacing: 6) {
+            stepButton("minus", enabled: canDecrement, action: onDecrement)
+            stepButton("plus", enabled: canIncrement, action: onIncrement)
+        }
+    }
+
+    private func stepButton(_ symbol: String, enabled: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(Color.mhTextSecondary)
+                .frame(width: 30, height: 30)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 2)
+                        .stroke(Color.mhHairline, lineWidth: 1)
+                )
+        }
+        .disabled(!enabled)
+        .opacity(enabled ? 1 : 0.35)
+    }
+}
+
 /// 空状態(アイコン+見出し+誘導文+主アクション)。DESIGN.md §5
 struct MHEmptyState: View {
     let systemImage: String

@@ -5,7 +5,7 @@ import Foundation
 public final class SearchEngine {
     let master: MasterDatabase
 
-    public struct Options {
+    public struct Options: Sendable {
         /// 上限件数(仕様Q-3: 仮100件)
         public var maxResults: Int
         /// 探索打ち切り時刻(仕様3.1: タイムアウト時は途中結果+フラグ)

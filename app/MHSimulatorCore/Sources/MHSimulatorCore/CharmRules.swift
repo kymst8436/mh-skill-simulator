@@ -5,18 +5,18 @@ import Foundation
 /// 全列挙テーブルは同梱しない(仕様4.2改訂 2026-08-22)。
 ///
 /// 前提(検証済み): 同一スキルは1つの護石に重複しない(2026-08-22実機確認)。
-public struct CharmRules {
-    public struct GroupEntry: Hashable {
+public struct CharmRules: Sendable {
+    public struct GroupEntry: Hashable, Sendable {
         public let skillId: SkillId
         public let level: Int
     }
 
-    public struct SlotCombo: Hashable {
+    public struct SlotCombo: Hashable, Sendable {
         public let weaponSlots: [Int]
         public let armorSlots: [Int]
     }
 
-    public struct Pattern {
+    public struct Pattern: Sendable {
         public let rarity: Int
         /// スキル1〜3のグループID(nil = そのスキル枠なし)
         public let skillGroups: [Int?]
@@ -36,7 +36,7 @@ public struct CharmRules {
     // MARK: - 逆引き用: 要求を満たす護石が抽選上あり得るか
 
     /// 護石への要求。スキルは「このレベル以上」、スロットは「このサイズ以上が個数分」
-    public struct Requirement: Hashable {
+    public struct Requirement: Hashable, Sendable {
         public let skills: [SkillId: Int]       // 最大3件
         public let weaponSlots: [Int]           // 必要サイズの配列
         public let armorSlots: [Int]
@@ -127,7 +127,7 @@ public struct CharmRules {
         return result
     }
 
-    public struct RaritySlots: Hashable {
+    public struct RaritySlots: Hashable, Sendable {
         public let rarity: Int
         public let slots: SlotCombo
     }

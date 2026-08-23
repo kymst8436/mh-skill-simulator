@@ -6,11 +6,8 @@ struct MainTabView: View {
 
     var body: some View {
         TabView {
-            NavigationStack {
-                SearchConditionPlaceholderView()
-                    .mhNavigationTitle("検索条件")
-            }
-            .tabItem { Label("検索", systemImage: "magnifyingglass") }
+            SearchConditionView(dependencies: dependencies)
+                .tabItem { Label("検索", systemImage: "magnifyingglass") }
 
             NavigationStack {
                 CharmListPlaceholderView()
@@ -27,19 +24,7 @@ struct MainTabView: View {
     }
 }
 
-// Phase 3-2以降で本実装に差し替えるプレースホルダ
-
-struct SearchConditionPlaceholderView: View {
-    var body: some View {
-        ZStack {
-            Color.mhBackground.ignoresSafeArea()
-            MHEmptyState(
-                systemImage: "magnifyingglass",
-                title: "検索条件(実装中)",
-                message: "Phase 3-2で実装")
-        }
-    }
-}
+// Phase 4以降で本実装に差し替えるプレースホルダ
 
 struct CharmListPlaceholderView: View {
     var body: some View {
