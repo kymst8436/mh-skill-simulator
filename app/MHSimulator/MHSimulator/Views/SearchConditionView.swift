@@ -5,7 +5,7 @@ import MHSimulatorCore
 nonisolated enum SearchRoute: Hashable {
     case results
     case detail(EquipmentSetItem)
-    case weaponSelect
+    case weaponSelect(String?)  // 引数: 武器種フィルタの初期値(nil=すべて)
     case customWeapon
 }
 
@@ -18,7 +18,7 @@ nonisolated struct EquipmentSetItem: Hashable, Identifiable {
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
 
-/// 検索タブのフロー(検索条件→結果→詳細)。画面設計4.1
+/// 検索タブのフロー(検索条件→結果→詳細)。画面設計4.1(2026-08-24改訂)
 struct SearchConditionView: View {
     let dependencies: AppDependencies
     @State private var viewModel: SearchConditionViewModel
@@ -34,29 +34,29 @@ struct SearchConditionView: View {
         NavigationStack(path: $path) {
             ZStack {
                 Color.mhBackground.ignoresSafeArea()
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 0) {
-                        MHSectionHeader(title: "武器")
-                            .padding(.top, 20)
-                        weaponRow
-                            .padding(.horizontal, 16)
-                            .padding(.top, 7)
+                VStack(spacing: 0) {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 0) {
+                            MHSectionHeader(title: "武器")
+                                .padding(.top, 20)
+                            // 武器種チップ: タップでその武器種にフィルタした武器選択へ
+                            WeaponKindChips(
+                                selectedKind: selectedWeaponKind,
+                                onTap: { kind in path.append(.weaponSelect(kind)) })
+                                .padding(.top, 7)
+                            weaponStatusRow
+                                .padding(.horizontal, 16)
+                                .padding(.top, 8)
 
-                        MHSectionHeader(title: "スキル条件", actionTitle: "+ 追加") {
-                            showsSkillPicker = true
+                            MHSectionHeader(title: "スキル条件")
+                                .padding(.top, 20)
+                            conditionList
+                                .padding(.horizontal, 16)
+                                .padding(.top, 7)
                         }
-                        .padding(.top, 20)
-                        conditionList
-                            .padding(.horizontal, 16)
-                            .padding(.top, 7)
-
-                        MHPrimaryButton(title: "検索する", isEnabled: viewModel.canSearch) {
-                            path.append(.results)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 28)
+                        .padding(.bottom, 24)
                     }
-                    .padding(.bottom, 24)
+                    searchButtonBar
                 }
             }
             .mhNavigationTitle("検索条件")
@@ -81,8 +81,8 @@ struct SearchConditionView: View {
                         dependencies: dependencies,
                         item: item,
                         condition: viewModel.makeCondition())
-                case .weaponSelect:
-                    WeaponSelectView(conditionViewModel: viewModel, path: $path)
+                case .weaponSelect(let kind):
+                    WeaponSelectView(conditionViewModel: viewModel, path: $path, initialKind: kind)
                 case .customWeapon:
                     CustomWeaponView(conditionViewModel: viewModel, path: $path)
                 }
@@ -90,9 +90,29 @@ struct SearchConditionView: View {
         }
     }
 
-    private var weaponRow: some View {
+    /// チップのハイライト対象(カスタム武器は該当なし)
+    private var selectedWeaponKind: String? {
+        guard let kind = viewModel.selectedWeapon?.kind, kind != "custom" else { return nil }
+        return kind
+    }
+
+    /// 画面下部固定の検索ボタン(2026-08-24改訂)
+    private var searchButtonBar: some View {
+        MHPrimaryButton(title: "検索する", isEnabled: viewModel.canSearch) {
+            path.append(.results)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(Color.mhBackground)
+        .overlay(alignment: .top) {
+            Rectangle().fill(Color.mhHairlineFaint).frame(height: 1)
+        }
+    }
+
+    /// 選択中武器の1行表示(未選択時は自動選択の案内)
+    private var weaponStatusRow: some View {
         Button {
-            path.append(.weaponSelect)
+            path.append(.weaponSelect(selectedWeaponKind))
         } label: {
             MHCard {
                 HStack(spacing: 8) {
@@ -100,15 +120,16 @@ struct SearchConditionView: View {
                         Text(weapon.id == CustomWeaponConfig.weaponId
                              ? weapon.name
                              : "\(MHFormat.weaponKindLabel(weapon.kind)) \(weapon.name)")
-                            .font(.system(size: 16))
+                            .font(.system(size: 15))
                             .foregroundStyle(Color.mhTextPrimary)
+                            .lineLimit(1)
                         Spacer()
                         Text(MHFormat.slotSymbols(weapon.slots))
-                            .font(.system(size: 15))
+                            .font(.system(size: 14))
                             .foregroundStyle(Color.mhTextSecondary)
                     } else {
                         Text("指定なし(全武器から自動選択)")
-                            .font(.system(size: 16))
+                            .font(.system(size: 15))
                             .foregroundStyle(Color.mhTextSecondary)
                         Spacer()
                     }
@@ -124,25 +145,34 @@ struct SearchConditionView: View {
 
     private var conditionList: some View {
         MHCard {
-            if viewModel.conditions.isEmpty {
-                Text("スキルを追加して検索条件を作成してください")
-                    .font(.system(size: 13))
-                    .foregroundStyle(Color.mhTextTertiary)
-                    .frame(maxWidth: .infinity, minHeight: 64)
-                    .padding(.horizontal, 16)
-            } else {
-                VStack(spacing: 0) {
-                    ForEach(viewModel.conditions) { row in
-                        conditionRow(row)
-                        if row.id != viewModel.conditions.last?.id {
-                            Rectangle()
-                                .fill(Color.mhHairlineFaint)
-                                .frame(height: 1)
-                                .padding(.leading, 16)
-                        }
-                    }
+            VStack(spacing: 0) {
+                ForEach(viewModel.conditions) { row in
+                    conditionRow(row)
+                    Rectangle()
+                        .fill(Color.mhHairlineFaint)
+                        .frame(height: 1)
+                        .padding(.leading, 16)
                 }
+                addSkillRow
             }
+        }
+    }
+
+    /// スキル条件リスト末尾の追加行(2026-08-24改訂: ヘッダから移動)
+    private var addSkillRow: some View {
+        Button {
+            showsSkillPicker = true
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "plus")
+                    .font(.system(size: 14, weight: .semibold))
+                Text("スキルを追加")
+                    .font(.system(size: 16))
+                Spacer()
+            }
+            .foregroundStyle(Color.mhAccent)
+            .padding(.horizontal, 16)
+            .frame(minHeight: 48)
         }
     }
 

@@ -11,11 +11,10 @@ struct WeaponSelectView: View {
 
     private var master: MasterDatabase { conditionViewModel.dependencies.master }
 
-    init(conditionViewModel: SearchConditionViewModel, path: Binding<[SearchRoute]>) {
+    init(conditionViewModel: SearchConditionViewModel, path: Binding<[SearchRoute]>, initialKind: String? = nil) {
         self.conditionViewModel = conditionViewModel
         _path = path
-        let kind = conditionViewModel.selectedWeapon?.kind
-        _kindFilter = State(initialValue: kind == "custom" ? nil : kind)
+        _kindFilter = State(initialValue: initialKind)
     }
 
     var body: some View {
@@ -46,6 +45,12 @@ struct WeaponSelectView: View {
 
     private var controls: some View {
         VStack(spacing: 10) {
+            // 武器種チップ(この画面内でも武器種を変更できる。2026-08-24改訂)
+            WeaponKindChips(selectedKind: kindFilter) { kind in
+                kindFilter = kind
+            }
+            .padding(.horizontal, -16)
+
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 15))
@@ -54,34 +59,15 @@ struct WeaponSelectView: View {
                           prompt: Text("武器名で検索").foregroundStyle(Color.mhTextTertiary))
                     .font(.system(size: 16))
                     .foregroundStyle(Color.mhTextPrimary)
+                Text("\(visibleWeapons.count)本")
+                    .font(.system(size: 13))
+                    .foregroundStyle(Color.mhTextTertiary)
             }
             .padding(.horizontal, 10)
             .frame(minHeight: 38)
             .background(Color.mhSurfaceSubtle)
             .clipShape(RoundedRectangle(cornerRadius: 2))
             .overlay(RoundedRectangle(cornerRadius: 2).stroke(Color.mhHairline, lineWidth: 1))
-
-            HStack {
-                Menu {
-                    Button("すべて") { kindFilter = nil }
-                    ForEach(MHFormat.weaponKinds, id: \.self) { kind in
-                        Button(MHFormat.weaponKindLabel(kind)) { kindFilter = kind }
-                    }
-                } label: {
-                    HStack(spacing: 6) {
-                        Text(kindFilter.map(MHFormat.weaponKindLabel) ?? "すべての武器種")
-                            .font(.system(size: 14))
-                            .foregroundStyle(Color.mhAccent)
-                        Image(systemName: "chevron.down")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(Color.mhAccent)
-                    }
-                }
-                Spacer()
-                Text("\(visibleWeapons.count)本")
-                    .font(.system(size: 13))
-                    .foregroundStyle(Color.mhTextTertiary)
-            }
         }
     }
 

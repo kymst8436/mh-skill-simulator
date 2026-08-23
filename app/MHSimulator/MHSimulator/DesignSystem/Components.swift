@@ -274,6 +274,47 @@ struct MHTabBar: View {
     }
 }
 
+/// 武器種の横スクロールチップリスト(検索条件・武器選択の上部)。
+/// 抽出アイコン導入(Phase 5-2)までは武器種名のテキストチップで表現する
+struct WeaponKindChips: View {
+    var includeAll = true
+    /// 現在選択中の武器種(nil = すべて/未選択)
+    var selectedKind: String?
+    let onTap: (String?) -> Void
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                if includeAll {
+                    chip(label: "すべて", kind: nil, isSelected: selectedKind == nil)
+                }
+                ForEach(MHFormat.weaponKinds, id: \.self) { kind in
+                    chip(label: MHFormat.weaponKindLabel(kind), kind: kind, isSelected: selectedKind == kind)
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+    }
+
+    private func chip(label: String, kind: String?, isSelected: Bool) -> some View {
+        Button {
+            onTap(kind)
+        } label: {
+            Text(label)
+                .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
+                .foregroundStyle(isSelected ? Color.mhAccentSoft : Color.mhTextSecondary)
+                .padding(.horizontal, 12)
+                .frame(minHeight: 34)
+                .background(isSelected ? Color.mhAccentWash : Color.mhSurface)
+                .clipShape(RoundedRectangle(cornerRadius: 2))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 2)
+                        .stroke(isSelected ? Color.mhAccentDim : Color.mhHairline, lineWidth: 1)
+                )
+        }
+    }
+}
+
 /// −/+の正方ボタン(iOS標準Stepperは使わない。DESIGN.md §5)
 struct MHStepper: View {
     var canDecrement: Bool

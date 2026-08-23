@@ -6,20 +6,21 @@ struct MainTabView: View {
     @State private var selection: MHTab = .search
 
     var body: some View {
-        TabView(selection: $selection) {
-            SearchConditionView(dependencies: dependencies)
-                .tag(MHTab.search)
-                .toolbar(.hidden, for: .tabBar)
+        // TabViewの下に自作タブバーを並べる(タブ画面のコンテンツ領域をタブバー上端までに制限)
+        VStack(spacing: 0) {
+            TabView(selection: $selection) {
+                SearchConditionView(dependencies: dependencies)
+                    .tag(MHTab.search)
+                    .toolbar(.hidden, for: .tabBar)
 
-            CharmListView(dependencies: dependencies)
-                .tag(MHTab.charms)
-                .toolbar(.hidden, for: .tabBar)
+                CharmListView(dependencies: dependencies)
+                    .tag(MHTab.charms)
+                    .toolbar(.hidden, for: .tabBar)
 
-            InfoView(dependencies: dependencies)
-                .tag(MHTab.info)
-                .toolbar(.hidden, for: .tabBar)
-        }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
+                InfoView(dependencies: dependencies)
+                    .tag(MHTab.info)
+                    .toolbar(.hidden, for: .tabBar)
+            }
             MHTabBar(selection: $selection)
         }
     }
