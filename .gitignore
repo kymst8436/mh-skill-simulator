@@ -13,3 +13,9 @@ data/generated/
 
 # Design canvas seeded output (re-generatable from design/mockups/*.dc.html)
 design/mockups/mh-simulator-screens.html
+
+# Xcode
+app/MHSimulator/build/
+app/MHSimulatorCore/build/
+xcuserdata/
+DerivedData/
