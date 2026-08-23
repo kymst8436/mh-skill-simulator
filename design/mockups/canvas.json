@@ -1,14 +1,23 @@
 {
+  "pages": [
+    { "id": "page-mocks", "name": "画面モック" },
+    { "id": "page-styles", "name": "デザイン方向案" }
+  ],
   "artboards": [
     { "file": "Main.dc.html", "x": 0, "y": 0, "w": 390, "h": 844, "title": "検索条件" },
     { "file": "SkillPicker.dc.html", "x": 450, "y": 0, "w": 390, "h": 844, "title": "スキル選択(sheet)" },
     { "file": "Results.dc.html", "x": 900, "y": 0, "w": 390, "h": 844, "title": "検索結果" },
     { "file": "ResultsEmpty.dc.html", "x": 1350, "y": 0, "w": 390, "h": 844, "title": "0件・逆引き" },
     { "file": "Detail.dc.html", "x": 1800, "y": 0, "w": 390, "h": 844, "title": "装備詳細" },
-    { "file": "CharmEntry.dc.html", "x": 2250, "y": 0, "w": 390, "h": 844, "title": "護石入力(sheet)" }
+    { "file": "CharmEntry.dc.html", "x": 2250, "y": 0, "w": 390, "h": 844, "title": "護石入力(sheet)" },
+    { "file": "StyleA.dc.html", "x": 0, "y": 0, "w": 390, "h": 620, "title": "A案 狩猟ダーク", "page": "page-styles" },
+    { "file": "StyleB.dc.html", "x": 450, "y": 0, "w": 390, "h": 620, "title": "B案 ハンターノート", "page": "page-styles" },
+    { "file": "StyleC.dc.html", "x": 900, "y": 0, "w": 390, "h": 620, "title": "C案 モダンダーク", "page": "page-styles" },
+    { "file": "StyleD.dc.html", "x": 1350, "y": 0, "w": 390, "h": 620, "title": "D案 ネイティブ+最小", "page": "page-styles" }
   ],
   "annotations": [
-    { "id": "flow-note", "x": 0, "y": -150, "w": 560, "text": "画面設計.md(2026-08-23)準拠のiPhone縦モック。\n左から: 検索条件 → スキル選択(sheet) → 検索結果 → 0件時の逆引き → 装備詳細 → 護石入力(sheet)。\nSwiftUI標準ルック(システムカラー・グループリスト)。広告バナーはルート画面下部のプレースホルダ。" }
+    { "id": "flow-note", "x": 0, "y": -150, "w": 560, "text": "画面設計.md(2026-08-23)準拠のiPhone縦モック。\n左から: 検索条件 → スキル選択(sheet) → 検索結果 → 0件時の逆引き → 装備詳細 → 護石入力(sheet)。\nSwiftUI標準ルック(システムカラー・グループリスト)。広告バナーはルート画面下部のプレースホルダ。" },
+    { "id": "style-note", "x": 0, "y": -170, "w": 640, "text": "DESIGN.md策定用のデザイン方向案(同じ内容を4スタイルで表現)。\nA案 狩猟ダーク: ゲーム画面の空気感(明朝・金茶・直角・罫線)を独自造形で再現。世界観最優先\nB案 ハンターノート: 紙とインクの図鑑風。温かく長時間見ても疲れない\nC案 モダンダーク: 今風のダークアプリ+アンバー。実装コストが最も低く崩れにくい\nD案 ネイティブ+最小: iOS標準のままアクセント色とレア度色だけMH化。最軽量\n※ゲームUIの直接模倣はせず「想起させる独自デザイン」に留める方針(権利配慮)", "page": "page-styles" }
   ],
-  "launch": { "view": "canvas" }
+  "launch": { "view": "canvas", "page": "page-styles" }
 }

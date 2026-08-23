@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #D9A036; } a:hover { color: #E8B95A; }
+    .mincho { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
+  </style>
+</helmet>
+<div style="width: 390px; height: 620px; background: linear-gradient(175deg, #1B1812 0%, #14110C 60%, #191509 100%); display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="padding: 18px 20px 12px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #4A3E22;">
+    <svg width="10" height="10" viewBox="0 0 10 10"><rect x="1.8" y="1.8" width="6.4" height="6.4" transform="rotate(45 5 5)" fill="none" stroke="#D9A036" stroke-width="1.2"></rect></svg>
+    <div class="mincho" style="font-size: 20px; font-weight: 600; color: #E8D9A8; letter-spacing: 0.12em;">検索条件</div>
+    <div style="flex-grow: 1;"></div>
+    <div style="font-size: 14px; color: #B08D3C;">リセット</div>
+  </div>
+
+  <div style="padding: 16px 16px 0 16px; display: flex; flex-direction: column; gap: 10px;">
+    <div style="background: rgba(233, 213, 160, 0.05); border: 1px solid #4A3E22; border-left: 3px solid #D9A036; padding: 12px 14px; display: flex; align-items: center; gap: 10px;">
+      <div style="flex-grow: 1; font-size: 16px; color: #EDE4CB;">攻撃</div>
+      <div style="font-size: 16px; color: #D9A036; font-weight: 600;">Lv3</div>
+      <div style="display: flex; gap: 6px;">
+        <div style="width: 30px; height: 30px; border: 1px solid #6B5A2E; display: flex; align-items: center; justify-content: center; color: #C8B478; font-size: 16px;">−</div>
+        <div style="width: 30px; height: 30px; border: 1px solid #6B5A2E; display: flex; align-items: center; justify-content: center; color: #C8B478; font-size: 16px;">+</div>
+      </div>
+    </div>
+
+    <div style="background: rgba(233, 213, 160, 0.05); border: 1px solid #4A3E22; padding: 14px; display: flex; flex-direction: column; gap: 9px;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between;">
+        <div style="display: flex; align-items: baseline; gap: 7px;">
+          <div style="font-size: 12px; color: #9C8B5E;">防御力</div>
+          <div class="mincho" style="font-size: 24px; font-weight: 700; color: #F0E6C8;">512</div>
+        </div>
+        <div style="font-size: 13px; color: #9C8B5E;">空きスロ 武③ 防①①</div>
+      </div>
+      <div style="font-size: 14px; color: #CFC2A0;">ゴアヘルムβ 他4部位</div>
+      <div style="height: 1px; background: linear-gradient(90deg, #6B5A2E, rgba(107,90,46,0));"></div>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+        <div style="font-size: 12px; color: #E8D9A8; border: 1px solid #8A6F30; padding: 3px 9px;">攻撃Lv3</div>
+        <div style="font-size: 12px; color: #E8D9A8; border: 1px solid #8A6F30; padding: 3px 9px;">見切りLv2</div>
+        <div style="font-size: 12px; color: #A99C78; border: 1px solid #4A3E22; padding: 3px 9px;">挑戦者Lv2</div>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <div style="font-size: 11px; color: #14110C; background: #B08D3C; padding: 2px 8px; font-weight: 700;">R7</div>
+        <div style="font-size: 11px; color: #C8B478;">護石: 攻撃Lv2・見切りLv1</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin: 18px 16px 0 16px;">
+    <div style="background: linear-gradient(180deg, #E0AC45 0%, #C08A2A 100%); border: 1px solid #8A6F30; min-height: 50px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+      <svg width="12" height="12" viewBox="0 0 10 10"><rect x="1.8" y="1.8" width="6.4" height="6.4" transform="rotate(45 5 5)" fill="#3A2C0E"></rect></svg>
+      <div class="mincho" style="font-size: 17px; font-weight: 700; color: #241A05; letter-spacing: 0.2em;">検索する</div>
+    </div>
+  </div>
+
+  <div style="flex-grow: 1;"></div>
+  <div style="padding: 14px 20px; border-top: 1px solid #4A3E22; display: flex; align-items: baseline; justify-content: space-between;">
+    <div class="mincho" style="font-size: 15px; color: #E8D9A8; letter-spacing: 0.1em;">A案 狩猟ダーク</div>
+    <div style="font-size: 11px; color: #9C8B5E;">ゲーム画面の空気感を独自造形で。明朝+金茶+直角</div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":620}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
