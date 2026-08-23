@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# 上流ゲームデータのスナップショット(コミットしない。SOURCE.mdのcommit hashで再現可能)
+# 権利面の配慮: ゲーム由来データの著作権はカプコンにあるためリポジトリに含めない
+data/source/merged/
+
+# 生成物(tools/convert・tools/enumerate-charmsで再生成可能)
+data/generated/
