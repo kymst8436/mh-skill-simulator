@@ -9,106 +9,111 @@
 <helmet>
   <style>
     body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif; -webkit-font-smoothing: antialiased; }
-    a { color: #007AFF; } a:hover { color: #0062CC; }
-    .card { background: #FFFFFF; border-radius: 12px; margin: 0 16px 12px 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+    a { color: #D9A036; } a:hover { color: #E8B95A; }
+    .mincho { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
+    .card { background: #1E1B14; border: 1px solid #3A342A; border-radius: 2px; margin: 0 16px 12px 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
     .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-    .chip { font-size: 13px; color: #3C3C43; background: #F2F2F7; border-radius: 6px; padding: 3px 8px; }
+    .chip { font-size: 12px; color: #A89F87; border: 1px solid #3A342A; border-radius: 2px; padding: 3px 9px; }
+    .chipc { font-size: 12px; color: #E3C87F; border: 1px solid #8A6F30; border-radius: 2px; padding: 3px 9px; }
   </style>
 </helmet>
-<div style="width: 390px; height: 844px; background: #F2F2F7; display: flex; flex-direction: column; overflow: hidden;">
+<div style="width: 390px; height: 844px; background: #14120D; display: flex; flex-direction: column; overflow: hidden;">
 
-  <div style="background: #F9F9F9; border-bottom: 1px solid #C6C6C8; padding: 14px 16px 10px 16px; display: flex; align-items: center; justify-content: space-between;">
+  <div style="background: #191712; border-bottom: 1px solid #3A342A; padding: 14px 16px 10px 16px; display: flex; align-items: center; justify-content: space-between;">
     <div style="width: 90px; display: flex; align-items: center; gap: 4px;">
-      <svg width="10" height="17" viewBox="0 0 10 17" fill="none"><path d="M9 1L2 8.5 9 16" stroke="#007AFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-      <div style="font-size: 17px; color: #007AFF;">検索条件</div>
+      <svg width="10" height="17" viewBox="0 0 10 17" fill="none"><path d="M9 1L2 8.5 9 16" stroke="#D9A036" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <div style="font-size: 16px; color: #D9A036;">検索条件</div>
     </div>
-    <div style="font-size: 17px; font-weight: 600; color: #000000;">検索結果</div>
+    <div style="display: flex; align-items: center; gap: 7px;">
+      <svg width="8" height="8" viewBox="0 0 10 10"><rect x="2" y="2" width="6" height="6" transform="rotate(45 5 5)" fill="#D9A036"></rect></svg>
+      <div class="mincho" style="font-size: 17px; font-weight: 600; color: #E8D9A8; letter-spacing: 1.5px;">検索結果</div>
+    </div>
     <div style="width: 90px;"></div>
   </div>
 
   <div style="padding: 12px 16px 8px 16px; display: flex; align-items: baseline; justify-content: space-between;">
-    <div style="font-size: 13px; color: #6D6D72;">100件(上限で打ち切り。条件を絞ると精度が上がります)</div>
-    <div style="font-size: 13px; color: #8E8E93;">防御力順</div>
+    <div style="font-size: 13px; color: #A89F87;">100件(上限で打ち切り。条件を絞ると精度が上がります)</div>
+    <div style="font-size: 13px; color: #6F675A;">防御力順</div>
   </div>
 
   <div style="flex-grow: 1; overflow: hidden;">
     <div class="card">
       <div style="display: flex; align-items: baseline; justify-content: space-between;">
-        <div style="display: flex; align-items: baseline; gap: 6px;">
-          <div style="font-size: 13px; color: #6D6D72;">防御力</div>
-          <div style="font-size: 22px; font-weight: 700; color: #000000;">512</div>
+        <div style="display: flex; align-items: baseline; gap: 7px;">
+          <div style="font-size: 12px; color: #6F675A;">防御力</div>
+          <div class="mincho" style="font-size: 24px; font-weight: 700; color: #EDE6D4;">512</div>
         </div>
-        <div style="font-size: 14px; color: #8E8E93;">空きスロ 武③ 防①①</div>
+        <div style="font-size: 13px; color: #A89F87;">空きスロ 武③ 防①①</div>
       </div>
-      <div style="font-size: 15px; color: #3C3C43;">ゴアヘルムβ 他4部位</div>
+      <div style="font-size: 14px; color: #CFC6AC;">ゴアヘルムβ 他4部位</div>
       <div class="chips">
-        <div class="chip" style="background: #E8F1FF; color: #0A5AC2;">攻撃Lv3</div>
-        <div class="chip" style="background: #E8F1FF; color: #0A5AC2;">見切りLv2</div>
-        <div class="chip" style="background: #E8F1FF; color: #0A5AC2;">弱点特効Lv3</div>
+        <div class="chipc">攻撃Lv3</div>
+        <div class="chipc">見切りLv2</div>
+        <div class="chipc">弱点特効Lv3</div>
         <div class="chip">挑戦者Lv2</div>
         <div class="chip">…</div>
       </div>
     </div>
     <div class="card">
       <div style="display: flex; align-items: baseline; justify-content: space-between;">
-        <div style="display: flex; align-items: baseline; gap: 6px;">
-          <div style="font-size: 13px; color: #6D6D72;">防御力</div>
-          <div style="font-size: 22px; font-weight: 700; color: #000000;">508</div>
+        <div style="display: flex; align-items: baseline; gap: 7px;">
+          <div style="font-size: 12px; color: #6F675A;">防御力</div>
+          <div class="mincho" style="font-size: 24px; font-weight: 700; color: #EDE6D4;">508</div>
         </div>
-        <div style="font-size: 14px; color: #8E8E93;">空きスロ 武① 防①</div>
+        <div style="font-size: 13px; color: #A89F87;">空きスロ 武① 防①</div>
       </div>
-      <div style="font-size: 15px; color: #3C3C43;">アークヘルムβ 他4部位</div>
+      <div style="font-size: 14px; color: #CFC6AC;">アークヘルムβ 他4部位</div>
       <div class="chips">
-        <div class="chip" style="background: #E8F1FF; color: #0A5AC2;">攻撃Lv3</div>
-        <div class="chip" style="background: #E8F1FF; color: #0A5AC2;">見切りLv2</div>
-        <div class="chip" style="background: #E8F1FF; color: #0A5AC2;">弱点特効Lv3</div>
+        <div class="chipc">攻撃Lv3</div>
+        <div class="chipc">見切りLv2</div>
+        <div class="chipc">弱点特効Lv3</div>
         <div class="chip">渾身Lv2</div>
         <div class="chip">…</div>
       </div>
     </div>
     <div class="card">
       <div style="display: flex; align-items: baseline; justify-content: space-between;">
-        <div style="display: flex; align-items: baseline; gap: 6px;">
-          <div style="font-size: 13px; color: #6D6D72;">防御力</div>
-          <div style="font-size: 22px; font-weight: 700; color: #000000;">497</div>
+        <div style="display: flex; align-items: baseline; gap: 7px;">
+          <div style="font-size: 12px; color: #6F675A;">防御力</div>
+          <div class="mincho" style="font-size: 24px; font-weight: 700; color: #EDE6D4;">497</div>
         </div>
-        <div style="font-size: 14px; color: #8E8E93;">空きスロ 防③</div>
+        <div style="font-size: 13px; color: #A89F87;">空きスロ 防③</div>
       </div>
-      <div style="font-size: 15px; color: #3C3C43;">シルドヘルムα 他4部位</div>
+      <div style="font-size: 14px; color: #CFC6AC;">シルドヘルムα 他4部位</div>
       <div class="chips">
-        <div class="chip" style="background: #E8F1FF; color: #0A5AC2;">攻撃Lv3</div>
-        <div class="chip" style="background: #E8F1FF; color: #0A5AC2;">見切りLv2</div>
-        <div class="chip" style="background: #E8F1FF; color: #0A5AC2;">弱点特効Lv3</div>
+        <div class="chipc">攻撃Lv3</div>
+        <div class="chipc">見切りLv2</div>
+        <div class="chipc">弱点特効Lv3</div>
         <div class="chip">ひるみ軽減Lv1</div>
         <div class="chip">…</div>
       </div>
     </div>
-    <div class="card" style="opacity: 0.55;">
+    <div class="card" style="opacity: 0.45;">
       <div style="display: flex; align-items: baseline; justify-content: space-between;">
-        <div style="display: flex; align-items: baseline; gap: 6px;">
-          <div style="font-size: 13px; color: #6D6D72;">防御力</div>
-          <div style="font-size: 22px; font-weight: 700; color: #000000;">495</div>
+        <div style="display: flex; align-items: baseline; gap: 7px;">
+          <div style="font-size: 12px; color: #6F675A;">防御力</div>
+          <div class="mincho" style="font-size: 24px; font-weight: 700; color: #EDE6D4;">495</div>
         </div>
-        <div style="font-size: 14px; color: #8E8E93;">空きスロ 防②</div>
+        <div style="font-size: 13px; color: #A89F87;">空きスロ 防②</div>
       </div>
-      <div style="font-size: 15px; color: #3C3C43;">レダウヘルムβ 他4部位</div>
+      <div style="font-size: 14px; color: #CFC6AC;">レダウヘルムβ 他4部位</div>
     </div>
   </div>
 
-  <div style="height: 50px; background: #E9E9EB; border-top: 1px dashed #C6C6C8; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #8E8E93;">広告バナー(320×50 プレースホルダ)</div>
+  <div style="height: 50px; background: #191712; border-top: 1px dashed #3A342A; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #6F675A;">広告バナー(320×50 プレースホルダ)</div>
 
-  <div style="background: #F9F9F9; border-top: 1px solid #C6C6C8; display: flex; padding: 6px 0 14px 0;">
+  <div style="background: #191712; border-top: 1px solid #3A342A; display: flex; padding: 6px 0 14px 0;">
     <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="#007AFF" stroke-width="2"></circle><path d="M15.5 15.5L21 21" stroke="#007AFF" stroke-width="2" stroke-linecap="round"></path></svg>
-      <div style="font-size: 10px; color: #007AFF;">検索</div>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="#D9A036" stroke-width="2"></circle><path d="M15.5 15.5L21 21" stroke="#D9A036" stroke-width="2" stroke-linecap="round"></path></svg>
+      <div style="font-size: 10px; color: #D9A036;">検索</div>
     </div>
     <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="14" r="6" stroke="#8E8E93" stroke-width="2"></circle><path d="M9.5 5.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.7" stroke="#8E8E93" stroke-width="2" stroke-linecap="round"></path></svg>
-      <div style="font-size: 10px; color: #8E8E93;">護石</div>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="14" r="6" stroke="#6F675A" stroke-width="2"></circle><path d="M9.5 5.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.7" stroke="#6F675A" stroke-width="2" stroke-linecap="round"></path></svg>
+      <div style="font-size: 10px; color: #6F675A;">護石</div>
     </div>
     <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#8E8E93" stroke-width="2"></circle><path d="M12 11v5" stroke="#8E8E93" stroke-width="2" stroke-linecap="round"></path><circle cx="12" cy="8" r="1.2" fill="#8E8E93"></circle></svg>
-      <div style="font-size: 10px; color: #8E8E93;">情報</div>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#6F675A" stroke-width="2"></circle><path d="M12 11v5" stroke="#6F675A" stroke-width="2" stroke-linecap="round"></path><circle cx="12" cy="8" r="1.2" fill="#6F675A"></circle></svg>
+      <div style="font-size: 10px; color: #6F675A;">情報</div>
     </div>
   </div>
 </div>
