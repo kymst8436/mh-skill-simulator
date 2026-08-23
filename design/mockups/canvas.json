@@ -1,0 +1,14 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 390, "h": 844, "title": "検索条件" },
+    { "file": "SkillPicker.dc.html", "x": 450, "y": 0, "w": 390, "h": 844, "title": "スキル選択(sheet)" },
+    { "file": "Results.dc.html", "x": 900, "y": 0, "w": 390, "h": 844, "title": "検索結果" },
+    { "file": "ResultsEmpty.dc.html", "x": 1350, "y": 0, "w": 390, "h": 844, "title": "0件・逆引き" },
+    { "file": "Detail.dc.html", "x": 1800, "y": 0, "w": 390, "h": 844, "title": "装備詳細" },
+    { "file": "CharmEntry.dc.html", "x": 2250, "y": 0, "w": 390, "h": 844, "title": "護石入力(sheet)" }
+  ],
+  "annotations": [
+    { "id": "flow-note", "x": 0, "y": -150, "w": 560, "text": "画面設計.md(2026-08-23)準拠のiPhone縦モック。\n左から: 検索条件 → スキル選択(sheet) → 検索結果 → 0件時の逆引き → 装備詳細 → 護石入力(sheet)。\nSwiftUI標準ルック(システムカラー・グループリスト)。広告バナーはルート画面下部のプレースホルダ。" }
+  ],
+  "launch": { "view": "canvas" }
+}

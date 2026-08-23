@@ -10,3 +10,6 @@ data/generated/
 
 # Swift Package Manager
 .build/
+
+# Design canvas seeded output (re-generatable from design/mockups/*.dc.html)
+design/mockups/mh-simulator-screens.html
