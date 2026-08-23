@@ -23,6 +23,7 @@ struct SearchResultsView: View {
             content
         }
         .mhNavigationTitle("検索結果")
+        .safeAreaInset(edge: .bottom) { AdBannerView() }
         .task { viewModel.start() }
         .onDisappear { viewModel.cancel() }
         .sheet(item: $entryTarget) { target in

@@ -59,6 +59,7 @@ struct SearchConditionView: View {
                 }
             }
             .mhNavigationTitle("検索条件")
+            .safeAreaInset(edge: .bottom) { AdBannerView() }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("リセット") { viewModel.reset() }

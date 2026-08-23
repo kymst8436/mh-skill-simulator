@@ -20,6 +20,7 @@ struct CharmListView: View {
                 content
             }
             .mhNavigationTitle("護石")
+            .safeAreaInset(edge: .bottom) { AdBannerView() }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("+ 追加") { entryTarget = .new }

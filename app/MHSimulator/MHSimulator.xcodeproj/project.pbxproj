@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E026B8A4303AC2D600DD74CA /* MHSimulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = E026B8A3303AC2D600DD74CA /* MHSimulatorCore */; };
+		E0ADMOB00000000000000003 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = E0ADMOB00000000000000002 /* GoogleMobileAds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E026B8A4303AC2D600DD74CA /* MHSimulatorCore in Frameworks */,
+				E0ADMOB00000000000000003 /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +121,7 @@
 			name = MHSimulator;
 			packageProductDependencies = (
 				E026B8A3303AC2D600DD74CA /* MHSimulatorCore */,
+				E0ADMOB00000000000000002 /* GoogleMobileAds */,
 			);
 			productName = MHSimulator;
 			productReference = E026B876303AC25300DD74CA /* MHSimulator.app */;
@@ -204,6 +207,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				E026B8A2303AC2D600DD74CA /* XCLocalSwiftPackageReference "../MHSimulatorCore" */,
+				E0ADMOB00000000000000001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E026B877303AC25300DD74CA /* Products */;
@@ -429,6 +433,7 @@
 				DEVELOPMENT_TEAM = 8779PCXQ5H;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MHSimulator;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -467,6 +472,7 @@
 				DEVELOPMENT_TEAM = 8779PCXQ5H;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MHSimulator;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -627,10 +633,26 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		E0ADMOB00000000000000001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		E026B8A3303AC2D600DD74CA /* MHSimulatorCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MHSimulatorCore;
+		};
+		E0ADMOB00000000000000002 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E0ADMOB00000000000000001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

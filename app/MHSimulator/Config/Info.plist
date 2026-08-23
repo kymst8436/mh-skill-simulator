@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- AdMobアプリID(2026-08-24 ユーザー発行) -->
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-4797364772307900~6688829679</string>
+	<!-- SKAdNetwork: Googleの識別子。Store申請前(Phase 6-2)に
+	     https://developers.google.com/admob/ios/quick-start の完全なリストへ差し替えること -->
+	<key>SKAdNetworkItems</key>
+	<array>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>cstr6suwn9.skadnetwork</string>
+		</dict>
+	</array>
+</dict>
+</plist>

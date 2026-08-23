@@ -14,6 +14,7 @@ public final class MasterDatabase {
     public let charmRules: CharmRules
     public let schemaVersion: Int
     public let charmRulesVersion: String
+    public let sourceCommit: String
 
     public enum LoadError: Error {
         case cannotOpen(String)
@@ -28,15 +29,16 @@ public final class MasterDatabase {
             throw LoadError.integrityCheckFailed
         }
 
-        var meta: (Int, String) = (0, "")
-        try db.query("SELECT schemaVersion, charmRulesVersion FROM Meta") { row in
-            meta = (Int(row.int(0)), row.string(1))
+        var meta: (Int, String, String) = (0, "", "")
+        try db.query("SELECT schemaVersion, charmRulesVersion, sourceCommit FROM Meta") { row in
+            meta = (Int(row.int(0)), row.string(1), row.string(2))
         }
         guard meta.0 == 1 else {
             throw LoadError.unexpectedSchema("schemaVersion=\(meta.0)")
         }
         schemaVersion = meta.0
         charmRulesVersion = meta.1
+        sourceCommit = meta.2
 
         var skills: [SkillId: Skill] = [:]
         try db.query("SELECT id, nameJa, kind, maxLevel FROM Skill") { row in

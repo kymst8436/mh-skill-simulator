@@ -1,4 +1,5 @@
 import SwiftUI
+import GoogleMobileAds
 
 @main
 struct MHSimulatorApp: App {
@@ -6,6 +7,7 @@ struct MHSimulatorApp: App {
 
     init() {
         MHTheme.configureAppearance()
+        MobileAds.shared.start()
     }
 
     var body: some Scene {
