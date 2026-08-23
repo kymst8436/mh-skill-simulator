@@ -90,9 +90,14 @@ struct SearchResultsView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
 
-                ForEach(Array(result.sets.enumerated()), id: \.offset) { _, set in
+                // 一覧先頭+5件ごとにネイティブ広告(画面設計§2。2026-08-24)
+                NativeAdSlot()
+                ForEach(Array(result.sets.enumerated()), id: \.offset) { index, set in
                     resultCard(set)
                         .padding(.horizontal, 16)
+                    if (index + 1) % 5 == 0 {
+                        NativeAdSlot()
+                    }
                 }
             }
             .padding(.bottom, 24)
@@ -123,7 +128,6 @@ struct SearchResultsView: View {
                             .minimumScaleFactor(0.8)
                     }
                     pieceRow(for: set)
-                    chipRow(for: set)
                 }
                 .padding(14)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -144,27 +148,6 @@ struct SearchResultsView: View {
         }
     }
 
-    /// 発動スキルを条件優先で全件、1行横スクロール表示(2026-08-24改訂)
-    private func chipRow(for set: EquipmentSet) -> some View {
-        let conditionSkills = set.activeSkills
-            .filter { viewModel.isConditionSkill($0.key) }
-            .sorted { $0.value != $1.value ? $0.value > $1.value : viewModel.skillName($0.key) < viewModel.skillName($1.key) }
-        let others = set.activeSkills
-            .filter { !viewModel.isConditionSkill($0.key) }
-            .sorted { $0.value != $1.value ? $0.value > $1.value : viewModel.skillName($0.key) < viewModel.skillName($1.key) }
-
-        return ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 6) {
-                ForEach(conditionSkills, id: \.key) { entry in
-                    SkillChip(text: MHFormat.skillLine(viewModel.skillName(entry.key), entry.value), isCondition: true)
-                }
-                ForEach(others, id: \.key) { entry in
-                    SkillChip(text: MHFormat.skillLine(viewModel.skillName(entry.key), entry.value))
-                }
-            }
-            .padding(.vertical, 1)
-        }
-    }
 
     // MARK: - 0件・逆引き(画面設計4.4の0件時)
 
@@ -186,6 +169,8 @@ struct SearchResultsView: View {
     private func reverseContent(_ outcome: CharmOracle.Outcome) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
+                NativeAdSlot()
+                    .padding(.top, 12)
                 notFoundHeader
                 switch outcome {
                 case .charms(let suggestions):
