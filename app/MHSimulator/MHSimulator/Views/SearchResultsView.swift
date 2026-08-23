@@ -95,7 +95,7 @@ struct SearchResultsView: View {
                 ForEach(Array(result.sets.enumerated()), id: \.offset) { index, set in
                     resultCard(set)
                         .padding(.horizontal, 16)
-                    if (index + 1) % 5 == 0 {
+                    if (index + 1) % 10 == 0 {
                         NativeAdSlot()
                     }
                 }
