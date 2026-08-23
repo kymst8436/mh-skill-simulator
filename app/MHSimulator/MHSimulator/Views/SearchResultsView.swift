@@ -115,19 +115,14 @@ struct SearchResultsView: View {
                                 .foregroundStyle(Color.mhTextPrimary)
                         }
                         Spacer()
-                        Text("空きスロ " + MHFormat.emptySlotSummary(
+                        Text("空きスロ " + MHFormat.slotCountSummary(
                             weapon: set.emptyWeaponSlots, armor: set.emptyArmorSlots))
                             .font(.system(size: 13))
                             .foregroundStyle(Color.mhTextSecondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
                     }
-                    Text(headline(for: set))
-                        .font(.system(size: 14))
-                        .foregroundStyle(Color.mhTextSecondary)
-                    if let weapon = set.weapon {
-                        Text("武器: \(weapon.name) \(MHFormat.slotSymbols(weapon.slots))")
-                            .font(.system(size: 12))
-                            .foregroundStyle(Color.mhTextTertiary)
-                    }
+                    pieceRow(for: set)
                     chipRow(for: set)
                 }
                 .padding(14)
@@ -136,32 +131,38 @@ struct SearchResultsView: View {
         }
     }
 
-    private func headline(for set: EquipmentSet) -> String {
-        let headName = set.pieces[.head]?.name ?? set.pieces.values.first?.name ?? ""
-        return "\(headName) 他\(max(0, set.pieces.count - 1))部位"
+    /// 部位名を頭・胴・腕・腰・脚の順で1行横スクロール表示(2026-08-24改訂)
+    private func pieceRow(for set: EquipmentSet) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 0) {
+                let names = ArmorPieceKind.allCases.compactMap { set.pieces[$0]?.name }
+                Text(names.joined(separator: "・"))
+                    .font(.system(size: 14))
+                    .foregroundStyle(Color.mhTextSecondary)
+                    .lineLimit(1)
+            }
+        }
     }
 
+    /// 発動スキルを条件優先で全件、1行横スクロール表示(2026-08-24改訂)
     private func chipRow(for set: EquipmentSet) -> some View {
-        // 条件スキル優先で最大5チップ+「…」
         let conditionSkills = set.activeSkills
             .filter { viewModel.isConditionSkill($0.key) }
             .sorted { $0.value != $1.value ? $0.value > $1.value : viewModel.skillName($0.key) < viewModel.skillName($1.key) }
         let others = set.activeSkills
             .filter { !viewModel.isConditionSkill($0.key) }
             .sorted { $0.value != $1.value ? $0.value > $1.value : viewModel.skillName($0.key) < viewModel.skillName($1.key) }
-        let visibleOthers = others.prefix(max(0, 5 - conditionSkills.count))
-        let hasMore = others.count > visibleOthers.count
 
-        return MHFlowLayout(spacing: 6) {
-            ForEach(conditionSkills, id: \.key) { entry in
-                SkillChip(text: MHFormat.skillLine(viewModel.skillName(entry.key), entry.value), isCondition: true)
+        return ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(conditionSkills, id: \.key) { entry in
+                    SkillChip(text: MHFormat.skillLine(viewModel.skillName(entry.key), entry.value), isCondition: true)
+                }
+                ForEach(others, id: \.key) { entry in
+                    SkillChip(text: MHFormat.skillLine(viewModel.skillName(entry.key), entry.value))
+                }
             }
-            ForEach(Array(visibleOthers), id: \.key) { entry in
-                SkillChip(text: MHFormat.skillLine(viewModel.skillName(entry.key), entry.value))
-            }
-            if hasMore {
-                SkillChip(text: "…")
-            }
+            .padding(.vertical, 1)
         }
     }
 

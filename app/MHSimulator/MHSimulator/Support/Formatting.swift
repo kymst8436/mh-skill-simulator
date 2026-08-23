@@ -23,6 +23,22 @@ nonisolated enum MHFormat {
         return parts.isEmpty ? "─" : parts.joined(separator: " ")
     }
 
+    /// 空きスロットのサイズ×個数サマリ(結果カード用。例「武 ③① / 防 ③×6 ①×2」)
+    static func slotCountSummary(weapon: [Int], armor: [Int]) -> String {
+        func group(_ slots: [Int], label: String) -> String? {
+            guard !slots.isEmpty else { return nil }
+            let counts = Dictionary(grouping: slots, by: { $0 }).mapValues(\.count)
+            let parts = counts.keys.sorted(by: >).map { size in
+                let symbol = slotSymbols([size])
+                let count = counts[size]!
+                return count == 1 ? symbol : "\(symbol)×\(count)"
+            }
+            return label + " " + parts.joined(separator: " ")
+        }
+        let parts = [group(weapon, label: "武"), group(armor, label: "防")].compactMap { $0 }
+        return parts.isEmpty ? "─" : parts.joined(separator: " / ")
+    }
+
     /// 部位ラベル
     static func pieceLabel(_ kind: ArmorPieceKind) -> String {
         switch kind {

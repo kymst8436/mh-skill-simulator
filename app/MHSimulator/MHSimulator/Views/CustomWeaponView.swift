@@ -30,6 +30,27 @@ struct CustomWeaponForm: View {
     }
 
     var body: some View {
+        VStack(spacing: 0) {
+            scrollContent
+            applyButtonBar
+        }
+    }
+
+    /// 下部固定の設定ボタン(検索するボタンと同様。2026-08-24改訂)
+    private var applyButtonBar: some View {
+        MHPrimaryButton(title: "この構成で設定", isEnabled: hasContent) {
+            conditionViewModel.selectCustomWeapon(config)
+            onApplied()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(Color.mhBackground)
+        .overlay(alignment: .top) {
+            Rectangle().fill(Color.mhHairlineFaint).frame(height: 1)
+        }
+    }
+
+    private var scrollContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 MHSectionHeader(title: "スロット")
@@ -70,13 +91,6 @@ struct CustomWeaponForm: View {
                     .foregroundStyle(Color.mhTextTertiary)
                     .padding(.horizontal, 32)
                     .padding(.top, 10)
-
-                MHPrimaryButton(title: "この構成で設定", isEnabled: hasContent) {
-                    conditionViewModel.selectCustomWeapon(config)
-                    onApplied()
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 24)
             }
             .padding(.bottom, 24)
         }
