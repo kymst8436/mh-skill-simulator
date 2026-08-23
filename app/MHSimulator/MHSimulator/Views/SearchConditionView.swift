@@ -6,6 +6,7 @@ nonisolated enum SearchRoute: Hashable {
     case results
     case detail(EquipmentSetItem)
     case weaponSelect
+    case customWeapon
 }
 
 /// EquipmentSetをナビゲーション引数にするためのIdラッパ
@@ -79,10 +80,11 @@ struct SearchConditionView: View {
                     EquipmentDetailView(
                         dependencies: dependencies,
                         item: item,
-                        condition: viewModel.makeCondition(),
-                        weapon: viewModel.selectedWeapon)
+                        condition: viewModel.makeCondition())
                 case .weaponSelect:
-                    WeaponSelectView(conditionViewModel: viewModel)
+                    WeaponSelectView(conditionViewModel: viewModel, path: $path)
+                case .customWeapon:
+                    CustomWeaponView(conditionViewModel: viewModel, path: $path)
                 }
             }
         }
@@ -95,7 +97,9 @@ struct SearchConditionView: View {
             MHCard {
                 HStack(spacing: 8) {
                     if let weapon = viewModel.selectedWeapon {
-                        Text("\(MHFormat.weaponKindLabel(weapon.kind)) \(weapon.name)")
+                        Text(weapon.id == CustomWeaponConfig.weaponId
+                             ? weapon.name
+                             : "\(MHFormat.weaponKindLabel(weapon.kind)) \(weapon.name)")
                             .font(.system(size: 16))
                             .foregroundStyle(Color.mhTextPrimary)
                         Spacer()
@@ -103,9 +107,9 @@ struct SearchConditionView: View {
                             .font(.system(size: 15))
                             .foregroundStyle(Color.mhTextSecondary)
                     } else {
-                        Text("武器を選択(任意)")
+                        Text("指定なし(全武器から自動選択)")
                             .font(.system(size: 16))
-                            .foregroundStyle(Color.mhTextTertiary)
+                            .foregroundStyle(Color.mhTextSecondary)
                         Spacer()
                     }
                     Image(systemName: "chevron.right")

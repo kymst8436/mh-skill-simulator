@@ -57,7 +57,7 @@ public struct OwnedCharm: Identifiable, Equatable, Sendable {
 /// 起動時にintegrity_checkを行い、破損時は退避→再作成→通知(didRecoverFromCorruption)。
 /// SQLiteアクセスは素のC API(Q-5改訂 2026-08-24: GRDB仮決定を撤回し依存ゼロを維持)。
 public final class UserStore {
-    public static let schemaVersion = 1
+    public static let schemaVersion = 2  // v2: AppState.customWeapon追加(2026-08-24)
 
     public enum StoreError: Error {
         case cannotOpen(String)
@@ -195,6 +195,24 @@ public final class UserStore {
         }
     }
 
+    /// カスタム武器設定(JSON。アプリ側で形式を定義)
+    public func loadCustomWeaponJSON() throws -> String? {
+        var json: String?
+        try query("SELECT customWeapon FROM AppState WHERE id = 1") { stmt in
+            if sqlite3_column_type(stmt, 0) != SQLITE_NULL {
+                json = String(cString: sqlite3_column_text(stmt, 0))
+            }
+        }
+        return json
+    }
+
+    public func saveCustomWeaponJSON(_ json: String?) throws {
+        try transaction {
+            try exec("UPDATE AppState SET customWeapon = ? WHERE id = 1",
+                     [json.map { .text($0) } ?? .null])
+        }
+    }
+
     /// 最終検索条件(スキルId+目標レベルの配列をJSONで保持)
     public func loadLastSearchConditions() throws -> [(skillId: SkillId, level: Int)] {
         var json: String?
@@ -288,7 +306,8 @@ public final class UserStore {
               id INTEGER PRIMARY KEY CHECK (id = 1),
               schemaVersion INTEGER NOT NULL,
               selectedWeaponId INTEGER,
-              lastSearchConditions TEXT
+              lastSearchConditions TEXT,
+              customWeapon TEXT
             )
             """)
         try exec("INSERT OR IGNORE INTO AppState (id, schemaVersion) VALUES (1, ?)",
@@ -301,9 +320,13 @@ public final class UserStore {
             version = Int(sqlite3_column_int64(stmt, 0))
         }
         guard version < Self.schemaVersion else { return }
-        // 移行前にバックアップ(仕様5.2 手順3)。初版=1のため現時点で実移行はない
+        // 移行前にバックアップ(仕様5.2 手順3)
         try? FileManager.default.copyItem(atPath: path, toPath: path + ".bak")
         try transaction {
+            if version < 2 {
+                // v1→v2: カスタム武器カラム追加(既存カラムならエラーを無視)
+                try? exec("ALTER TABLE AppState ADD COLUMN customWeapon TEXT")
+            }
             try exec("UPDATE AppState SET schemaVersion = ?", [.int(Int64(Self.schemaVersion))])
         }
     }

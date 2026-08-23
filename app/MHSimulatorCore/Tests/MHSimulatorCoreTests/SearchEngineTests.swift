@@ -8,11 +8,11 @@ final class SearchEngineTests: XCTestCase {
     lazy var validator = ResultValidator(master: master)
 
     func assertAllValid(
-        _ result: SearchResult, condition: SearchCondition, weapon: Weapon? = nil,
+        _ result: SearchResult, condition: SearchCondition,
         file: StaticString = #filePath, line: UInt = #line
     ) {
         for set in result.sets {
-            let violations = validator.validate(set, condition: condition, weapon: weapon)
+            let violations = validator.validate(set, condition: condition)
             XCTAssertTrue(violations.isEmpty,
                           "違反: \(violations.map(\.description).joined(separator: " / "))",
                           file: file, line: line)
@@ -102,7 +102,7 @@ final class SearchEngineTests: XCTestCase {
         let condition = SearchCondition(requiredSkills: [skill.id: 1])
         let result = try engine.search(condition: condition, weapon: weapon)
         XCTAssertFalse(result.sets.isEmpty)
-        assertAllValid(result, condition: condition, weapon: weapon)
+        assertAllValid(result, condition: condition)
         // 武器が1部位分を担うため、該当ボーナス持ちの防具は1部位で足りる組み合わせが存在する
         let minPieces = result.sets.map { set in
             set.pieces.values.filter { piece in
@@ -114,21 +114,36 @@ final class SearchEngineTests: XCTestCase {
 
     // MARK: - 武器スキルと護石
 
-    func testWeaponSkillWithoutWeaponOrCharmIsImpossible() throws {
-        // 武器スキルは防具・固定護石から出ない(データ実測)ため、武器未選択・護石なしでは組めない
-        let condition = SearchCondition(requiredSkills: [TestSupport.skill(named: "攻撃").id: 1])
+    func testAutoWeaponSolvesWeaponSkills() throws {
+        // 武器未指定=「何の武器でも良い」(2026-08-24改訂)。
+        // ガード性能3+ガード強化3は適切な武器(スキル持ちorスロット持ち)を自動選択して組める
+        let condition = SearchCondition(requiredSkills: [
+            TestSupport.skill(named: "ガード性能").id: 3,
+            TestSupport.skill(named: "ガード強化").id: 3,
+        ])
         let result = try engine.search(condition: condition)
+        XCTAssertFalse(result.sets.isEmpty, "自動武器選択で組めるはず")
+        assertAllValid(result, condition: condition)
+        // 採用武器が結果に含まれる
+        XCTAssertTrue(result.sets.allSatisfy { $0.weapon != nil })
+    }
+
+    func testSlotlessWeaponMakesWeaponSkillImpossible() throws {
+        // スロット無し・スキル無しの武器を明示指定した場合、武器スキルは護石以外で埋まらない
+        let condition = SearchCondition(requiredSkills: [TestSupport.skill(named: "攻撃").id: 1])
+        let result = try engine.search(condition: condition, weapon: TestSupport.slotlessWeapon)
         XCTAssertTrue(result.sets.isEmpty)
     }
 
     func testOwnedCharmEnablesWeaponSkill() throws {
-        // 攻撃Lv1の所持護石を登録すれば組める(F-3→F-1の連携)
+        // スロット無し武器でも、攻撃Lv1の所持護石を登録すれば組める(F-3→F-1の連携)
         let attack = TestSupport.skill(named: "攻撃")
         let charm = Charm(
             source: .owned(UUID()), name: "テスト護石",
             skills: [attack.id: 1], weaponSlots: [], armorSlots: [])
         let condition = SearchCondition(requiredSkills: [attack.id: 1])
-        let result = try engine.search(condition: condition, ownedCharms: [charm])
+        let result = try engine.search(
+            condition: condition, weapon: TestSupport.slotlessWeapon, ownedCharms: [charm])
         XCTAssertFalse(result.sets.isEmpty)
         assertAllValid(result, condition: condition)
         for set in result.sets {
@@ -149,7 +164,7 @@ final class SearchEngineTests: XCTestCase {
         let condition = SearchCondition(requiredSkills: [attack.id: 1])
         let result = try engine.search(condition: condition, weapon: weapon)
         XCTAssertFalse(result.sets.isEmpty)
-        assertAllValid(result, condition: condition, weapon: weapon)
+        assertAllValid(result, condition: condition)
     }
 
     // MARK: - 既知の正解ビルド(仕様3.4 手順6)

@@ -14,6 +14,7 @@ final class SearchConditionViewModel {
     let dependencies: AppDependencies
     private(set) var conditions: [ConditionRow] = []
     private(set) var selectedWeapon: Weapon?
+    private(set) var customWeaponConfig: CustomWeaponConfig?
 
     init(dependencies: AppDependencies) {
         self.dependencies = dependencies
@@ -30,7 +31,11 @@ final class SearchConditionViewModel {
                 return ConditionRow(skill: skill, level: min(entry.level, skill.maxLevel))
             }
         }
-        if let weaponId = try? store.loadSelectedWeaponId() {
+        if let json = (try? store.loadCustomWeaponJSON()) ?? nil,
+           let config = CustomWeaponConfig.decode(json) {
+            customWeaponConfig = config
+            selectedWeapon = config.makeWeapon()
+        } else if let weaponId = try? store.loadSelectedWeaponId() {
             selectedWeapon = master.weapons.first { $0.id == weaponId }
         }
     }
@@ -43,7 +48,16 @@ final class SearchConditionViewModel {
 
     func selectWeapon(_ weapon: Weapon?) {
         selectedWeapon = weapon
+        customWeaponConfig = nil
         try? dependencies.userStore.saveSelectedWeaponId(weapon?.id)
+        try? dependencies.userStore.saveCustomWeaponJSON(nil)
+    }
+
+    func selectCustomWeapon(_ config: CustomWeaponConfig) {
+        customWeaponConfig = config
+        selectedWeapon = config.makeWeapon()
+        try? dependencies.userStore.saveSelectedWeaponId(nil)
+        try? dependencies.userStore.saveCustomWeaponJSON(config.encoded())
     }
 
     var canSearch: Bool { !conditions.isEmpty }

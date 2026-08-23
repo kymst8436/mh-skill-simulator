@@ -5,14 +5,17 @@ import MHSimulatorCore
 struct WeaponSelectView: View {
     @Environment(\.dismiss) private var dismiss
     let conditionViewModel: SearchConditionViewModel
+    @Binding var path: [SearchRoute]
     @State private var searchText = ""
     @State private var kindFilter: String?
 
     private var master: MasterDatabase { conditionViewModel.dependencies.master }
 
-    init(conditionViewModel: SearchConditionViewModel) {
+    init(conditionViewModel: SearchConditionViewModel, path: Binding<[SearchRoute]>) {
         self.conditionViewModel = conditionViewModel
-        _kindFilter = State(initialValue: conditionViewModel.selectedWeapon?.kind)
+        _path = path
+        let kind = conditionViewModel.selectedWeapon?.kind
+        _kindFilter = State(initialValue: kind == "custom" ? nil : kind)
     }
 
     var body: some View {
@@ -94,6 +97,8 @@ struct WeaponSelectView: View {
                 LazyVStack(spacing: 0) {
                     clearRow
                     separator
+                    customWeaponRow
+                    separator
                     ForEach(visibleWeapons, id: \.id) { weapon in
                         weaponRow(weapon)
                         separator
@@ -109,7 +114,7 @@ struct WeaponSelectView: View {
             dismiss()
         } label: {
             HStack {
-                Text("武器を使わない")
+                Text("指定なし(全武器から自動選択)")
                     .font(.system(size: 16))
                     .foregroundStyle(Color.mhTextSecondary)
                 Spacer()
@@ -118,6 +123,29 @@ struct WeaponSelectView: View {
                         .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(Color.mhAccent)
                 }
+            }
+            .padding(.horizontal, 16)
+            .frame(minHeight: 48)
+        }
+    }
+
+    private var customWeaponRow: some View {
+        Button {
+            path.append(.customWeapon)
+        } label: {
+            HStack(spacing: 8) {
+                Text("カスタム武器(スロット・スキルを指定)")
+                    .font(.system(size: 16))
+                    .foregroundStyle(Color.mhTextPrimary)
+                Spacer()
+                if conditionViewModel.customWeaponConfig != nil {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(Color.mhAccent)
+                }
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color.mhTextTertiary)
             }
             .padding(.horizontal, 16)
             .frame(minHeight: 48)

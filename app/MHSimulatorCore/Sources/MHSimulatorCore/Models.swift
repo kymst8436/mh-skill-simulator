@@ -92,6 +92,15 @@ public struct Weapon: Sendable {
     public let rarity: Int
     public let slots: [Int]
     public let skills: [SkillId: Int]
+
+    public init(id: Int64, kind: String, name: String, rarity: Int, slots: [Int], skills: [SkillId: Int]) {
+        self.id = id
+        self.kind = kind
+        self.name = name
+        self.rarity = rarity
+        self.slots = slots
+        self.skills = skills
+    }
 }
 
 // MARK: - 検索条件と結果
@@ -118,6 +127,8 @@ public struct DecorationAssignment: Sendable {
 }
 
 public struct EquipmentSet: Sendable {
+    /// 採用武器(固定選択またはエンジンの自動選択。2026-08-24改訂)
+    public let weapon: Weapon?
     public let pieces: [ArmorPieceKind: ArmorPiece]
     public let charm: Charm
     public let decorations: [DecorationAssignment]

@@ -122,8 +122,14 @@ public final class CharmOracle {
             return true
         }
 
-        var state = SearchEngine.State(prepared: prepared)
-        _ = dfs(0, &state)
+        for weapon in prepared.weaponCandidates {
+            var state = SearchEngine.State(prepared: prepared, weapon: weapon)
+            if !dfs(0, &state) { break }
+        }
+        if prepared.weaponCandidates.isEmpty {
+            var state = SearchEngine.State(prepared: prepared, weapon: nil)
+            _ = dfs(0, &state)
+        }
         return requirements
     }
 

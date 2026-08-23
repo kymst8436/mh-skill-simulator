@@ -6,8 +6,9 @@ struct EquipmentDetailView: View {
     let dependencies: AppDependencies
     let item: EquipmentSetItem
     let condition: SearchCondition
-    let weapon: Weapon?
     @Environment(\.dismiss) private var dismiss
+
+    private var weapon: Weapon? { item.set.weapon }
 
     private var equipment: EquipmentSet { item.set }
     private var master: MasterDatabase { dependencies.master }

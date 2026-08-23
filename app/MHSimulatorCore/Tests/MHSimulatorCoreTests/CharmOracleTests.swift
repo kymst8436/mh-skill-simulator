@@ -12,7 +12,7 @@ final class CharmOracleTests: XCTestCase {
         // →逆引きは「攻撃を持つ護石」を提示するはず
         let attack = TestSupport.skill(named: "攻撃")
         let condition = SearchCondition(requiredSkills: [attack.id: 1])
-        let outcome = try oracle.reverseLookup(condition: condition)
+        let outcome = try oracle.reverseLookup(condition: condition, weapon: TestSupport.slotlessWeapon)
         guard case .charms(let suggestions) = outcome else {
             return XCTFail("護石候補が提示されるべき: \(outcome)")
         }
@@ -29,7 +29,7 @@ final class CharmOracleTests: XCTestCase {
         // スキルのみ要求の候補は、全列挙DBに上位互換の護石が実在するはず(規則評価の相互検証)
         let attack = TestSupport.skill(named: "攻撃")
         let condition = SearchCondition(requiredSkills: [attack.id: 3])
-        let outcome = try oracle.reverseLookup(condition: condition)
+        let outcome = try oracle.reverseLookup(condition: condition, weapon: TestSupport.slotlessWeapon)
         guard case .charms(let suggestions) = outcome else {
             return XCTFail("護石候補が提示されるべき")
         }
@@ -72,7 +72,7 @@ final class CharmOracleTests: XCTestCase {
         let attack = TestSupport.skill(named: "攻撃")
         let mind = TestSupport.skill(named: "見切り")
         let condition = SearchCondition(requiredSkills: [attack.id: 2, mind.id: 2])
-        let outcome = try oracle.reverseLookup(condition: condition)
+        let outcome = try oracle.reverseLookup(condition: condition, weapon: TestSupport.slotlessWeapon)
         if case .charms(let suggestions) = outcome {
             for suggestion in suggestions {
                 XCTAssertNotNil(

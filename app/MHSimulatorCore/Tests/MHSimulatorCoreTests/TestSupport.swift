@@ -28,6 +28,11 @@ enum TestSupport {
         }
     }()
 
+    /// スロットもスキルも持たない実在武器(「武器の寄与ゼロ」を固定するテスト用)
+    static var slotlessWeapon: Weapon {
+        master.weapons.first { $0.slots.isEmpty && $0.skills.isEmpty }!
+    }
+
     static func skill(named name: String) -> Skill {
         guard let skill = master.skills.values.first(where: { $0.name == name }) else {
             fatalError("スキルが見つかりません: \(name)")

@@ -123,6 +123,11 @@ struct SearchResultsView: View {
                     Text(headline(for: set))
                         .font(.system(size: 14))
                         .foregroundStyle(Color.mhTextSecondary)
+                    if let weapon = set.weapon {
+                        Text("武器: \(weapon.name) \(MHFormat.slotSymbols(weapon.slots))")
+                            .font(.system(size: 12))
+                            .foregroundStyle(Color.mhTextTertiary)
+                    }
                     chipRow(for: set)
                 }
                 .padding(14)

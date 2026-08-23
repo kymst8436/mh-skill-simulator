@@ -31,9 +31,9 @@ public struct ResultValidator {
     /// 違反の一覧を返す(空 = 正当)
     public func validate(
         _ set: EquipmentSet,
-        condition: SearchCondition,
-        weapon: Weapon?
+        condition: SearchCondition
     ) -> [Violation] {
+        let weapon = set.weapon
         var violations: [Violation] = []
 
         for kind in ArmorPieceKind.allCases where set.pieces[kind] == nil {

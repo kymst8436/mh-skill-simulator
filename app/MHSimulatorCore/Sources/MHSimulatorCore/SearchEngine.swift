@@ -81,8 +81,14 @@ public final class SearchEngine {
             return true
         }
 
-        var state = State(prepared: prepared)
-        _ = dfs(0, &state)
+        for weapon in prepared.weaponCandidates {
+            var state = State(prepared: prepared, weapon: weapon)
+            if !dfs(0, &state) { break }
+        }
+        if prepared.weaponCandidates.isEmpty {
+            var state = State(prepared: prepared, weapon: nil)
+            _ = dfs(0, &state)
+        }
 
         // 防御力maxの高い順(仕様Q-3)
         sets.sort { $0.totalDefenseMax > $1.totalDefenseMax }
@@ -103,7 +109,8 @@ public final class SearchEngine {
         let kindOrder: [ArmorPieceKind]
         let pieceCandidates: [ArmorPieceKind: [ArmorPiece]]
         let charmCandidates: [Charm]
-        let weapon: Weapon?
+        /// 探索する武器候補(固定選択なら1件。未指定なら全武器から優越除去した候補)
+        let weaponCandidates: [Weapon]
         let catalog: DecorationAssigner.Catalog
         // 上界計算用の事前集計
         let maxAdd: [ArmorPieceKind: [SkillId: Int]]
@@ -198,6 +205,23 @@ public final class SearchEngine {
             }
         }
 
+        // 武器候補: 未指定=「何の武器でも良い」(2026-08-24改訂)。全武器から優越除去
+        let weaponCandidates: [Weapon]
+        if let weapon {
+            weaponCandidates = [weapon]
+        } else {
+            let bonusSkillIdList = bonusNeeds.map(\.skillId)
+            weaponCandidates = nonDominated(master.weapons, keyPath: { candidate in
+                Dominance(
+                    skills: condSkills.map { candidate.skills[$0] ?? 0 }
+                        + bonusSkillIdList.map { candidate.skills[$0] ?? 0 },
+                    slotSets: [candidate.slots],
+                    extra: 0)
+            }).sorted {
+                contribution($0.skills, additiveNeeds) > contribution($1.skills, additiveNeeds)
+            }
+        }
+
         let catalog = DecorationAssigner.Catalog(
             decorations: master.decorations, targetSkills: Set(condSkills))
 
@@ -255,7 +279,7 @@ public final class SearchEngine {
         return Prepared(
             additiveNeeds: additiveNeeds, bonusNeeds: bonusNeeds,
             kindOrder: kindOrder, pieceCandidates: pieceCandidates,
-            charmCandidates: charmCandidates, weapon: weapon, catalog: catalog,
+            charmCandidates: charmCandidates, weaponCandidates: weaponCandidates, catalog: catalog,
             maxAdd: maxAdd, maxSlotCount: maxSlotCount, bonusAvail: bonusAvail,
             charmMaxSkill: charmMaxSkill, charmMaxSlotCount: charmMaxSlotCount,
             bestDecoLevel: bestDecoLevel, bonusContrib: bonusContrib)
@@ -264,13 +288,15 @@ public final class SearchEngine {
     // MARK: - 探索状態
 
     struct State {
+        let weapon: Weapon?
         var pieces: [ArmorPiece] = []
         var have: [SkillId: Int] = [:]
         var bonusCount: [SkillId: Int] = [:]
         var emptySlotCount = 0
 
-        init(prepared: Prepared) {
-            if let weapon = prepared.weapon {
+        init(prepared: Prepared, weapon: Weapon?) {
+            self.weapon = weapon
+            if let weapon {
                 for (skillId, level) in weapon.skills where prepared.additiveNeeds[skillId] != nil {
                     have[skillId, default: 0] += level
                 }
@@ -368,7 +394,7 @@ public final class SearchEngine {
 
     func collectSlots(_ prepared: Prepared, _ state: State, charm: Charm) -> [DecorationAssigner.Slot] {
         var slots: [DecorationAssigner.Slot] = []
-        if let weapon = prepared.weapon {
+        if let weapon = state.weapon {
             slots += weapon.slots.map { DecorationAssigner.Slot(owner: .weapon, size: $0) }
         }
         for piece in state.pieces {
@@ -388,7 +414,7 @@ public final class SearchEngine {
         func add(_ skills: [SkillId: Int]) {
             for (skillId, level) in skills { active[skillId, default: 0] += level }
         }
-        if let weapon = prepared.weapon {
+        if let weapon = state.weapon {
             // set/groupスキルは部位数カウント側で扱うため加算集計から除外
             add(weapon.skills.filter { id, _ in
                 let kind = master.skills[id]?.kind
@@ -409,7 +435,7 @@ public final class SearchEngine {
         }
         // 武器付与のシリーズ/グループスキル(seriesId=0枠で加算)
         var weaponBonusLevels: [SkillId: Int] = [:]
-        if let weapon = prepared.weapon {
+        if let weapon = state.weapon {
             for (skillId, level) in weapon.skills where master.skills[skillId]?.kind == .set || master.skills[skillId]?.kind == .group {
                 allBonusCount[skillId, default: [:]][0, default: 0] += level
                 weaponBonusLevels[skillId] = level
@@ -453,6 +479,7 @@ public final class SearchEngine {
         for piece in state.pieces { pieceMap[piece.kind] = piece }
 
         return EquipmentSet(
+            weapon: state.weapon,
             pieces: pieceMap,
             charm: charm,
             decorations: assignment,
