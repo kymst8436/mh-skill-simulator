@@ -9,11 +9,8 @@ struct MainTabView: View {
             SearchConditionView(dependencies: dependencies)
                 .tabItem { Label("検索", systemImage: "magnifyingglass") }
 
-            NavigationStack {
-                CharmListPlaceholderView()
-                    .mhNavigationTitle("護石")
-            }
-            .tabItem { Label("護石", systemImage: "seal") }
+            CharmListView(dependencies: dependencies)
+                .tabItem { Label("護石", systemImage: "seal") }
 
             NavigationStack {
                 InfoPlaceholderView()
@@ -24,19 +21,7 @@ struct MainTabView: View {
     }
 }
 
-// Phase 4以降で本実装に差し替えるプレースホルダ
-
-struct CharmListPlaceholderView: View {
-    var body: some View {
-        ZStack {
-            Color.mhBackground.ignoresSafeArea()
-            MHEmptyState(
-                systemImage: "seal",
-                title: "護石(実装中)",
-                message: "Phase 4-1で実装")
-        }
-    }
-}
+// Phase 5で本実装に差し替えるプレースホルダ
 
 struct InfoPlaceholderView: View {
     var body: some View {

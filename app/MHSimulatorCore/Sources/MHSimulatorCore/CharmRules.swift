@@ -9,11 +9,21 @@ public struct CharmRules: Sendable {
     public struct GroupEntry: Hashable, Sendable {
         public let skillId: SkillId
         public let level: Int
+
+        public init(skillId: SkillId, level: Int) {
+            self.skillId = skillId
+            self.level = level
+        }
     }
 
     public struct SlotCombo: Hashable, Sendable {
         public let weaponSlots: [Int]
         public let armorSlots: [Int]
+
+        public init(weaponSlots: [Int], armorSlots: [Int]) {
+            self.weaponSlots = weaponSlots
+            self.armorSlots = armorSlots
+        }
     }
 
     public struct Pattern: Sendable {
@@ -85,7 +95,7 @@ public struct CharmRules: Sendable {
     }
 
     /// 必要スロット(サイズ以上)が実スロット構成に収まるか(降順ソートして貪欲対応)
-    static func fits(required: [Int], available: [Int]) -> Bool {
+    public static func fits(required: [Int], available: [Int]) -> Bool {
         guard required.count <= available.count else { return false }
         let r = required.sorted(by: >)
         let a = available.sorted(by: >)
@@ -130,6 +140,11 @@ public struct CharmRules: Sendable {
     public struct RaritySlots: Hashable, Sendable {
         public let rarity: Int
         public let slots: SlotCombo
+
+        public init(rarity: Int, slots: SlotCombo) {
+            self.rarity = rarity
+            self.slots = slots
+        }
     }
 
     /// 護石(スキル構成の完全形)がこのパターンに合致するか。

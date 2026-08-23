@@ -2,7 +2,7 @@ import SwiftUI
 
 /// 起動フェーズの出し分け: 読み込み中 → タブ本体 / マスタ読込失敗(終端)
 struct RootView: View {
-    let bootstrap: AppBootstrap
+    @Bindable var bootstrap: AppBootstrap
 
     var body: some View {
         ZStack {
@@ -22,5 +22,8 @@ struct RootView: View {
             }
         }
         .task { bootstrap.load() }
+        .alert("護石データを初期化しました", isPresented: $bootstrap.shouldNotifyUserDataRecovery) {
+            Button("OK") {}
+        }
     }
 }

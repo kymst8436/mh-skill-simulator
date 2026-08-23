@@ -34,6 +34,35 @@ nonisolated enum MHFormat {
         }
     }
 
+    /// 武器種ラベル(bundled.dbのkind文字列→日本語)
+    static func weaponKindLabel(_ kind: String) -> String {
+        switch kind {
+        case "great-sword": "大剣"
+        case "long-sword": "太刀"
+        case "sword-shield": "片手剣"
+        case "dual-blades": "双剣"
+        case "hammer": "ハンマー"
+        case "hunting-horn": "狩猟笛"
+        case "lance": "ランス"
+        case "gunlance": "ガンランス"
+        case "switch-axe": "スラッシュアックス"
+        case "charge-blade": "チャージアックス"
+        case "insect-glaive": "操虫棍"
+        case "bow": "弓"
+        case "heavy-bowgun": "ヘビィボウガン"
+        case "light-bowgun": "ライトボウガン"
+        default: kind
+        }
+    }
+
+    /// 全武器種(表示順)
+    static let weaponKinds: [String] = [
+        "great-sword", "long-sword", "sword-shield", "dual-blades",
+        "hammer", "hunting-horn", "lance", "gunlance",
+        "switch-axe", "charge-blade", "insect-glaive",
+        "bow", "heavy-bowgun", "light-bowgun",
+    ]
+
     /// スキル分類ラベル
     static func kindLabel(_ kind: SkillKind) -> String {
         switch kind {

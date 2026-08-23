@@ -7,6 +7,7 @@ struct SearchResultsView: View {
     let conditionViewModel: SearchConditionViewModel
     @Binding var path: [SearchRoute]
     @State private var viewModel: SearchResultsViewModel
+    @State private var entryTarget: CharmEntryTarget?
 
     init(dependencies: AppDependencies, conditionViewModel: SearchConditionViewModel, path: Binding<[SearchRoute]>) {
         self.dependencies = dependencies
@@ -24,6 +25,12 @@ struct SearchResultsView: View {
         .mhNavigationTitle("検索結果")
         .task { viewModel.start() }
         .onDisappear { viewModel.cancel() }
+        .sheet(item: $entryTarget) { target in
+            // 逆引き候補→護石入力プリセット(画面設計4.7)。保存後は自動で再検索
+            CharmEntryView(dependencies: dependencies, target: target) {
+                viewModel.reloadAndRetry()
+            }
+        }
     }
 
     @ViewBuilder
@@ -203,6 +210,14 @@ struct SearchResultsView: View {
     }
 
     private func suggestionCard(_ suggestion: CharmOracle.CharmSuggestion) -> some View {
+        Button {
+            entryTarget = .preset(suggestion.requirement)
+        } label: {
+            suggestionCardBody(suggestion)
+        }
+    }
+
+    private func suggestionCardBody(_ suggestion: CharmOracle.CharmSuggestion) -> some View {
         MHCard {
             HStack(spacing: 12) {
                 ZStack {
@@ -216,14 +231,18 @@ struct SearchResultsView: View {
                     Text(viewModel.requirementText(suggestion.requirement))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(Color.mhTextPrimary)
+                        .multilineTextAlignment(.leading)
                     HStack(spacing: 6) {
                         RarityBadge(rarity: suggestion.minimumRarity)
-                        Text("の護石で出現")
+                        Text("の護石で出現。入手したらタップで登録")
                             .font(.system(size: 13))
                             .foregroundStyle(Color.mhTextSecondary)
                     }
                 }
                 Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color.mhTextTertiary)
             }
             .padding(13)
         }

@@ -69,24 +69,31 @@ final class SearchResultsViewModel {
         retry()
     }
 
+    /// 護石登録後の再検索(逆引き候補→登録→自動で組み直す)
+    func reloadAndRetry() {
+        retry()
+    }
+
     private func runSearch() {
         let engine = dependencies.engine
         let oracle = dependencies.oracle
         let condition = condition
         let weapon = weapon
-        // 所持護石はPhase 4-1(user.db)で接続。それまでは護石なし+固定護石で検索
+        let ownedCharms = dependencies.loadOwnedCharmsForSearch()
         task = Task {
             do {
                 let options = SearchEngine.Options(maxResults: 100, deadline: Date().addingTimeInterval(5))
                 let result = try await Task.detached(priority: .userInitiated) {
-                    try engine.search(condition: condition, weapon: weapon, options: options)
+                    try engine.search(condition: condition, weapon: weapon, ownedCharms: ownedCharms, options: options)
                 }.value
                 guard !Task.isCancelled else { return }
                 if result.sets.isEmpty {
                     phase = .reverseSearching
                     let outcomeOptions = CharmOracle.Options(deadline: Date().addingTimeInterval(4))
                     let outcome = try await Task.detached(priority: .userInitiated) {
-                        try oracle.reverseLookup(condition: condition, weapon: weapon, options: outcomeOptions)
+                        try oracle.reverseLookup(
+                            condition: condition, weapon: weapon,
+                            ownedCharms: ownedCharms, options: outcomeOptions)
                     }.value
                     guard !Task.isCancelled else { return }
                     phase = .reverse(outcome)
