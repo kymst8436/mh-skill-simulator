@@ -13,7 +13,7 @@
 
 ## 2. カラートークン
 
-SwiftUIでは `Color` 拡張として定義する(Assets.xcassetsに同名カラーセット)。
+SwiftUIでは `Color` 拡張としてコード定義する(単一テーマのためAssets.xcassetsのカラーセットは使わない)。実装の正は `app/MHSimulator/Sources/DesignSystem/MHTheme.swift`。本書と実装がずれた場合は本書が正。
 
 | トークン | 値 | 用途 |
 |---|---|---|
@@ -118,3 +118,78 @@ SwiftUIでは `Color` 拡張として定義する(Assets.xcassetsに同名カラ
 ## 9. 画面設計.mdとの関係
 
 画面設計.md §5「共通UI規約への参照」の参照先は本書。構成要素・文言・状態は画面設計.mdが正、見た目は本書が正。矛盾に気づいたら勝手に直さずユーザーに確認する。
+
+## 10. 実装ルール(Claude Code向け運用)
+
+UI実装の全タスクは以下の手続きで進める。**世界観の劣化は1画面の逸脱から始まる**ため、例外を作らない。
+
+1. **UIコードを書く前に本書を必読する**(セッションをまたいだら読み直す)
+2. トークン・共通コンポーネントを**先に**実装する(`DesignSystem/MHTheme.swift`・`DesignSystem/Components/`)。画面実装がリテラル値を書き始めてからの後付けはしない
+3. 逸脱(新しい色・角丸・フォント・モチーフ・アニメーション)が必要になったら、**実装せずユーザーに確認**し、承認されたら本書を先に改訂してから実装する。決定ログにも残す
+4. モック(design/mockups/ のカンバス)と実機の見た目が乖離したら、モック側を直すのではなくどちらが正か確認する
+
+### 画面実装ごとのセルフチェックリスト
+
+- [ ] 色は `mh*` トークンのみ。リテラル色・`.blue`・`.accentColor`・`#007AFF` を使っていない
+- [ ] 角丸は2pt。影・グラデーション・マテリアル(blur)を使っていない
+- [ ] 明朝体は `MHFont.screenTitle` / `statNumber` / `button` の3箇所以外に使っていない
+- [ ] 菱形モチーフはナビタイトル横のみ。新しい装飾を足していない
+- [ ] `List`/`Form` の標準背景を消して `mhBackground` に差し替えた(`.scrollContentBackground(.hidden)`)
+- [ ] ダーク固定はルート(`MHSimulatorApp`)の `preferredColorScheme(.dark)` 一括指定。画面側で再指定していない
+- [ ] タップ領域44pt以上、フォントは `relativeTo:` 付きでDynamic Type対応
+- [ ] 文言は画面設計.mdのものをそのまま使用(勝手に言い換えない)
+- [ ] レア度表示は `RarityBadge`、スロットは `SlotLabel`、チップは `SkillChip` を使った(画面ローカルの再実装をしていない)
+
+### MHTheme.swift の基準実装
+
+トークンの実装はこの形とする(値は§2・§3が正)。
+
+```swift
+import SwiftUI
+
+extension Color {
+    init(mhHex hex: UInt32) {
+        self.init(
+            red: Double((hex >> 16) & 0xFF) / 255,
+            green: Double((hex >> 8) & 0xFF) / 255,
+            blue: Double(hex & 0xFF) / 255)
+    }
+    static let mhBackground = Color(mhHex: 0x14120D)
+    static let mhBackgroundElevated = Color(mhHex: 0x191712)
+    static let mhSurface = Color(mhHex: 0x1E1B14)
+    static let mhSurfaceSubtle = Color(mhHex: 0x24211A)
+    static let mhHairline = Color(mhHex: 0x3A342A)
+    static let mhHairlineFaint = Color(mhHex: 0x2A2620)
+    static let mhTextPrimary = Color(mhHex: 0xEDE6D4)
+    static let mhTextSecondary = Color(mhHex: 0xA89F87)
+    static let mhTextTertiary = Color(mhHex: 0x6F675A)
+    static let mhAccent = Color(mhHex: 0xD9A036)
+    static let mhAccentSoft = Color(mhHex: 0xE3C87F)
+    static let mhAccentDim = Color(mhHex: 0x8A6F30)
+    static let mhOnAccent = Color(mhHex: 0x1A1204)
+    static let mhAccentWash = Color(mhHex: 0xD9A036).opacity(0.10)
+    static let mhDestructive = Color(mhHex: 0xC25B4A)
+    static let mhTitleGold = Color(mhHex: 0xE8D9A8)
+
+    static func mhRarity(_ rarity: Int) -> Color {
+        switch rarity {
+        case ...1: Color(mhHex: 0x8F8A7E)
+        case 2: Color(mhHex: 0xA9A395)
+        case 3: Color(mhHex: 0x6FA36B)
+        case 4: Color(mhHex: 0x5FA898)
+        case 5: Color(mhHex: 0x5B8FC2)
+        case 6: Color(mhHex: 0x9678C8)
+        case 7: Color(mhHex: 0xC46A5A)
+        default: Color(mhHex: 0xD9A036)  // R8
+        }
+    }
+}
+
+enum MHFont {
+    static let screenTitle = Font.custom("HiraMinProN-W6", size: 17, relativeTo: .headline)
+    static let statNumber = Font.custom("HiraMinProN-W6", size: 24, relativeTo: .title2)
+    static let button = Font.custom("HiraMinProN-W6", size: 17, relativeTo: .headline)
+}
+```
+
+※「HiraMinProN-W6」はiOS同梱のヒラギノ明朝のPostScript名。実機で解決できない場合は `UIFont.familyNames` で確認して本書を更新する(勝手に別フォントへフォールバックしない)。
