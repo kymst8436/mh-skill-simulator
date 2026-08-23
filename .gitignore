@@ -7,3 +7,6 @@ data/source/merged/
 
 # 生成物(tools/convert・tools/enumerate-charmsで再生成可能)
 data/generated/
+
+# Swift Package Manager
+.build/

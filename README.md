@@ -47,4 +47,13 @@ python3 tools/enumerate-charms/enumerate.py
 | `data/charm-rules/` | 鑑定護石の抽選規則(一次資産。状態はREADME参照) |
 | `data/generated/` | bundled.db ほか生成物(git管理外) |
 | `tools/` | 取得・変換・全列挙スクリプト(Python 3.9+、標準ライブラリのみ) |
-| `app/` | Xcodeプロジェクト(Phase 3以降・未着手) |
+| `app/MHSimulatorCore/` | コアロジックSwiftパッケージ(検索F-1・逆引きF-2・規則評価。Phase 2) |
+| `app/` | Xcodeプロジェクト本体はPhase 3で追加(コアをローカルパッケージとして取り込む) |
+
+## コアロジックのテスト(Phase 2)
+
+```bash
+cd app/MHSimulatorCore && swift test
+```
+
+bundled.db(上記パイプライン手順1〜2)が生成済みであること。29テストで検索・逆引き・規則評価の正しさを固定している(結果は独立検証器で再計算)。
