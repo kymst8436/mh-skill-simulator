@@ -47,16 +47,26 @@ public final class SearchEngine {
             return false
         }
 
+        // 装飾品割り当て(葉の内部)の中断判定。nodeCountに依らず即時で判定する
+        let deadlineExceeded: () -> Bool = {
+            guard let deadline = options.deadline else { return false }
+            return Date() > deadline
+        }
+
         func dfs(_ depth: Int, _ state: inout State) -> Bool {  // 戻り値: 探索継続するか
             if timedOut() {
                 truncated = true
                 return false
             }
             if depth == prepared.kindOrder.count {
-                // 全部位確定 → 護石を試す
+                // 全部位確定 → 護石を試す(葉の内部でもデッドラインを効かせる。2026-08-24)
                 for charm in prepared.charmCandidates {
+                    if timedOut() {
+                        truncated = true
+                        return false
+                    }
                     guard !upperBoundFails(prepared, state, remainingKinds: [], charm: charm) else { continue }
-                    if let set = finishLeaf(prepared, state, charm: charm) {
+                    if let set = finishLeaf(prepared, state, charm: charm, shouldAbort: deadlineExceeded) {
                         sets.append(set)
                         if sets.count >= options.maxResults {
                             truncated = true
@@ -391,7 +401,10 @@ public final class SearchEngine {
 
     // MARK: - 葉の確定(仕様3.1 手順5〜6)
 
-    func finishLeaf(_ prepared: Prepared, _ state: State, charm: Charm) -> EquipmentSet? {
+    func finishLeaf(
+        _ prepared: Prepared, _ state: State, charm: Charm,
+        shouldAbort: () -> Bool = { false }
+    ) -> EquipmentSet? {
         for bonus in prepared.bonusNeeds {
             guard (state.bonusCount[bonus.skillId] ?? 0) >= bonus.requiredPieces else { return nil }
         }
@@ -403,8 +416,10 @@ public final class SearchEngine {
         }
 
         let slots = collectSlots(prepared, state, charm: charm)
-        guard let assignment = DecorationAssigner.assign(
-            deficits: deficits, slots: slots, catalog: prepared.catalog) else { return nil }
+        // aborted(デッドライン超過)はnil扱い: 次のtimedOut()で探索全体が打ち切られる
+        guard case .assigned(let assignment) = DecorationAssigner.assign(
+            deficits: deficits, slots: slots, catalog: prepared.catalog,
+            shouldAbort: shouldAbort) else { return nil }
 
         return buildSet(prepared, state, charm: charm, slots: slots, assignment: assignment)
     }

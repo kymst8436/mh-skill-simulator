@@ -52,31 +52,68 @@ struct DecorationAssigner {
         }
     }
 
-    /// 不足分を完全に埋める割り当てを探す。埋められなければnil。
+    /// assign の結果。aborted は shouldAbort による中断(=結果未確定。呼び出し側で打ち切り扱いにする)
+    enum Result {
+        case assigned([DecorationAssignment])
+        case infeasible
+        case aborted
+    }
+
+    /// 不足分を完全に埋める割り当てを探す。
+    /// 充足不能ぎりぎりの条件でバックトラックが爆発しうるため、
+    /// 全体容量の上界による枝刈りと shouldAbort(デッドライン)による中断を備える(2026-08-24)
     static func assign(
         deficits: [SkillId: Int],
         slots: [Slot],
-        catalog: Catalog
-    ) -> [DecorationAssignment]? {
+        catalog: Catalog,
+        shouldAbort: () -> Bool = { false }
+    ) -> Result {
         var remaining = deficits.filter { $0.value > 0 }
-        if remaining.isEmpty { return [] }
+        if remaining.isEmpty { return .assigned([]) }
         let ordered = slots.sorted { $0.size > $1.size }
         var assignment: [DecorationAssignment] = []
+        var nodes = 0
+        var aborted = false
 
         func contribution(_ deco: Decoration) -> Int {
             deco.skills.reduce(0) { $0 + min($1.value, max(0, remaining[$1.key] ?? 0)) }
         }
 
+        // 全体容量の上界: 残りスロットそれぞれの最大寄与の合計。
+        // スキル単体の上界では「単体では足りるが全体では足りない」ケースを刈れない
+        func jointCapacity(from index: Int) -> Int {
+            var bestBySize = [[Int]](repeating: [Int](repeating: -1, count: 4), count: 2)
+            var capacity = 0
+            for slot in ordered[index...] {
+                let target = slot.isWeapon ? 1 : 0
+                if bestBySize[target][slot.size] < 0 {
+                    bestBySize[target][slot.size] = catalog.options(for: slot)
+                        .reduce(0) { max($0, contribution($1)) }
+                }
+                capacity += bestBySize[target][slot.size]
+            }
+            return capacity
+        }
+
         func solve(_ index: Int) -> Bool {
             if remaining.values.allSatisfy({ $0 <= 0 }) { return true }
+            nodes += 1
+            if nodes % 512 == 0, shouldAbort() {
+                aborted = true
+                return false
+            }
             guard index < ordered.count else { return false }
             let slot = ordered[index]
 
-            // 上界: 残りスロット全部を各スキルの最良装飾品で埋めても届かないなら失敗
+            // 上界1(スキル単体): 残りスロット全部を各スキルの最良装飾品で埋めても届かないなら失敗
+            var totalDeficit = 0
             for (skill, deficit) in remaining where deficit > 0 {
+                totalDeficit += deficit
                 let potential = ordered[index...].reduce(0) { $0 + catalog.bestLevel(of: skill, in: $1) }
                 if potential < deficit { return false }
             }
+            // 上界2(全体容量): スロット総寄与が総不足を下回るなら失敗
+            if jointCapacity(from: index) < totalDeficit { return false }
 
             // 不足スキルに寄与する装飾品を寄与量降順に試す
             let useful = catalog.options(for: slot)
@@ -92,31 +129,60 @@ struct DecorationAssigner {
                 for (skill, level) in deco.skills {
                     remaining[skill, default: 0] += level
                 }
+                if aborted { return false }
             }
             // このスロットを空のまま次へ(小さいスロット専用装飾品のための後退)
             return solve(index + 1)
         }
 
-        return solve(0) ? assignment : nil
+        if solve(0) { return .assigned(assignment) }
+        return aborted ? .aborted : .infeasible
     }
 
     /// 不足分を最小化する割り当て(逆引きの緩和探索用)。残不足の合計が最小の割り当てを返す。
     static func minimizeResidual(
         deficits: [SkillId: Int],
         slots: [Slot],
-        catalog: Catalog
+        catalog: Catalog,
+        shouldAbort: () -> Bool = { false }
     ) -> [SkillId: Int] {
         var remaining = deficits.filter { $0.value > 0 }
         if remaining.isEmpty { return [:] }
         let ordered = slots.sorted { $0.size > $1.size }
         var best = remaining
         var bestSum = remaining.values.reduce(0, +)
+        var nodes = 0
+        var aborted = false
 
         func residualSum() -> Int {
             remaining.values.reduce(0) { $0 + max(0, $1) }
         }
 
+        func contribution(_ deco: Decoration) -> Int {
+            deco.skills.reduce(0) { $0 + min($1.value, max(0, remaining[$1.key] ?? 0)) }
+        }
+
+        func jointCapacity(from index: Int) -> Int {
+            var bestBySize = [[Int]](repeating: [Int](repeating: -1, count: 4), count: 2)
+            var capacity = 0
+            for slot in ordered[index...] {
+                let target = slot.isWeapon ? 1 : 0
+                if bestBySize[target][slot.size] < 0 {
+                    bestBySize[target][slot.size] = catalog.options(for: slot)
+                        .reduce(0) { max($0, contribution($1)) }
+                }
+                capacity += bestBySize[target][slot.size]
+            }
+            return capacity
+        }
+
         func solve(_ index: Int) {
+            if aborted { return }
+            nodes += 1
+            if nodes % 512 == 0, shouldAbort() {
+                aborted = true
+                return
+            }
             let current = residualSum()
             if current == 0 || index == ordered.count {
                 if current < bestSum {
@@ -125,12 +191,14 @@ struct DecorationAssigner {
                 }
                 return
             }
-            // 上界: 残りスロットで削れる最大量を引いても現ベスト以上なら枝刈り
+            // 上界: 残りスロットで削れる最大量(スキル単体と全体容量の小さい方)を
+            // 引いても現ベスト以上なら枝刈り
             var optimistic = 0
             for (skill, deficit) in remaining where deficit > 0 {
                 let potential = ordered[index...].reduce(0) { $0 + catalog.bestLevel(of: skill, in: $1) }
                 optimistic += min(deficit, potential)
             }
+            optimistic = min(optimistic, jointCapacity(from: index))
             if current - optimistic >= bestSum { return }
 
             let slot = ordered[index]
@@ -144,6 +212,7 @@ struct DecorationAssigner {
                 for (skill, level) in deco.skills {
                     remaining[skill, default: 0] += level
                 }
+                if aborted { return }
             }
             solve(index + 1)  // 空のまま
         }

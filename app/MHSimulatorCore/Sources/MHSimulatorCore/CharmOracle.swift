@@ -104,7 +104,7 @@ public final class CharmOracle {
             if timedOut() { return false }
             if depth == prepared.kindOrder.count {
                 leafCount += 1
-                visitLeaf(prepared, state, into: &requirements)
+                visitLeaf(prepared, state, options: options, into: &requirements)
                 return leafCount < options.leafBudget
             }
             let kind = prepared.kindOrder[depth]
@@ -136,6 +136,7 @@ public final class CharmOracle {
     private func visitLeaf(
         _ prepared: SearchEngine.Prepared,
         _ state: SearchEngine.State,
+        options: Options,
         into requirements: inout Set<CharmRules.Requirement>
     ) {
         // ボーナススキルは護石で補えない
@@ -153,7 +154,11 @@ public final class CharmOracle {
         // 防具+武器のスロットで埋められる分を先に消し込み、残りを護石への要求とする
         let slots = engine.collectSlots(prepared, state, charm: .none)
         let residual = DecorationAssigner.minimizeResidual(
-            deficits: deficits, slots: slots, catalog: prepared.catalog)
+            deficits: deficits, slots: slots, catalog: prepared.catalog,
+            shouldAbort: {
+                guard let deadline = options.deadline else { return false }
+                return Date() > deadline
+            })
         guard !residual.isEmpty else { return }
 
         // 要求バリエーション: 各不足スキルを「護石スキルで直接」か「護石スロット+装飾品」で賄う
