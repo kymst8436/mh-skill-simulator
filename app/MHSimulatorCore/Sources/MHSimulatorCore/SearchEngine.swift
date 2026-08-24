@@ -421,7 +421,14 @@ public final class SearchEngine {
                 return kind != .set && kind != .group
             })
         }
-        for piece in state.pieces { add(piece.skills) }
+        for piece in state.pieces {
+            // データ上、部位スキルにシリーズ/グループスキルがLv1で含まれるが、
+            // 発動は部位数しきい値側で判定するため加算集計から除外(二重計上防止)
+            add(piece.skills.filter { id, _ in
+                let kind = master.skills[id]?.kind
+                return kind != .set && kind != .group
+            })
+        }
         add(charm.skills)
         for entry in assignment { add(entry.decoration.skills) }
 

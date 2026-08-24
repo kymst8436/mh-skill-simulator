@@ -29,6 +29,10 @@ struct EquipmentDetailView: View {
                         .mhEntrance(2)
                     section("発動スキル") { skillRows }
                         .mhEntrance(3)
+                    if !inactiveBonusRows.isEmpty {
+                        section("未発動のシリーズ・グループスキル") { inactiveRows }
+                            .mhEntrance(4)
+                    }
                     section("空きスロット") {
                         row {
                             Text("武器 \(MHFormat.slotSymbols(equipment.emptyWeaponSlots)) / 防具 \(MHFormat.slotSymbols(equipment.emptyArmorSlots))")
@@ -37,7 +41,7 @@ struct EquipmentDetailView: View {
                             Spacer()
                         }
                     }
-                    .mhEntrance(4)
+                    .mhEntrance(5)
                 }
                 .padding(.bottom, 24)
             }
@@ -214,13 +218,14 @@ struct EquipmentDetailView: View {
         }
     }
 
-    // MARK: - 発動スキル
+    // MARK: - 発動スキル(2026-08-24改訂: バッジ先頭+寄与装備アイコン)
 
     @ViewBuilder
     private var skillRows: some View {
         let sorted = sortedSkills
         ForEach(Array(sorted.enumerated()), id: \.offset) { index, entry in
             row {
+                kindBadge(entry.kind)
                 name(MHFormat.skillLine(entry.name, entry.level))
                 if entry.isCondition {
                     Text("★条件")
@@ -232,40 +237,177 @@ struct EquipmentDetailView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 2))
                 }
                 Spacer()
-                if let kindNote = entry.kindNote {
-                    slot(kindNote)
-                }
+                contributorIcons(entry.contributors)
             }
             if index < sorted.count - 1 { separator }
         }
     }
 
+    /// 未発動のシリーズ/グループスキル(部位数不足。2026-08-24追加)
+    @ViewBuilder
+    private var inactiveRows: some View {
+        let rows = inactiveBonusRows
+        ForEach(Array(rows.enumerated()), id: \.offset) { index, entry in
+            row {
+                kindBadge(entry.kind)
+                Text(entry.name)
+                    .font(.system(size: 15))
+                    .foregroundStyle(Color.mhTextSecondary)
+                Text("\(entry.currentPieces)/\(entry.requiredPieces)部位")
+                    .font(.system(size: 13))
+                    .foregroundStyle(Color.mhTextTertiary)
+                Spacer()
+                contributorIcons(entry.contributors)
+            }
+            if index < rows.count - 1 { separator }
+        }
+    }
+
+    /// 行先頭の分類バッジ(スキル選択画面と同一の見た目)
+    private func kindBadge(_ kind: SkillKind) -> some View {
+        Text(MHFormat.kindLabel(kind))
+            .font(.system(size: 11))
+            .foregroundStyle(Color.mhTextSecondary)
+            .padding(.vertical, 2)
+            .frame(width: 52)
+            .overlay(RoundedRectangle(cornerRadius: 2).stroke(Color.mhHairline, lineWidth: 1))
+    }
+
+    /// 寄与装備のアイコン列(武器→頭→胴→腕→腰→脚→護石の順)
+    @ViewBuilder
+    private func contributorIcons(_ contributors: [Contributor]) -> some View {
+        HStack(spacing: 5) {
+            ForEach(contributors, id: \.self) { contributor in
+                switch contributor {
+                case .weapon:
+                    if let weapon, let iconName = MHFormat.weaponIconName(weapon.kind) {
+                        contributorIcon(iconName, accessibility: "武器")
+                    } else {
+                        Text("武")
+                            .font(.system(size: 11))
+                            .foregroundStyle(Color.mhTextTertiary)
+                    }
+                case .piece(let kind):
+                    contributorIcon(MHFormat.pieceIconName(kind), accessibility: MHFormat.pieceLabel(kind))
+                case .charm:
+                    contributorIcon(MHFormat.charmIconName, accessibility: "護石")
+                }
+            }
+        }
+    }
+
+    private func contributorIcon(_ assetName: String, accessibility: String) -> some View {
+        Image(assetName)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 18, height: 18)
+            .accessibilityLabel(accessibility)
+    }
+
+    // MARK: - スキル行の組み立て
+
+    private enum Contributor: Hashable {
+        case weapon
+        case piece(ArmorPieceKind)
+        case charm
+    }
+
     private struct SkillRow {
         let name: String
         let level: Int
+        let kind: SkillKind
         let isCondition: Bool
-        let kindNote: String?
+        let contributors: [Contributor]
+    }
+
+    private struct InactiveBonusRow {
+        let name: String
+        let kind: SkillKind
+        let currentPieces: Int
+        let requiredPieces: Int
+        let contributors: [Contributor]
     }
 
     private var sortedSkills: [SkillRow] {
         equipment.activeSkills
             .compactMap { id, level -> SkillRow? in
                 guard let skill = master.skills[id] else { return nil }
-                let kindNote: String?
-                switch skill.kind {
-                case .set: kindNote = "シリーズ"
-                case .group: kindNote = "グループ"
-                default: kindNote = nil
-                }
                 return SkillRow(
-                    name: skill.name, level: level,
+                    name: skill.name, level: level, kind: skill.kind,
                     isCondition: condition.requiredSkills[id] != nil,
-                    kindNote: kindNote)
+                    contributors: contributors(of: id, kind: skill.kind))
             }
             .sorted {
                 if $0.isCondition != $1.isCondition { return $0.isCondition }
                 if $0.level != $1.level { return $0.level > $1.level }
                 return $0.name < $1.name
             }
+    }
+
+    /// 部位数不足で発動していないシリーズ/グループスキル
+    private var inactiveBonusRows: [InactiveBonusRow] {
+        var pieceCount: [SkillId: Int] = [:]
+        var minPieces: [SkillId: Int] = [:]
+        for piece in equipment.pieces.values {
+            guard let series = master.armorSeries[piece.seriesId] else { continue }
+            for bonus in [series.setBonus, series.groupBonus].compactMap({ $0 }) {
+                pieceCount[bonus.skillId, default: 0] += 1
+                let required = bonus.ranksByPieces.keys.min() ?? 0
+                minPieces[bonus.skillId] = min(minPieces[bonus.skillId] ?? .max, required)
+            }
+        }
+        if let weapon {
+            for (skillId, level) in weapon.skills
+            where master.skills[skillId]?.kind == .set || master.skills[skillId]?.kind == .group {
+                pieceCount[skillId, default: 0] += level
+            }
+        }
+        return pieceCount
+            .filter { equipment.activeSkills[$0.key] == nil }
+            .compactMap { skillId, count -> InactiveBonusRow? in
+                guard let skill = master.skills[skillId] else { return nil }
+                return InactiveBonusRow(
+                    name: skill.name, kind: skill.kind,
+                    currentPieces: count,
+                    requiredPieces: minPieces[skillId] ?? 0,
+                    contributors: contributors(of: skillId, kind: skill.kind))
+            }
+            .sorted {
+                if $0.currentPieces != $1.currentPieces { return $0.currentPieces > $1.currentPieces }
+                return $0.name < $1.name
+            }
+    }
+
+    /// スキルに寄与している装備(武器→頭→胴→腕→腰→脚→護石の順)
+    private func contributors(of skillId: SkillId, kind: SkillKind) -> [Contributor] {
+        var found: Set<Contributor> = []
+        if let weapon, weapon.skills[skillId] != nil { found.insert(.weapon) }
+        for (pieceKind, piece) in equipment.pieces {
+            if kind == .set || kind == .group {
+                guard let series = master.armorSeries[piece.seriesId] else { continue }
+                if [series.setBonus, series.groupBonus].compactMap({ $0 })
+                    .contains(where: { $0.skillId == skillId }) {
+                    found.insert(.piece(pieceKind))
+                }
+            } else if piece.skills[skillId] != nil {
+                found.insert(.piece(pieceKind))
+            }
+        }
+        if equipment.charm.skills[skillId] != nil { found.insert(.charm) }
+        // 装飾品由来は装着先の装備に帰属させる
+        for entry in equipment.decorations where entry.decoration.skills[skillId] != nil {
+            switch entry.owner {
+            case .weapon: found.insert(.weapon)
+            case .armor(let pieceKind): found.insert(.piece(pieceKind))
+            case .charmWeapon, .charmArmor: found.insert(.charm)
+            }
+        }
+        var ordered: [Contributor] = []
+        if found.contains(.weapon) { ordered.append(.weapon) }
+        for pieceKind in ArmorPieceKind.allCases where found.contains(.piece(pieceKind)) {
+            ordered.append(.piece(pieceKind))
+        }
+        if found.contains(.charm) { ordered.append(.charm) }
+        return ordered
     }
 }

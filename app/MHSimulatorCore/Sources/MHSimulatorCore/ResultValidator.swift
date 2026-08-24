@@ -74,7 +74,13 @@ public struct ResultValidator {
                 return kind != .set && kind != .group
             })
         }
-        for piece in set.pieces.values { add(piece.skills) }
+        for piece in set.pieces.values {
+            // エンジンと同一意味論: シリーズ/グループスキルは部位数側で判定(加算から除外)
+            add(piece.skills.filter { id, _ in
+                let kind = master.skills[id]?.kind
+                return kind != .set && kind != .group
+            })
+        }
         add(set.charm.skills)
         for entry in set.decorations { add(entry.decoration.skills) }
 
