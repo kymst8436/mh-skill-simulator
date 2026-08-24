@@ -8,10 +8,12 @@ enum AdConfig {
     static let searchBannerUnitId = "ca-app-pub-3940256099942544/2934735716"
     static let charmBannerUnitId = "ca-app-pub-3940256099942544/2934735716"
     static let nativeAdUnitId = "ca-app-pub-3940256099942544/3986624511"
+    static let detailNativeAdUnitId = "ca-app-pub-3940256099942544/3986624511"
     #else
     static let searchBannerUnitId = "ca-app-pub-4797364772307900/3487951268"
     static let charmBannerUnitId = "ca-app-pub-4797364772307900/9861787926"
     static let nativeAdUnitId = "ca-app-pub-4797364772307900/3052836992"
+    static let detailNativeAdUnitId = "ca-app-pub-4797364772307900/7840279766"
     #endif
 }
 

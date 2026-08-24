@@ -9,10 +9,10 @@ final class NativeAdBox: NSObject, NativeAdLoaderDelegate {
     private(set) var failed = false
     private var adLoader: AdLoader?
 
-    func loadIfNeeded() {
+    func loadIfNeeded(adUnitId: String) {
         guard adLoader == nil else { return }
         let loader = AdLoader(
-            adUnitID: AdConfig.nativeAdUnitId,
+            adUnitID: adUnitId,
             rootViewController: nil,
             adTypes: [.native],
             options: nil)
@@ -33,6 +33,8 @@ final class NativeAdBox: NSObject, NativeAdLoaderDelegate {
 /// 検索結果一覧に挟むネイティブ広告カード(画面設計§2。2026-08-24追加)。
 /// 読み込み完了までは何も表示せず、失敗時はスロットごと畳む
 struct NativeAdSlot: View {
+    /// 広告ユニット(既定は検索結果一覧用。装備詳細は detailNativeAdUnitId を渡す)
+    var adUnitId: String = AdConfig.nativeAdUnitId
     @State private var box = NativeAdBox()
 
     var body: some View {
@@ -48,7 +50,7 @@ struct NativeAdSlot: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .onAppear { box.loadIfNeeded() }
+        .onAppear { box.loadIfNeeded(adUnitId: adUnitId) }
     }
 }
 

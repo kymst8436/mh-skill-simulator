@@ -18,6 +18,8 @@ struct EquipmentDetailView: View {
             Color.mhBackground.ignoresSafeArea()
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
+                    NativeAdSlot(adUnitId: AdConfig.detailNativeAdUnitId)  // 広告は入場モーション対象外
+                        .padding(.top, 12)
                     // 入場モーション: 上から順にセクション単位(DESIGN.md §7.5)
                     summaryCard
                         .padding(.horizontal, 16)
