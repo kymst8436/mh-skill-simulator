@@ -79,6 +79,25 @@ nonisolated enum MHFormat {
         "bow", "heavy-bowgun", "light-bowgun",
     ]
 
+    /// 武器種アイコンのアセット名(未収録の武器種=カスタム武器はnil)
+    static func weaponIconName(_ kind: String) -> String? {
+        weaponKinds.contains(kind) ? "weapon_\(kind)" : nil
+    }
+
+    /// 防具部位アイコンのアセット名
+    static func pieceIconName(_ kind: ArmorPieceKind) -> String {
+        switch kind {
+        case .head: "piece_head"
+        case .chest: "piece_chest"
+        case .arms: "piece_arms"
+        case .waist: "piece_waist"
+        case .legs: "piece_legs"
+        }
+    }
+
+    /// 護石アイコンのアセット名
+    static let charmIconName = "icon_charm"
+
     /// スキル分類ラベル
     static func kindLabel(_ kind: SkillKind) -> String {
         switch kind {

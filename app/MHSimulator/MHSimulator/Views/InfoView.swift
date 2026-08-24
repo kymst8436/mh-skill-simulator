@@ -102,6 +102,10 @@ struct CreditsView: View {
                     section("鑑定護石の抽選規則データについて", """
                     出現パターンはコミュニティの解析情報をもとに構成しています。実際のゲーム内容と異なる場合があります。
                     """)
+                    section("アイコン素材", """
+                    武器種・防具部位・護石アイコン: MHW_Icons_SVG (OthelloRhin, MIT License) を配色変更のうえ使用
+                    https://github.com/OthelloRhin/MHW_Icons_SVG
+                    """)
                     section("免責", """
                     本アプリの利用により生じたいかなる損害についても、開発者は責任を負いません。
                     """)

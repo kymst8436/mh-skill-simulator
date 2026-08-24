@@ -104,7 +104,11 @@ struct EquipmentDetailView: View {
     private var equipmentRows: some View {
         if let weapon {
             row {
-                label("武器")
+                if let iconName = MHFormat.weaponIconName(weapon.kind) {
+                    icon(iconName, accessibility: "武器")
+                } else {
+                    label("武器")
+                }
                 name(weapon.name)
                 Spacer()
                 slot(MHFormat.slotSymbols(weapon.slots))
@@ -114,7 +118,7 @@ struct EquipmentDetailView: View {
         ForEach(ArmorPieceKind.allCases, id: \.self) { kind in
             if let piece = equipment.pieces[kind] {
                 row {
-                    label(MHFormat.pieceLabel(kind))
+                    icon(MHFormat.pieceIconName(kind), accessibility: MHFormat.pieceLabel(kind))
                     name(piece.name)
                     Spacer()
                     slot(MHFormat.slotSymbols(piece.slots))
@@ -123,7 +127,7 @@ struct EquipmentDetailView: View {
             }
         }
         row {
-            label("護石")
+            icon(MHFormat.charmIconName, accessibility: "護石")
             name(charmText)
             Spacer()
             if equipment.charm.source != .none {
@@ -141,6 +145,16 @@ struct EquipmentDetailView: View {
             if equipment.charm.skills.isEmpty { return equipment.charm.name }
             return equipment.charm.name
         }
+    }
+
+    /// 装備行の先頭アイコン(ラベル列と同じ幅44で名前の縦位置を揃える)
+    private func icon(_ assetName: String, accessibility: String) -> some View {
+        Image(assetName)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 26, height: 26)
+            .frame(width: 44, alignment: .leading)
+            .accessibilityLabel(accessibility)
     }
 
     private func label(_ text: String) -> some View {

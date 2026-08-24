@@ -96,6 +96,10 @@ struct CharmListView: View {
         } label: {
             MHCard {
                 HStack(spacing: 10) {
+                    Image(MHFormat.charmIconName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 22, height: 22)
                     Text(viewModel.displayName(charm))
                         .font(.system(size: 15))
                         .foregroundStyle(Color.mhTextPrimary)

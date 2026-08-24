@@ -300,11 +300,19 @@ struct WeaponKindChips: View {
         Button {
             onTap(kind)
         } label: {
-            Text(label)
-                .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
-                .foregroundStyle(isSelected ? Color.mhAccentSoft : Color.mhTextSecondary)
-                .padding(.horizontal, 12)
-                .frame(minHeight: 34)
+            HStack(spacing: 6) {
+                if let iconName = MHFormat.weaponIconName(kind) {
+                    Image(iconName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+                }
+                Text(label)
+                    .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
+                    .foregroundStyle(isSelected ? Color.mhAccentSoft : Color.mhTextSecondary)
+            }
+            .padding(.horizontal, 12)
+            .frame(minHeight: 34)
                 .background(isSelected ? Color.mhAccentWash : Color.mhSurface)
                 .clipShape(RoundedRectangle(cornerRadius: 2))
                 .overlay(
