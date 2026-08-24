@@ -16,10 +16,21 @@ struct EquipmentDetailView: View {
     var body: some View {
         ZStack {
             Color.mhBackground.ignoresSafeArea()
-            ScrollView {
+            VStack(spacing: 0) {
+                // 上部固定(スクロールしない)。広告は入場モーション対象外
+                NativeAdSlot(adUnitId: AdConfig.detailNativeAdUnitId)
+                    .padding(.top, 12)
+                scrollContent
+            }
+        }
+        .mhNavigationTitle("装備詳細")
+        .navigationBarBackButtonHidden(true)
+        .toolbar { MHBackButton { dismiss() } }
+    }
+
+    private var scrollContent: some View {
+        ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    NativeAdSlot(adUnitId: AdConfig.detailNativeAdUnitId)  // 広告は入場モーション対象外
-                        .padding(.top, 12)
                     // 入場モーション: 上から順にセクション単位(DESIGN.md §7.5)
                     summaryCard
                         .padding(.horizontal, 16)
@@ -46,11 +57,7 @@ struct EquipmentDetailView: View {
                     .mhEntrance(5)
                 }
                 .padding(.bottom, 24)
-            }
         }
-        .mhNavigationTitle("装備詳細")
-        .navigationBarBackButtonHidden(true)
-        .toolbar { MHBackButton { dismiss() } }
     }
 
     // MARK: - 部品
