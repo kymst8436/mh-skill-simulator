@@ -108,9 +108,27 @@ public struct Weapon: Sendable {
 public struct SearchCondition: Sendable {
     /// スキルID → 目標レベル。Dictionaryのため同一スキルの重複指定は構造的に起きない(仕様3.1)
     public let requiredSkills: [SkillId: Int]
+    /// 部位ごとの固定防具(必ず使う。ArmorPiece.id)。固定部位は候補がその1択になる(2026-08-24追加)
+    public let pinnedPieceIds: [ArmorPieceKind: Int64]
+    /// 除外する防具のid集合(候補から外す)
+    public let excludedPieceIds: Set<Int64>
+    /// 固定する生産護石の系統ID(Charm.Source.fixedの第1要素)。指定時は護石候補がその1択になる
+    public let pinnedFixedCharmId: Int32?
+    /// 除外する生産護石の系統ID集合
+    public let excludedFixedCharmIds: Set<Int32>
 
-    public init(requiredSkills: [SkillId: Int]) {
+    public init(
+        requiredSkills: [SkillId: Int],
+        pinnedPieceIds: [ArmorPieceKind: Int64] = [:],
+        excludedPieceIds: Set<Int64> = [],
+        pinnedFixedCharmId: Int32? = nil,
+        excludedFixedCharmIds: Set<Int32> = []
+    ) {
         self.requiredSkills = requiredSkills
+        self.pinnedPieceIds = pinnedPieceIds
+        self.excludedPieceIds = excludedPieceIds
+        self.pinnedFixedCharmId = pinnedFixedCharmId
+        self.excludedFixedCharmIds = excludedFixedCharmIds
     }
 }
 

@@ -165,7 +165,14 @@ public final class SearchEngine {
         // 部位候補: (寄与ボーナススキル集合)でグループ化し、同グループ内で優越除去
         var pieceCandidates: [ArmorPieceKind: [ArmorPiece]] = [:]
         for kind in ArmorPieceKind.allCases {
-            let all = master.armorPieces.filter { $0.kind == kind }
+            // 固定・除外(仕様3.1 2026-08-24改訂)。固定は除外に優先する。
+            // 除外は優越除去の前に適用する(除外品に優越されて消えた候補を復活させるため)
+            var all = master.armorPieces.filter { $0.kind == kind }
+            if let pinnedId = condition.pinnedPieceIds[kind] {
+                all = all.filter { $0.id == pinnedId }
+            } else if !condition.excludedPieceIds.isEmpty {
+                all = all.filter { !condition.excludedPieceIds.contains($0.id) }
+            }
             var groups: [Set<SkillId>: [ArmorPiece]] = [:]
             for piece in all {
                 groups[bonusContrib[piece.seriesId] ?? [], default: []].append(piece)
@@ -192,8 +199,18 @@ public final class SearchEngine {
         var charmCandidates: [Charm]
         if charmWildcard {
             charmCandidates = []
+        } else if let pinnedCharmId = condition.pinnedFixedCharmId {
+            // 生産護石の固定: その護石1択(護石なし・鑑定護石も候補にしない)
+            charmCandidates = master.fixedCharms.filter { charm in
+                if case .fixed(let id, _) = charm.source { return id == pinnedCharmId }
+                return false
+            }
         } else {
-            let allCharms = [Charm.none] + master.fixedCharms + ownedCharms
+            let fixedCharms = master.fixedCharms.filter { charm in
+                guard case .fixed(let id, _) = charm.source else { return true }
+                return !condition.excludedFixedCharmIds.contains(id)
+            }
+            let allCharms = [Charm.none] + fixedCharms + ownedCharms
             charmCandidates = nonDominated(allCharms, keyPath: { charm in
                 Dominance(
                     skills: condSkills.map { charm.skills[$0] ?? 0 },

@@ -23,6 +23,7 @@ struct SearchConditionView: View {
     @State private var viewModel: SearchConditionViewModel
     @State private var path: [SearchRoute] = []
     @State private var showsSkillPicker = false
+    @State private var showsSearchSettings = false
 
     init(dependencies: AppDependencies) {
         self.dependencies = dependencies
@@ -38,7 +39,9 @@ struct SearchConditionView: View {
                         VStack(alignment: .leading, spacing: 0) {
                             // 入場モーション: 武器(0)→スキル条件(1)→検索ボタン(2)。DESIGN.md §7.5
                             Group {
-                                MHSectionHeader(title: "武器")
+                                MHSectionHeader(title: "武器", actionTitle: "リセット") {
+                                    viewModel.reset()
+                                }
                                     .padding(.top, 20)
                                 // 武器種チップ: タップでその武器種にフィルタした武器選択へ
                                 WeaponKindChips(
@@ -69,12 +72,19 @@ struct SearchConditionView: View {
             .mhNavigationTitle("検索条件")
             .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.searchBannerUnitId) }
             .toolbar {
-                MHToolbarButton(title: "リセット", isEnabled: viewModel.canReset) {
-                    viewModel.reset()
+                // 検索設定(固定・除外)。設定ありのときは赤バッジ(画面設計4.1 2026-08-24改訂)
+                MHToolbarIconButton(
+                    systemImage: "gearshape",
+                    showsBadge: viewModel.hasEquipmentFilters
+                ) {
+                    showsSearchSettings = true
                 }
             }
             .sheet(isPresented: $showsSkillPicker) {
                 SkillPickerView(conditionViewModel: viewModel)
+            }
+            .sheet(isPresented: $showsSearchSettings) {
+                SearchSettingsView(conditionViewModel: viewModel)
             }
             .navigationDestination(for: SearchRoute.self) { route in
                 switch route {

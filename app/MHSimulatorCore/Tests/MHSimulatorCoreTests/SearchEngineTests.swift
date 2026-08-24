@@ -49,6 +49,62 @@ final class SearchEngineTests: XCTestCase {
         assertAllValid(result, condition: condition)
     }
 
+    // MARK: - 固定・除外(2026-08-24追加)
+
+    func testPinnedPieceIsAlwaysUsed() throws {
+        let skillId = TestSupport.skill(named: "龍耐性").id
+        let base = try engine.search(condition: SearchCondition(requiredSkills: [skillId: 1]))
+        // 基準結果の先頭セットの頭部位を固定して再検索→全結果がその頭になる
+        guard let pinnedHead = base.sets.first?.pieces[.head] else {
+            return XCTFail("基準結果に頭部位がない")
+        }
+        let condition = SearchCondition(
+            requiredSkills: [skillId: 1],
+            pinnedPieceIds: [.head: pinnedHead.id])
+        let result = try engine.search(condition: condition)
+        XCTAssertFalse(result.sets.isEmpty)
+        for set in result.sets {
+            XCTAssertEqual(set.pieces[.head]?.id, pinnedHead.id)
+        }
+        assertAllValid(result, condition: condition)
+    }
+
+    func testExcludedPieceNeverAppears() throws {
+        let skillId = TestSupport.skill(named: "龍耐性").id
+        let base = try engine.search(condition: SearchCondition(requiredSkills: [skillId: 1]))
+        let excludedIds = Set(base.sets.compactMap { $0.pieces[.head]?.id })
+        let condition = SearchCondition(
+            requiredSkills: [skillId: 1],
+            excludedPieceIds: excludedIds)
+        let result = try engine.search(condition: condition)
+        for set in result.sets {
+            if let head = set.pieces[.head] {
+                XCTAssertFalse(excludedIds.contains(head.id))
+            }
+        }
+        assertAllValid(result, condition: condition)
+    }
+
+    func testPinnedFixedCharmIsAlwaysUsed() throws {
+        guard let charm = master.fixedCharms.first,
+              case .fixed(let charmId, _) = charm.source else {
+            return XCTFail("固定護石データがない")
+        }
+        let skillId = TestSupport.skill(named: "龍耐性").id
+        let condition = SearchCondition(
+            requiredSkills: [skillId: 1],
+            pinnedFixedCharmId: charmId)
+        let result = try engine.search(condition: condition)
+        XCTAssertFalse(result.sets.isEmpty)
+        for set in result.sets {
+            guard case .fixed(let usedId, _) = set.charm.source else {
+                return XCTFail("固定護石以外が使われた: \(set.charm.name)")
+            }
+            XCTAssertEqual(usedId, charmId)
+        }
+        assertAllValid(result, condition: condition)
+    }
+
     func testEmptyConditionThrows() {
         XCTAssertThrowsError(try engine.search(condition: SearchCondition(requiredSkills: [:]))) {
             XCTAssertEqual($0 as? SearchError, .emptyCondition)

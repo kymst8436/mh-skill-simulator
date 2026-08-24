@@ -57,7 +57,7 @@ public struct OwnedCharm: Identifiable, Equatable, Sendable {
 /// 起動時にintegrity_checkを行い、破損時は退避→再作成→通知(didRecoverFromCorruption)。
 /// SQLiteアクセスは素のC API(Q-5改訂 2026-08-24: GRDB仮決定を撤回し依存ゼロを維持)。
 public final class UserStore {
-    public static let schemaVersion = 2  // v2: AppState.customWeapon追加(2026-08-24)
+    public static let schemaVersion = 3  // v3: AppState.searchFilters追加(2026-08-24)
 
     public enum StoreError: Error {
         case cannotOpen(String)
@@ -213,6 +213,24 @@ public final class UserStore {
         }
     }
 
+    /// 固定・除外設定(JSON。アプリ側で形式を定義。2026-08-24追加)
+    public func loadSearchFiltersJSON() throws -> String? {
+        var json: String?
+        try query("SELECT searchFilters FROM AppState WHERE id = 1") { stmt in
+            if sqlite3_column_type(stmt, 0) != SQLITE_NULL {
+                json = String(cString: sqlite3_column_text(stmt, 0))
+            }
+        }
+        return json
+    }
+
+    public func saveSearchFiltersJSON(_ json: String?) throws {
+        try transaction {
+            try exec("UPDATE AppState SET searchFilters = ? WHERE id = 1",
+                     [json.map { .text($0) } ?? .null])
+        }
+    }
+
     /// 最終検索条件(スキルId+目標レベルの配列をJSONで保持)
     public func loadLastSearchConditions() throws -> [(skillId: SkillId, level: Int)] {
         var json: String?
@@ -307,7 +325,8 @@ public final class UserStore {
               schemaVersion INTEGER NOT NULL,
               selectedWeaponId INTEGER,
               lastSearchConditions TEXT,
-              customWeapon TEXT
+              customWeapon TEXT,
+              searchFilters TEXT
             )
             """)
         try exec("INSERT OR IGNORE INTO AppState (id, schemaVersion) VALUES (1, ?)",
@@ -326,6 +345,10 @@ public final class UserStore {
             if version < 2 {
                 // v1→v2: カスタム武器カラム追加(既存カラムならエラーを無視)
                 try? exec("ALTER TABLE AppState ADD COLUMN customWeapon TEXT")
+            }
+            if version < 3 {
+                // v2→v3: 固定・除外設定カラム追加
+                try? exec("ALTER TABLE AppState ADD COLUMN searchFilters TEXT")
             }
             try exec("UPDATE AppState SET schemaVersion = ?", [.int(Int64(Self.schemaVersion))])
         }

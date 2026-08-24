@@ -124,11 +124,45 @@ struct MHSectionHeader: View {
             Spacer()
             if let actionTitle, let action {
                 Button(actionTitle, action: action)
-                    .font(.system(size: 15))
+                    .font(.system(size: 13))
                     .foregroundStyle(Color.mhAccent)
             }
         }
         .padding(.horizontal, 32)
+    }
+}
+
+/// ナビバー用アイコンボタン(歯車等)。バッジで「設定あり」を示せる(画面設計4.1 2026-08-24改訂)
+struct MHToolbarIconButton: ToolbarContent {
+    let systemImage: String
+    var showsBadge: Bool = false
+    var placement: ToolbarItemPlacement = .topBarTrailing
+    let action: () -> Void
+
+    var body: some ToolbarContent {
+        if #available(iOS 26.0, *) {
+            ToolbarItem(placement: placement) { button }
+                .sharedBackgroundVisibility(.hidden)
+        } else {
+            ToolbarItem(placement: placement) { button }
+        }
+    }
+
+    private var button: some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: 17, weight: .medium))
+                .foregroundStyle(Color.mhAccent)
+                .overlay(alignment: .topTrailing) {
+                    if showsBadge {
+                        Image(systemName: "exclamationmark.circle.fill")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(Color.mhDestructive)
+                            .background(Circle().fill(Color.mhBackgroundElevated).padding(1))
+                            .offset(x: 6, y: -5)
+                    }
+                }
+        }
     }
 }
 

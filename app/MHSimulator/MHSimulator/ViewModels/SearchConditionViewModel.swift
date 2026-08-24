@@ -15,6 +15,8 @@ final class SearchConditionViewModel {
     private(set) var conditions: [ConditionRow] = []
     private(set) var selectedWeapon: Weapon?
     private(set) var customWeaponConfig: CustomWeaponConfig?
+    /// 装備の固定・除外設定(検索設定画面。画面設計4.10)
+    private(set) var equipmentFilters = EquipmentFilters()
 
     init(dependencies: AppDependencies) {
         self.dependencies = dependencies
@@ -38,6 +40,10 @@ final class SearchConditionViewModel {
         } else if let weaponId = try? store.loadSelectedWeaponId() {
             selectedWeapon = master.weapons.first { $0.id == weaponId }
         }
+        if let json = (try? store.loadSearchFiltersJSON()) ?? nil,
+           let filters = EquipmentFilters.decode(json) {
+            equipmentFilters = filters
+        }
     }
 
     /// 変更の都度AppStateへ保存(失敗しても操作は継続)
@@ -59,6 +65,14 @@ final class SearchConditionViewModel {
         try? dependencies.userStore.saveSelectedWeaponId(nil)
         try? dependencies.userStore.saveCustomWeaponJSON(config.encoded())
     }
+
+    /// 検索設定画面のOKで反映(永続化込み)
+    func applyEquipmentFilters(_ filters: EquipmentFilters) {
+        equipmentFilters = filters
+        try? dependencies.userStore.saveSearchFiltersJSON(filters.isEmpty ? nil : filters.encoded())
+    }
+
+    var hasEquipmentFilters: Bool { !equipmentFilters.isEmpty }
 
     var canSearch: Bool { !conditions.isEmpty }
     var canReset: Bool { !conditions.isEmpty || selectedWeapon != nil }
@@ -92,7 +106,12 @@ final class SearchConditionViewModel {
     }
 
     func makeCondition() -> SearchCondition {
-        SearchCondition(requiredSkills: Dictionary(
-            uniqueKeysWithValues: conditions.map { ($0.id, $0.level) }))
+        SearchCondition(
+            requiredSkills: Dictionary(
+                uniqueKeysWithValues: conditions.map { ($0.id, $0.level) }),
+            pinnedPieceIds: equipmentFilters.pinnedPieceIdsByKind,
+            excludedPieceIds: Set(equipmentFilters.excludedPieces),
+            pinnedFixedCharmId: equipmentFilters.pinnedCharmId,
+            excludedFixedCharmIds: Set(equipmentFilters.excludedCharmIds))
     }
 }
