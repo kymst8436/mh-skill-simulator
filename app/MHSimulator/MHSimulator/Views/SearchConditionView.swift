@@ -36,26 +36,34 @@ struct SearchConditionView: View {
                 VStack(spacing: 0) {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
-                            MHSectionHeader(title: "武器")
-                                .padding(.top, 20)
-                            // 武器種チップ: タップでその武器種にフィルタした武器選択へ
-                            WeaponKindChips(
-                                selectedKind: selectedWeaponKind,
-                                onTap: { kind in path.append(.weaponSelect(kind)) })
-                                .padding(.top, 7)
-                            weaponStatusRow
-                                .padding(.horizontal, 16)
-                                .padding(.top, 8)
+                            // 入場モーション: 武器(0)→スキル条件(1)→検索ボタン(2)。DESIGN.md §7.5
+                            Group {
+                                MHSectionHeader(title: "武器")
+                                    .padding(.top, 20)
+                                // 武器種チップ: タップでその武器種にフィルタした武器選択へ
+                                WeaponKindChips(
+                                    selectedKind: selectedWeaponKind,
+                                    onTap: { kind in path.append(.weaponSelect(kind)) })
+                                    .padding(.top, 7)
+                                weaponStatusRow
+                                    .padding(.horizontal, 16)
+                                    .padding(.top, 8)
+                            }
+                            .mhEntrance(0)
 
-                            MHSectionHeader(title: "スキル条件")
-                                .padding(.top, 20)
-                            conditionList
-                                .padding(.horizontal, 16)
-                                .padding(.top, 7)
+                            Group {
+                                MHSectionHeader(title: "スキル条件")
+                                    .padding(.top, 20)
+                                conditionList
+                                    .padding(.horizontal, 16)
+                                    .padding(.top, 7)
+                            }
+                            .mhEntrance(1)
                         }
                         .padding(.bottom, 24)
                     }
                     searchButtonBar
+                        .mhEntrance(2)
                 }
             }
             .mhNavigationTitle("検索条件")

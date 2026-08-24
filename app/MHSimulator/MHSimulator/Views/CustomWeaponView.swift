@@ -33,6 +33,7 @@ struct CustomWeaponForm: View {
         VStack(spacing: 0) {
             scrollContent
             applyButtonBar
+                .mhEntrance(4)
         }
     }
 
@@ -53,44 +54,54 @@ struct CustomWeaponForm: View {
     private var scrollContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                MHSectionHeader(title: "スロット")
-                    .padding(.top, 4)
-                MHCard {
-                    VStack(spacing: 0) {
-                        ForEach(0..<3, id: \.self) { index in
-                            slotRow(index)
-                            if index < 2 { separator }
+                // 入場モーション: 武器選択画面のチップ(0)に続きセクション順(DESIGN.md §7.5)
+                Group {
+                    MHSectionHeader(title: "スロット")
+                        .padding(.top, 4)
+                    MHCard {
+                        VStack(spacing: 0) {
+                            ForEach(0..<3, id: \.self) { index in
+                                slotRow(index)
+                                if index < 2 { separator }
+                            }
                         }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 6)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 6)
+                .mhEntrance(1)
 
-                MHSectionHeader(title: "シリーズスキル(1部位分として加算)")
-                    .padding(.top, 20)
-                MHCard {
-                    skillMenuRow(
-                        selection: config.setSkillId,
-                        skills: setSkills) { config.setSkillId = $0 }
+                Group {
+                    MHSectionHeader(title: "シリーズスキル(1部位分として加算)")
+                        .padding(.top, 20)
+                    MHCard {
+                        skillMenuRow(
+                            selection: config.setSkillId,
+                            skills: setSkills) { config.setSkillId = $0 }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 6)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 6)
+                .mhEntrance(2)
 
-                MHSectionHeader(title: "グループスキル(1部位分として加算)")
-                    .padding(.top, 20)
-                MHCard {
-                    skillMenuRow(
-                        selection: config.groupSkillId,
-                        skills: groupSkills) { config.groupSkillId = $0 }
+                Group {
+                    MHSectionHeader(title: "グループスキル(1部位分として加算)")
+                        .padding(.top, 20)
+                    MHCard {
+                        skillMenuRow(
+                            selection: config.groupSkillId,
+                            skills: groupSkills) { config.groupSkillId = $0 }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 6)
+
+                    Text("巨撃アーティア等、データ未収録の武器を仮定するための機能です")
+                        .font(.system(size: 12))
+                        .foregroundStyle(Color.mhTextTertiary)
+                        .padding(.horizontal, 32)
+                        .padding(.top, 10)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 6)
-
-                Text("巨撃アーティア等、データ未収録の武器を仮定するための機能です")
-                    .font(.system(size: 12))
-                    .foregroundStyle(Color.mhTextTertiary)
-                    .padding(.horizontal, 32)
-                    .padding(.top, 10)
+                .mhEntrance(3)
             }
             .padding(.bottom, 24)
         }

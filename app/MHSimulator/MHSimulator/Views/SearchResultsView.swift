@@ -74,6 +74,7 @@ struct SearchResultsView: View {
     // MARK: - 結果あり
 
     private func resultList(_ result: SearchResult) -> some View {
+        // 一覧はコンテナごと1単位で入場(DESIGN.md §7.5)
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .firstTextBaseline) {
@@ -102,6 +103,7 @@ struct SearchResultsView: View {
             }
             .padding(.bottom, 24)
         }
+        .mhEntrance(0)
     }
 
     private func resultCard(_ set: EquipmentSet) -> some View {
@@ -169,35 +171,39 @@ struct SearchResultsView: View {
     private func reverseContent(_ outcome: CharmOracle.Outcome) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                NativeAdSlot()
+                NativeAdSlot()  // 広告は入場モーション対象外(DESIGN.md §7.5)
                     .padding(.top, 12)
                 notFoundHeader
-                switch outcome {
-                case .charms(let suggestions):
-                    MHSectionHeader(title: "この護石があれば組めます")
-                    VStack(spacing: 10) {
-                        ForEach(suggestions, id: \.self) { suggestion in
-                            suggestionCard(suggestion)
+                    .mhEntrance(0)
+                Group {
+                    switch outcome {
+                    case .charms(let suggestions):
+                        MHSectionHeader(title: "この護石があれば組めます")
+                        VStack(spacing: 10) {
+                            ForEach(suggestions, id: \.self) { suggestion in
+                                suggestionCard(suggestion)
+                            }
                         }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 7)
-                case .relaxations(let skillIds):
-                    MHSectionHeader(title: "このスキルを外せば組めます")
-                    VStack(spacing: 10) {
-                        ForEach(skillIds, id: \.self) { skillId in
-                            relaxationRow(skillId)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 7)
+                    case .relaxations(let skillIds):
+                        MHSectionHeader(title: "このスキルを外せば組めます")
+                        VStack(spacing: 10) {
+                            ForEach(skillIds, id: \.self) { skillId in
+                                relaxationRow(skillId)
+                            }
                         }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 7)
+                    case .none:
+                        Text("護石では埋まらない条件です。条件を見直してください")
+                            .font(.system(size: 14))
+                            .foregroundStyle(Color.mhTextSecondary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 32)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 7)
-                case .none:
-                    Text("護石では埋まらない条件です。条件を見直してください")
-                        .font(.system(size: 14))
-                        .foregroundStyle(Color.mhTextSecondary)
-                        .frame(maxWidth: .infinity)
-                        .padding(.horizontal, 32)
                 }
+                .mhEntrance(1)
             }
             .padding(.bottom, 24)
         }

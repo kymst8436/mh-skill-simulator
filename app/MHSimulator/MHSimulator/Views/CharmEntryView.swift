@@ -70,47 +70,57 @@ struct CharmEntryView: View {
     private var form: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                MHSectionHeader(title: "スキル")
-                    .padding(.top, 16)
-                MHCard {
-                    VStack(spacing: 0) {
-                        skillRow(position: 0, label: "スキル1", entry: viewModel.skill1, enabled: true, allowsNone: false)
-                        separator
-                        skillRow(position: 1, label: "スキル2", entry: viewModel.skill2, enabled: viewModel.skill1 != nil, allowsNone: true)
-                        separator
-                        skillRow(position: 2, label: "スキル3", entry: viewModel.skill3, enabled: viewModel.skill2 != nil, allowsNone: true)
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 6)
-                note("抽選規則上あり得る組み合わせだけが選べます")
-
-                MHSectionHeader(title: "スロット・レア度")
-                    .padding(.top, 20)
-                MHCard {
-                    slotSection
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 6)
-                note("スキル構成から自動で候補を絞り込みます")
-
-                MHSectionHeader(title: "メモ")
-                    .padding(.top, 20)
-                MHCard {
-                    TextField("", text: $viewModel.memo,
-                              prompt: Text("メモ(任意)").foregroundStyle(Color.mhTextTertiary))
-                        .font(.system(size: 16))
-                        .foregroundStyle(Color.mhTextPrimary)
-                        .padding(.horizontal, 16)
-                        .frame(minHeight: 48)
-                        .onChange(of: viewModel.memo) { _, newValue in
-                            if newValue.count > 100 {
-                                viewModel.memo = String(newValue.prefix(100))
-                            }
+                // 入場モーション: セクション単位(DESIGN.md §7.5)
+                Group {
+                    MHSectionHeader(title: "スキル")
+                        .padding(.top, 16)
+                    MHCard {
+                        VStack(spacing: 0) {
+                            skillRow(position: 0, label: "スキル1", entry: viewModel.skill1, enabled: true, allowsNone: false)
+                            separator
+                            skillRow(position: 1, label: "スキル2", entry: viewModel.skill2, enabled: viewModel.skill1 != nil, allowsNone: true)
+                            separator
+                            skillRow(position: 2, label: "スキル3", entry: viewModel.skill3, enabled: viewModel.skill2 != nil, allowsNone: true)
                         }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 6)
+                    note("抽選規則上あり得る組み合わせだけが選べます")
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 6)
+                .mhEntrance(0)
+
+                Group {
+                    MHSectionHeader(title: "スロット・レア度")
+                        .padding(.top, 20)
+                    MHCard {
+                        slotSection
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 6)
+                    note("スキル構成から自動で候補を絞り込みます")
+                }
+                .mhEntrance(1)
+
+                Group {
+                    MHSectionHeader(title: "メモ")
+                        .padding(.top, 20)
+                    MHCard {
+                        TextField("", text: $viewModel.memo,
+                                  prompt: Text("メモ(任意)").foregroundStyle(Color.mhTextTertiary))
+                            .font(.system(size: 16))
+                            .foregroundStyle(Color.mhTextPrimary)
+                            .padding(.horizontal, 16)
+                            .frame(minHeight: 48)
+                            .onChange(of: viewModel.memo) { _, newValue in
+                                if newValue.count > 100 {
+                                    viewModel.memo = String(newValue.prefix(100))
+                                }
+                            }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 6)
+                }
+                .mhEntrance(2)
 
                 if let message = viewModel.saveErrorMessage {
                     Text(message)

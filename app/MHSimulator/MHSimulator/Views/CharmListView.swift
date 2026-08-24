@@ -69,8 +69,10 @@ struct CharmListView: View {
                 title: "護石がまだ登録されていません",
                 message: "[+追加] から所持している鑑定護石を登録してください",
                 actionTitle: "追加する") { entryTarget = .new }
+                .mhEntrance(0)
         } else {
             charmList
+                .mhEntrance(0)
         }
     }
 

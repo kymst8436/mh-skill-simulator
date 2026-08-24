@@ -30,6 +30,7 @@ struct WeaponSelectView: View {
                     kindFilter = (kindFilter == kind) ? nil : kind
                 }
                 .padding(.vertical, 12)
+                .mhEntrance(0)
 
                 if isArtianMode {
                     CustomWeaponForm(conditionViewModel: conditionViewModel) {
@@ -39,7 +40,9 @@ struct WeaponSelectView: View {
                     searchField
                         .padding(.horizontal, 16)
                         .padding(.bottom, 10)
+                        .mhEntrance(1)
                     weaponList
+                        .mhEntrance(2)
                 }
             }
         }

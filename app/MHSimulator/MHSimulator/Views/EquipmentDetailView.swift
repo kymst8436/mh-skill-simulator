@@ -18,12 +18,17 @@ struct EquipmentDetailView: View {
             Color.mhBackground.ignoresSafeArea()
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
+                    // 入場モーション: 上から順にセクション単位(DESIGN.md §7.5)
                     summaryCard
                         .padding(.horizontal, 16)
                         .padding(.top, 14)
+                        .mhEntrance(0)
                     section("装備") { equipmentRows }
+                        .mhEntrance(1)
                     section("装飾品") { decorationRows }
+                        .mhEntrance(2)
                     section("発動スキル") { skillRows }
+                        .mhEntrance(3)
                     section("空きスロット") {
                         row {
                             Text("武器 \(MHFormat.slotSymbols(equipment.emptyWeaponSlots)) / 防具 \(MHFormat.slotSymbols(equipment.emptyArmorSlots))")
@@ -32,6 +37,7 @@ struct EquipmentDetailView: View {
                             Spacer()
                         }
                     }
+                    .mhEntrance(4)
                 }
                 .padding(.bottom, 24)
             }

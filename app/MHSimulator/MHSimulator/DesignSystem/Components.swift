@@ -323,6 +323,33 @@ struct WeaponKindChips: View {
     }
 }
 
+/// 画面遷移時の入場モーション(DESIGN.md §7.5。2026-08-24追加)。
+/// 上から順(index順)に右からフェードイン。広告(AdBannerView/NativeAdSlot)には適用しない
+private struct MHEntranceModifier: ViewModifier {
+    let index: Int
+    @State private var shown = false
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(shown ? 1 : 0)
+            .offset(x: shown ? 0 : 24)
+            .onAppear {
+                guard !shown else { return }
+                withAnimation(.easeOut(duration: 0.28).delay(Double(index) * 0.06)) {
+                    shown = true
+                }
+            }
+            .onDisappear { shown = false }
+    }
+}
+
+extension View {
+    /// 入場モーション(セクション単位でindexを振る。0が最上部)
+    func mhEntrance(_ index: Int) -> some View {
+        modifier(MHEntranceModifier(index: index))
+    }
+}
+
 /// −/+の正方ボタン(iOS標準Stepperは使わない。DESIGN.md §5)
 struct MHStepper: View {
     var canDecrement: Bool

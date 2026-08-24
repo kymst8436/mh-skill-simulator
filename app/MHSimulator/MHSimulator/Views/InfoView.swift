@@ -17,19 +17,22 @@ struct InfoView: View {
                 Color.mhBackground.ignoresSafeArea()
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
-                        MHSectionHeader(title: "このアプリについて")
-                            .padding(.top, 20)
-                        MHCard {
-                            VStack(spacing: 0) {
-                                infoRow("バージョン", appVersion)
-                                separator
-                                infoRow("ゲームデータ", String(dependencies.master.sourceCommit.prefix(7)))
-                                separator
-                                infoRow("護石規則データ", dependencies.master.charmRulesVersion)
+                        Group {
+                            MHSectionHeader(title: "このアプリについて")
+                                .padding(.top, 20)
+                            MHCard {
+                                VStack(spacing: 0) {
+                                    infoRow("バージョン", appVersion)
+                                    separator
+                                    infoRow("ゲームデータ", String(dependencies.master.sourceCommit.prefix(7)))
+                                    separator
+                                    infoRow("護石規則データ", dependencies.master.charmRulesVersion)
+                                }
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.top, 7)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 7)
+                        .mhEntrance(0)
 
                         MHCard {
                             NavigationLink {
@@ -50,12 +53,14 @@ struct InfoView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, 20)
+                        .mhEntrance(1)
 
                         Text("本アプリは非公式のファンメイドアプリです")
                             .font(.system(size: 12))
                             .foregroundStyle(Color.mhTextTertiary)
                             .padding(.horizontal, 32)
                             .padding(.top, 10)
+                            .mhEntrance(2)
                     }
                     .padding(.bottom, 24)
                 }
@@ -95,20 +100,25 @@ struct CreditsView: View {
                     ゲームデータ・アイコン等のゲーム由来コンテンツの著作権は株式会社カプコンに帰属します。
                     権利者からの申し立てがあった場合、本アプリは速やかに公開を停止します。
                     """)
+                    .mhEntrance(0)
                     section("データ出典", """
                     データ: mhdb-wilds-data (LartTyler) を加工して使用
                     https://github.com/LartTyler/mhdb-wilds-data
                     """)
+                    .mhEntrance(1)
                     section("鑑定護石の抽選規則データについて", """
                     出現パターンはコミュニティの解析情報をもとに構成しています。実際のゲーム内容と異なる場合があります。
                     """)
+                    .mhEntrance(2)
                     section("アイコン素材", """
                     武器種・防具部位・護石アイコン: MHW_Icons_SVG (OthelloRhin, MIT License) を配色変更のうえ使用
                     https://github.com/OthelloRhin/MHW_Icons_SVG
                     """)
+                    .mhEntrance(3)
                     section("免責", """
                     本アプリの利用により生じたいかなる損害についても、開発者は責任を負いません。
                     """)
+                    .mhEntrance(4)
                 }
                 .padding(16)
             }

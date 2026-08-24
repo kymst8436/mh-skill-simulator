@@ -16,18 +16,23 @@ struct SkillPickerView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-            searchField
-                .padding(.horizontal, 16)
-                .padding(.bottom, 10)
-            if !conditionViewModel.conditions.isEmpty {
-                selectedSummary
+                .mhEntrance(0)
+            Group {
+                searchField
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 10)
+                if !conditionViewModel.conditions.isEmpty {
+                    selectedSummary
+                        .padding(.bottom, 10)
+                }
+                kindFilterBar
+                    .padding(.horizontal, 16)
                     .padding(.bottom, 10)
             }
-            kindFilterBar
-                .padding(.horizontal, 16)
-                .padding(.bottom, 10)
+            .mhEntrance(1)
             Rectangle().fill(Color.mhHairline).frame(height: 1)
             skillList
+                .mhEntrance(2)
         }
         .background(Color.mhBackgroundElevated)
         .presentationDragIndicator(.visible)
