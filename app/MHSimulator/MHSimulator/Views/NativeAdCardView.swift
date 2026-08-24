@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 import GoogleMobileAds
 import Observation
 
@@ -21,6 +22,13 @@ final class NativeAdBox: NSObject, NativeAdLoaderDelegate {
         loader.load(Request())
     }
 
+    /// 定期更新(表示中の広告がある場合のみ。ロード中・失敗時は触らない)
+    func refreshIfDisplayed(adUnitId: String) {
+        guard nativeAd != nil else { return }
+        adLoader = nil
+        loadIfNeeded(adUnitId: adUnitId)
+    }
+
     func adLoader(_ adLoader: AdLoader, didReceive nativeAd: NativeAd) {
         self.nativeAd = nativeAd
     }
@@ -36,6 +44,10 @@ struct NativeAdSlot: View {
     /// 広告ユニット(既定は検索結果一覧用。装備詳細は detailNativeAdUnitId を渡す)
     var adUnitId: String = AdConfig.nativeAdUnitId
     @State private var box = NativeAdBox()
+    @Environment(\.scenePhase) private var scenePhase
+
+    /// 定期更新の間隔(2026-08-24決定。バナー公式レンジ30〜120sより保守的)
+    private static let refreshInterval: TimeInterval = 90
 
     var body: some View {
         // 空表示でもonAppearが発火するよう、常に幅を持つコンテナにする
@@ -51,6 +63,16 @@ struct NativeAdSlot: View {
         }
         .frame(maxWidth: .infinity)
         .onAppear { box.loadIfNeeded(adUnitId: adUnitId) }
+        .task {
+            // 定期更新。taskは非表示化で自動キャンセルされるため、
+            // 「画面に見えている間だけ」が構造的に保証される(無効インプレッション対策)。
+            // アプリが前面でない間(scenePhase != .active)は更新しない
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(Self.refreshInterval))
+                guard !Task.isCancelled, scenePhase == .active else { continue }
+                box.refreshIfDisplayed(adUnitId: adUnitId)
+            }
+        }
     }
 }
 
