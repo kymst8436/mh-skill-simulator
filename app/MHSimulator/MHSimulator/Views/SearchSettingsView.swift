@@ -470,6 +470,10 @@ private struct ArmorPiecePickerView: View {
             }
         } label: {
             HStack(spacing: 10) {
+                // レア度バッジは行の先頭(名称の左)に表示(2026-08-24改訂)
+                if let series = master.armorSeries[piece.seriesId] {
+                    RarityBadge(rarity: series.rarity)
+                }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(piece.name)
                         .font(.system(size: 16))
@@ -483,9 +487,6 @@ private struct ArmorPiecePickerView: View {
                     }
                 }
                 Spacer()
-                if let series = master.armorSeries[piece.seriesId] {
-                    RarityBadge(rarity: series.rarity)
-                }
                 Text(MHFormat.slotSymbols(piece.slots))
                     .font(.system(size: 14))
                     .foregroundStyle(Color.mhTextSecondary)
