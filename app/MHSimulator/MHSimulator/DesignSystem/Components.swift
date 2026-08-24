@@ -327,6 +327,8 @@ struct WeaponKindChips: View {
 struct MHStepper: View {
     var canDecrement: Bool
     var canIncrement: Bool
+    /// ボタンの一辺(既定30。リスト行に収める場合は小さくできる)
+    var size: CGFloat = 30
     let onDecrement: () -> Void
     let onIncrement: () -> Void
 
@@ -342,7 +344,7 @@ struct MHStepper: View {
             Image(systemName: symbol)
                 .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(Color.mhTextSecondary)
-                .frame(width: 30, height: 30)
+                .frame(width: size, height: size)
                 .overlay(
                     RoundedRectangle(cornerRadius: 2)
                         .stroke(Color.mhHairline, lineWidth: 1)

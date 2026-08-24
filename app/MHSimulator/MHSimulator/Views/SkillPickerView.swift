@@ -19,6 +19,10 @@ struct SkillPickerView: View {
             searchField
                 .padding(.horizontal, 16)
                 .padding(.bottom, 10)
+            if !conditionViewModel.conditions.isEmpty {
+                selectedSummary
+                    .padding(.bottom, 10)
+            }
             kindFilterBar
                 .padding(.horizontal, 16)
                 .padding(.bottom, 10)
@@ -31,21 +35,35 @@ struct SkillPickerView: View {
 
     private var header: some View {
         HStack {
-            Button("キャンセル") { dismiss() }
-                .font(.system(size: 16))
-                .foregroundStyle(Color.mhAccent)
-                .frame(width: 84, alignment: .leading)
+            Color.clear.frame(width: 84, height: 1)
             Spacer()
             Text("スキルを選択")
                 .font(MHFont.screenTitle)
                 .tracking(1.5)
                 .foregroundStyle(Color.mhTitleGold)
             Spacer()
-            Color.clear.frame(width: 84, height: 1)
+            // 選択は即時反映(ライブ同期)なのでキャンセルは置かない(2026-08-24改訂)
+            Button("OK") { dismiss() }
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(Color.mhAccent)
+                .frame(width: 84, alignment: .trailing)
         }
         .padding(.horizontal, 16)
         .padding(.top, 18)
         .padding(.bottom, 12)
+    }
+
+    /// 選択中スキルの1行サマリ(見切れは横スクロール。2026-08-24改訂)
+    private var selectedSummary: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            Text(conditionViewModel.conditions
+                .map { "\($0.skill.name)Lv\($0.level)" }
+                .joined(separator: ", "))
+                .font(.system(size: 13))
+                .foregroundStyle(Color.mhAccentSoft)
+                .lineLimit(1)
+                .padding(.horizontal, 16)
+        }
     }
 
     private var searchField: some View {
@@ -110,38 +128,40 @@ struct SkillPickerView: View {
     }
 
     private func skillRow(_ skill: Skill) -> some View {
-        let isSelected = conditionViewModel.selectedSkillIds.contains(skill.id)
+        let selectedRow = conditionViewModel.conditions.first { $0.id == skill.id }
         return Button {
             conditionViewModel.toggleSkill(skill)
         } label: {
             HStack(spacing: 10) {
-                Group {
-                    if isSelected {
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(Color.mhAccent)
-                    } else {
-                        Color.clear
-                    }
-                }
-                .frame(width: 18, height: 18)
+                Text(MHFormat.kindLabel(skill.kind))
+                    .font(.system(size: 11))
+                    .foregroundStyle(Color.mhTextSecondary)
+                    .padding(.vertical, 2)
+                    .frame(width: 52)
+                    .overlay(RoundedRectangle(cornerRadius: 2).stroke(Color.mhHairline, lineWidth: 1))
                 Text(skill.name)
                     .font(.system(size: 16))
                     .foregroundStyle(Color.mhTextPrimary)
                 Spacer()
-                Text(MHFormat.kindLabel(skill.kind))
-                    .font(.system(size: 11))
-                    .foregroundStyle(Color.mhTextSecondary)
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 2)
-                    .overlay(RoundedRectangle(cornerRadius: 2).stroke(Color.mhHairline, lineWidth: 1))
-                Text("最大Lv\(skill.maxLevel)")
-                    .font(.system(size: 13))
-                    .foregroundStyle(Color.mhTextTertiary)
+                if let row = selectedRow {
+                    Text("Lv\(row.level)")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(Color.mhAccent)
+                    MHStepper(
+                        canDecrement: row.level > 1,
+                        canIncrement: row.level < skill.maxLevel,
+                        size: 26,
+                        onDecrement: { conditionViewModel.setLevel(skill.id, row.level - 1) },
+                        onIncrement: { conditionViewModel.setLevel(skill.id, row.level + 1) })
+                } else {
+                    Text("最大Lv\(skill.maxLevel)")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Color.mhTextTertiary)
+                }
             }
             .padding(.horizontal, 16)
             .frame(minHeight: 48)
-            .background(isSelected ? Color.mhAccentWash : .clear)
+            .background(selectedRow != nil ? Color.mhAccentWash : .clear)
         }
     }
 }
