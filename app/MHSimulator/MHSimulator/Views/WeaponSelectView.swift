@@ -10,6 +10,8 @@ struct WeaponSelectView: View {
     @Binding var path: [SearchRoute]
     @State private var searchText = ""
     @State private var kindFilter: String?
+    /// レア度フィルター(nil=すべて。右上のオプションボタンで設定)
+    @State private var rarityFilter: Int?
 
     private var master: MasterDatabase { conditionViewModel.dependencies.master }
 
@@ -48,13 +50,41 @@ struct WeaponSelectView: View {
         }
         .mhNavigationTitle("武器を選択")
         .navigationBarBackButtonHidden(true)
-        .toolbar { MHBackButton { dismiss() } }
+        .toolbar {
+            MHBackButton { dismiss() }
+            rarityFilterButton
+        }
+    }
+
+    /// レア度フィルター(2026-08-24追加)。設定中はラベルにR<n>を表示
+    private var rarityFilterButton: some ToolbarContent {
+        MHToolbarMenu(showsBadge: rarityFilter != nil, label: {
+            HStack(spacing: 4) {
+                Image(systemName: "line.3.horizontal.decrease")
+                    .font(.system(size: 16, weight: .medium))
+                if let rarity = rarityFilter {
+                    Text("R\(rarity)")
+                        .font(.system(size: 14, weight: .semibold))
+                }
+            }
+            .foregroundStyle(Color.mhAccent)
+        }) {
+            Button("すべて") { rarityFilter = nil }
+            ForEach(availableRarities, id: \.self) { rarity in
+                Button("レア\(rarity)") { rarityFilter = rarity }
+            }
+        }
+    }
+
+    private var availableRarities: [Int] {
+        Set(master.weapons.map(\.rarity)).sorted(by: >)
     }
 
     private var visibleWeapons: [Weapon] {
         master.weapons
             .filter { weapon in
                 (kindFilter == nil || weapon.kind == kindFilter)
+                    && (rarityFilter == nil || weapon.rarity == rarityFilter)
                     && weapon.name.mhContains(searchText)
             }
             .sorted {
@@ -136,6 +166,8 @@ struct WeaponSelectView: View {
             dismiss()
         } label: {
             HStack(spacing: 10) {
+                // レア度バッジは一覧行の先頭(画面設計§6 2026-08-24改訂)
+                RarityBadge(rarity: weapon.rarity)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(weapon.name)
                         .font(.system(size: 16))
@@ -148,7 +180,6 @@ struct WeaponSelectView: View {
                     }
                 }
                 Spacer()
-                RarityBadge(rarity: weapon.rarity)
                 Text(MHFormat.slotSymbols(weapon.slots))
                     .font(.system(size: 14))
                     .foregroundStyle(Color.mhTextSecondary)

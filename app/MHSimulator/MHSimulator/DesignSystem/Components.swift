@@ -166,6 +166,39 @@ struct MHToolbarIconButton: ToolbarContent {
     }
 }
 
+/// ナビバー用メニューボタン(レア度フィルター等)。ラベルは呼び出し側が組む
+struct MHToolbarMenu<Label: View, Content: View>: ToolbarContent {
+    var showsBadge: Bool = false
+    var placement: ToolbarItemPlacement = .topBarTrailing
+    @ViewBuilder let label: () -> Label
+    @ViewBuilder let content: () -> Content
+
+    var body: some ToolbarContent {
+        if #available(iOS 26.0, *) {
+            ToolbarItem(placement: placement) { menu }
+                .sharedBackgroundVisibility(.hidden)
+        } else {
+            ToolbarItem(placement: placement) { menu }
+        }
+    }
+
+    private var menu: some View {
+        Menu {
+            content()
+        } label: {
+            label()
+                .overlay(alignment: .topTrailing) {
+                    if showsBadge {
+                        Circle()
+                            .fill(Color.mhAccent)
+                            .frame(width: 6, height: 6)
+                            .offset(x: 5, y: -3)
+                    }
+                }
+        }
+    }
+}
+
 /// チップ等を折り返して並べる簡易フローレイアウト(SE幅での横はみ出し防止)
 struct MHFlowLayout: Layout {
     var spacing: CGFloat = 6
