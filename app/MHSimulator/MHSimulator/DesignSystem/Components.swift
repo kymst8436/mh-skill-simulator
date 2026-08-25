@@ -166,6 +166,42 @@ struct MHToolbarIconButton: ToolbarContent {
     }
 }
 
+/// 下線式タブ(コンテンツ切替用。DESIGN.md §5 2026-08-26追加)。
+/// 選択中はmhAccentの下線+セミボールド。下線は切替時にスライドする。
+/// フィルタ用セグメント(SkillPicker等の台座式)とは役割で使い分ける
+struct MHUnderlineTabs<Tab: Hashable>: View {
+    let tabs: [(tab: Tab, label: String)]
+    @Binding var selection: Tab
+    @Namespace private var underlineNamespace
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                ForEach(tabs, id: \.tab) { entry in
+                    let isSelected = entry.tab == selection
+                    Button {
+                        withAnimation(.easeOut(duration: 0.2)) { selection = entry.tab }
+                    } label: {
+                        Text(entry.label)
+                            .font(.system(size: 15, weight: isSelected ? .semibold : .regular))
+                            .foregroundStyle(isSelected ? Color.mhAccent : Color.mhTextSecondary)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .overlay(alignment: .bottom) {
+                                if isSelected {
+                                    Rectangle()
+                                        .fill(Color.mhAccent)
+                                        .frame(height: 2)
+                                        .matchedGeometryEffect(id: "underline", in: underlineNamespace)
+                                }
+                            }
+                    }
+                }
+            }
+            Rectangle().fill(Color.mhHairlineFaint).frame(height: 1)
+        }
+    }
+}
+
 /// ナビバー用メニューボタン(レア度フィルター等)。ラベルは呼び出し側が組む
 struct MHToolbarMenu<Label: View, Content: View>: ToolbarContent {
     var showsBadge: Bool = false

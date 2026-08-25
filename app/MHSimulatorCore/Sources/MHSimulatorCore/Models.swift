@@ -105,6 +105,37 @@ public struct Weapon: Sendable {
 
 // MARK: - 検索条件と結果
 
+/// ウィッシュリスト項目(欲しい鑑定護石の要求。画面設計4.6 2026-08-25追加)
+public struct WishlistItem: Identifiable, Sendable {
+    public let id: UUID
+    /// 要求スキル(順序保持・最大3件)
+    public var skills: [CharmRules.GroupEntry]
+    public var weaponSlots: [Int]
+    public var armorSlots: [Int]
+    public var createdAt: Date
+
+    public init(
+        id: UUID = UUID(),
+        skills: [CharmRules.GroupEntry],
+        weaponSlots: [Int] = [],
+        armorSlots: [Int] = [],
+        createdAt: Date = Date()
+    ) {
+        self.id = id
+        self.skills = skills
+        self.weaponSlots = weaponSlots
+        self.armorSlots = armorSlots
+        self.createdAt = createdAt
+    }
+
+    public var requirement: CharmRules.Requirement {
+        CharmRules.Requirement(
+            skills: Dictionary(skills.map { ($0.skillId, $0.level) }) { max($0, $1) },
+            weaponSlots: weaponSlots,
+            armorSlots: armorSlots)
+    }
+}
+
 public struct SearchCondition: Sendable {
     /// スキルID → 目標レベル。Dictionaryのため同一スキルの重複指定は構造的に起きない(仕様3.1)
     public let requiredSkills: [SkillId: Int]

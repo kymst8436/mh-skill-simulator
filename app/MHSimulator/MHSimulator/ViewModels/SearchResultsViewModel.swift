@@ -39,13 +39,38 @@ final class SearchResultsViewModel {
 
     /// 逆引き要求の表示文字列(例「攻撃Lv3 + 防具スロ①」)
     func requirementText(_ requirement: CharmRules.Requirement) -> String {
-        var parts = requirement.skills
-            .map { (skillName($0.key), $0.value) }
-            .sorted { $0.0 < $1.0 }
-            .map { MHFormat.skillLine($0.0, $0.1) }
-        parts += requirement.armorSlots.sorted(by: >).map { "防具スロ" + MHFormat.slotSymbols([$0]) }
-        parts += requirement.weaponSlots.sorted(by: >).map { "武器スロ" + MHFormat.slotSymbols([$0]) }
-        return parts.joined(separator: " + ")
+        MHFormat.requirementText(requirement, master: dependencies.master)
+    }
+
+    // MARK: - ウィッシュリスト(逆引き候補のワンタップ登録。2026-08-25追加)
+
+    /// 登録済み要求(ボタンの状態表示用。画面表示時に読み込む)
+    private(set) var wishlistRequirements: Set<CharmRules.Requirement> = []
+
+    func loadWishlistRequirements() {
+        let items = (try? dependencies.userStore.loadWishlist()) ?? []
+        wishlistRequirements = Set(items.map(\.requirement))
+    }
+
+    func isInWishlist(_ requirement: CharmRules.Requirement) -> Bool {
+        wishlistRequirements.contains(requirement)
+    }
+
+    /// 逆引き候補をウィッシュリストへ(重複登録は無視)
+    func addToWishlist(_ requirement: CharmRules.Requirement) {
+        guard !wishlistRequirements.contains(requirement) else { return }
+        let item = WishlistItem(
+            skills: requirement.skills
+                .sorted { $0.value != $1.value ? $0.value > $1.value : $0.key < $1.key }
+                .map { CharmRules.GroupEntry(skillId: $0.key, level: $0.value) },
+            weaponSlots: requirement.weaponSlots,
+            armorSlots: requirement.armorSlots)
+        do {
+            try dependencies.userStore.insertWishlistItem(item)
+            wishlistRequirements.insert(requirement)
+        } catch {
+            // 保存失敗は状態を変えない(ボタンは押せるまま)
+        }
     }
 
     func start() {

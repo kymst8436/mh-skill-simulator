@@ -95,6 +95,7 @@ SwiftUIでは `Color` 拡張としてコード定義する(単一テーマのた
 | `MHBackButton` | カスタム戻るボタン(無地シェブロン`mhAccent`)。標準戻るは使わない。スワイプバックは維持する |
 | `MHTabBar` | 自作タブバー。全幅・上ヘアライン・アイコン24pt+ラベル10pt。選択中 `mhAccent` |
 | `MHStepper` | −/+の正方ボタン(30pt・`mhHairline`枠)。iOS標準Stepperは使わない |
+| `MHUnderlineTabs` | 下線式タブ(コンテンツ切替用)。選択中 `mhAccent` 下線2pt+セミボールド、非選択 `mhTextSecondary`。全幅・下に`mhHairlineFaint`。切替時に下線がスライド。フィルタ用の台座式セグメントとは役割で使い分ける(2026-08-26追加) |
 
 選択状態の行: 背景 `mhAccentWash` + チェックマーク `mhAccent`。
 

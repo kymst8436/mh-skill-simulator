@@ -26,7 +26,10 @@ struct SearchResultsView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar { MHBackButton { path.removeLast() } }
         .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.searchBannerUnitId) }
-        .task { viewModel.start() }
+        .task {
+            viewModel.start()
+            viewModel.loadWishlistRequirements()
+        }
         .onDisappear { viewModel.cancel() }
         .sheet(item: $entryTarget) { target in
             // 逆引き候補→護石入力プリセット(画面設計4.7)。保存後は自動で再検索
@@ -215,6 +218,25 @@ struct SearchResultsView: View {
         } label: {
             suggestionCardBody(suggestion)
         }
+        // ウィッシュリストへワンタップ登録(画面設計4.4 2026-08-25追加)
+        .overlay(alignment: .topTrailing) {
+            wishlistButton(suggestion.requirement)
+        }
+    }
+
+    /// 逆引き候補カード右上のウィッシュリスト登録ボタン。登録済みは塗りつぶし表示
+    private func wishlistButton(_ requirement: CharmRules.Requirement) -> some View {
+        let isAdded = viewModel.isInWishlist(requirement)
+        return Button {
+            viewModel.addToWishlist(requirement)
+        } label: {
+            Image(systemName: isAdded ? "bookmark.fill" : "bookmark")
+                .font(.system(size: 15))
+                .foregroundStyle(isAdded ? Color.mhAccent : Color.mhTextSecondary)
+                .frame(width: 40, height: 40)
+        }
+        .disabled(isAdded)
+        .accessibilityLabel(isAdded ? "ウィッシュリスト登録済み" : "ウィッシュリストに追加")
     }
 
     private func suggestionCardBody(_ suggestion: CharmOracle.CharmSuggestion) -> some View {

@@ -3,10 +3,20 @@ import MHSimulatorCore
 
 /// 護石タブ: 所持護石の一覧・追加・編集・削除(画面設計4.6)
 struct CharmListView: View {
+    /// 護石タブの表示切替(2026-08-25追加)
+    enum Tab: String, CaseIterable {
+        case owned = "所持護石"
+        case wishlist = "ウィッシュリスト"
+    }
+
     let dependencies: AppDependencies
     @State private var viewModel: CharmListViewModel
     @State private var entryTarget: CharmEntryTarget?
     @State private var pendingDelete: OwnedCharm?
+    @State private var tab: Tab = .owned
+    @State private var showsWishlistEntry = false
+    /// ウィッシュリスト行タップ→護石入力プリセット(保存でリストから消す)
+    @State private var wishlistEntryTarget: WishlistItem?
 
     init(dependencies: AppDependencies) {
         self.dependencies = dependencies
@@ -17,16 +27,40 @@ struct CharmListView: View {
         NavigationStack {
             ZStack {
                 Color.mhBackground.ignoresSafeArea()
-                content
+                VStack(spacing: 0) {
+                    tabBar
+                        .mhEntrance(0)
+                    switch tab {
+                    case .owned: content
+                    case .wishlist: wishlistContent
+                    }
+                }
             }
             .mhNavigationTitle("護石")
             .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.charmBannerUnitId) }
             .toolbar {
-                MHToolbarButton(title: "+ 追加") { entryTarget = .new }
+                MHToolbarButton(title: "+ 追加") {
+                    switch tab {
+                    case .owned: entryTarget = .new
+                    case .wishlist: showsWishlistEntry = true
+                    }
+                }
             }
             .task { viewModel.load() }
             .sheet(item: $entryTarget) { target in
                 CharmEntryView(dependencies: dependencies, target: target) {
+                    viewModel.load()
+                }
+            }
+            .sheet(isPresented: $showsWishlistEntry) {
+                WishlistEntryView(dependencies: dependencies) {
+                    viewModel.load()
+                }
+            }
+            .sheet(item: $wishlistEntryTarget) { item in
+                // 入手した護石を登録→ウィッシュリストから自動で外す
+                CharmEntryView(dependencies: dependencies, target: .preset(item.requirement)) {
+                    viewModel.deleteWishlistItem(item)
                     viewModel.load()
                 }
             }
@@ -54,6 +88,73 @@ struct CharmListView: View {
         }
     }
 
+    /// 所持/ウィッシュリストの切替(下線式タブ。2026-08-26改訂)
+    private var tabBar: some View {
+        MHUnderlineTabs(
+            tabs: Tab.allCases.map { (tab: $0, label: $0.rawValue) },
+            selection: $tab)
+    }
+
+    // MARK: - ウィッシュリスト(2026-08-25追加)
+
+    @ViewBuilder
+    private var wishlistContent: some View {
+        if viewModel.wishlist.isEmpty {
+            MHEmptyState(
+                systemImage: "sparkles",
+                title: "ウィッシュリストは空です",
+                message: "[+追加] で欲しい護石を登録できます。検索結果の護石候補からもワンタップで追加できます",
+                actionTitle: "追加する") { showsWishlistEntry = true }
+                .mhEntrance(1)
+        } else {
+            ScrollView {
+                LazyVStack(spacing: 10) {
+                    ForEach(viewModel.wishlist) { item in
+                        wishlistRow(item)
+                    }
+                    Text("入手したらタップで所持護石として登録できます")
+                        .font(.system(size: 12))
+                        .foregroundStyle(Color.mhTextTertiary)
+                        .padding(.top, 4)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+            }
+            .mhEntrance(1)
+        }
+    }
+
+    private func wishlistRow(_ item: WishlistItem) -> some View {
+        Button {
+            wishlistEntryTarget = item
+        } label: {
+            MHCard {
+                HStack(spacing: 10) {
+                    Image(MHFormat.charmIconName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 22, height: 22)
+                    Text(viewModel.requirementText(item))
+                        .font(.system(size: 15))
+                        .foregroundStyle(Color.mhTextPrimary)
+                        .multilineTextAlignment(.leading)
+                    Spacer()
+                    if let rarity = viewModel.minimumRarity(item) {
+                        RarityBadge(rarity: rarity)
+                    }
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Color.mhTextTertiary)
+                }
+                .padding(.horizontal, 14)
+                .frame(minHeight: 48)
+            }
+        }
+        .contextMenu {
+            Button("削除", role: .destructive) { viewModel.deleteWishlistItem(item) }
+        }
+    }
+
     @ViewBuilder
     private var content: some View {
         if viewModel.isLoading {
@@ -69,10 +170,10 @@ struct CharmListView: View {
                 title: "護石がまだ登録されていません",
                 message: "[+追加] から所持している鑑定護石を登録してください",
                 actionTitle: "追加する") { entryTarget = .new }
-                .mhEntrance(0)
+                .mhEntrance(1)
         } else {
             charmList
-                .mhEntrance(0)
+                .mhEntrance(1)
         }
     }
 

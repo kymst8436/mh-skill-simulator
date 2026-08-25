@@ -123,4 +123,28 @@ final class UserStoreTests: XCTestCase {
         XCTAssertLessThan(elapsed, 1.0)
         print("護石1,000件読込: \(String(format: "%.3f", elapsed))s")
     }
+    func testWishlistRoundTrip() throws {
+        let store = try UserStore(path: dbPath)
+        let item = WishlistItem(
+            skills: [
+                CharmRules.GroupEntry(skillId: 100, level: 3),
+                CharmRules.GroupEntry(skillId: 200, level: 1),
+            ],
+            weaponSlots: [2],
+            armorSlots: [3, 1])
+        try store.insertWishlistItem(item)
+
+        let loaded = try store.loadWishlist()
+        XCTAssertEqual(loaded.count, 1)
+        XCTAssertEqual(loaded[0].id, item.id)
+        XCTAssertEqual(loaded[0].skills.map(\.skillId), [100, 200])
+        XCTAssertEqual(loaded[0].skills.map(\.level), [3, 1])
+        XCTAssertEqual(loaded[0].weaponSlots, [2])
+        XCTAssertEqual(loaded[0].armorSlots, [3, 1])
+        XCTAssertEqual(loaded[0].requirement.skills, [100: 3, 200: 1])
+
+        try store.deleteWishlistItem(id: item.id)
+        XCTAssertTrue(try store.loadWishlist().isEmpty)
+    }
+
 }
