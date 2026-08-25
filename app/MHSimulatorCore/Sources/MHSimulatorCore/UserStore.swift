@@ -57,7 +57,7 @@ public struct OwnedCharm: Identifiable, Equatable, Sendable {
 /// 起動時にintegrity_checkを行い、破損時は退避→再作成→通知(didRecoverFromCorruption)。
 /// SQLiteアクセスは素のC API(Q-5改訂 2026-08-24: GRDB仮決定を撤回し依存ゼロを維持)。
 public final class UserStore {
-    public static let schemaVersion = 3  // v3: AppState.searchFilters追加(2026-08-24)
+    public static let schemaVersion = 4  // v4: WishlistItemテーブル追加(2026-08-25)
 
     public enum StoreError: Error {
         case cannotOpen(String)
@@ -173,6 +173,59 @@ public final class UserStore {
                 .int(Int64(entry.skillId)),
                 .int(Int64(entry.level)),
             ])
+        }
+    }
+
+    // MARK: - ウィッシュリスト(画面設計4.6 2026-08-25追加)
+
+    /// 登録日時降順
+    public func loadWishlist() throws -> [WishlistItem] {
+        var items: [WishlistItem] = []
+        try query("SELECT id, skills, weaponSlots, armorSlots, createdAt FROM WishlistItem ORDER BY createdAt DESC") { stmt in
+            let idText = String(cString: sqlite3_column_text(stmt, 0))
+            let skillsJson = String(cString: sqlite3_column_text(stmt, 1))
+            items.append(WishlistItem(
+                id: UUID(uuidString: idText) ?? UUID(),
+                skills: Self.decodeWishlistSkills(skillsJson),
+                weaponSlots: Self.decodeSlots(String(cString: sqlite3_column_text(stmt, 2))),
+                armorSlots: Self.decodeSlots(String(cString: sqlite3_column_text(stmt, 3))),
+                createdAt: Date(timeIntervalSince1970: sqlite3_column_double(stmt, 4))))
+        }
+        return items
+    }
+
+    public func insertWishlistItem(_ item: WishlistItem) throws {
+        try transaction {
+            try exec(
+                "INSERT INTO WishlistItem (id, skills, weaponSlots, armorSlots, createdAt) VALUES (?,?,?,?,?)",
+                [
+                    .text(item.id.uuidString),
+                    .text(Self.encodeWishlistSkills(item.skills)),
+                    .text(Self.encodeSlots(item.weaponSlots)),
+                    .text(Self.encodeSlots(item.armorSlots)),
+                    .real(item.createdAt.timeIntervalSince1970),
+                ])
+        }
+    }
+
+    public func deleteWishlistItem(id: UUID) throws {
+        try transaction {
+            try exec("DELETE FROM WishlistItem WHERE id = ?", [.text(id.uuidString)])
+        }
+    }
+
+    private static func encodeWishlistSkills(_ skills: [CharmRules.GroupEntry]) -> String {
+        let rows = skills.map { ["skillId": Int64($0.skillId), "level": Int64($0.level)] }
+        guard let data = try? JSONEncoder().encode(rows) else { return "[]" }
+        return String(decoding: data, as: UTF8.self)
+    }
+
+    private static func decodeWishlistSkills(_ json: String) -> [CharmRules.GroupEntry] {
+        guard let data = json.data(using: .utf8),
+              let rows = try? JSONDecoder().decode([[String: Int64]].self, from: data) else { return [] }
+        return rows.compactMap { row in
+            guard let skillId = row["skillId"], let level = row["level"] else { return nil }
+            return CharmRules.GroupEntry(skillId: SkillId(truncatingIfNeeded: skillId), level: Int(level))
         }
     }
 
@@ -320,6 +373,15 @@ public final class UserStore {
             )
             """)
         try exec("""
+            CREATE TABLE IF NOT EXISTS WishlistItem (
+              id TEXT PRIMARY KEY,
+              skills TEXT NOT NULL,
+              weaponSlots TEXT NOT NULL,
+              armorSlots TEXT NOT NULL,
+              createdAt REAL NOT NULL
+            )
+            """)
+        try exec("""
             CREATE TABLE IF NOT EXISTS AppState (
               id INTEGER PRIMARY KEY CHECK (id = 1),
               schemaVersion INTEGER NOT NULL,
@@ -350,6 +412,7 @@ public final class UserStore {
                 // v2→v3: 固定・除外設定カラム追加
                 try? exec("ALTER TABLE AppState ADD COLUMN searchFilters TEXT")
             }
+            // v3→v4: WishlistItemテーブルはcreateSchemaのCREATE IF NOT EXISTSで作成される
             try exec("UPDATE AppState SET schemaVersion = ?", [.int(Int64(Self.schemaVersion))])
         }
     }

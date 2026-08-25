@@ -98,6 +98,17 @@ nonisolated enum MHFormat {
     /// 護石アイコンのアセット名
     static let charmIconName = "icon_charm"
 
+    /// 護石要求の表示文字列(例「攻撃Lv3 + 防具スロ①」。逆引き候補・ウィッシュリスト共通)
+    static func requirementText(_ requirement: CharmRules.Requirement, master: MasterDatabase) -> String {
+        var parts = requirement.skills
+            .map { (master.skills[$0.key]?.name ?? "?", $0.value) }
+            .sorted { $0.0 < $1.0 }
+            .map { skillLine($0.0, $0.1) }
+        parts += requirement.armorSlots.sorted(by: >).map { "防具スロ" + slotSymbols([$0]) }
+        parts += requirement.weaponSlots.sorted(by: >).map { "武器スロ" + slotSymbols([$0]) }
+        return parts.joined(separator: " + ")
+    }
+
     /// スキル分類ラベル
     static func kindLabel(_ kind: SkillKind) -> String {
         switch kind {
