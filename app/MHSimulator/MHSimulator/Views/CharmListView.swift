@@ -30,10 +30,14 @@ struct CharmListView: View {
                 VStack(spacing: 0) {
                     tabBar
                         .mhEntrance(0)
-                    switch tab {
-                    case .owned: content
-                    case .wishlist: wishlistContent
+                    // 空状態・読込中でもタブ位置が動かないよう、コンテンツ側が残り領域を占有する
+                    Group {
+                        switch tab {
+                        case .owned: content
+                        case .wishlist: wishlistContent
+                        }
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
             .mhNavigationTitle("護石")
