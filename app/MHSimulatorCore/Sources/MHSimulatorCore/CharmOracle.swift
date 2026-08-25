@@ -94,8 +94,9 @@ public final class CharmOracle {
 
         func timedOut() -> Bool {
             nodeCount += 1
-            if nodeCount % 1024 == 0, let deadline = options.deadline, Date() > deadline {
-                return true
+            if nodeCount % 1024 == 0 {
+                if Task.isCancelled { return true }
+                if let deadline = options.deadline, Date() > deadline { return true }
             }
             return false
         }
@@ -156,6 +157,7 @@ public final class CharmOracle {
         let residual = DecorationAssigner.minimizeResidual(
             deficits: deficits, slots: slots, catalog: prepared.catalog,
             shouldAbort: {
+                if Task.isCancelled { return true }
                 guard let deadline = options.deadline else { return false }
                 return Date() > deadline
             })

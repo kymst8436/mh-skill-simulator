@@ -41,14 +41,17 @@ public final class SearchEngine {
 
         func timedOut() -> Bool {
             nodeCount += 1
-            if nodeCount % 1024 == 0, let deadline = options.deadline, Date() > deadline {
-                return true
+            if nodeCount % 1024 == 0 {
+                // タスクキャンセル(画面離脱等)も打ち切り扱い(2026-08-25)
+                if Task.isCancelled { return true }
+                if let deadline = options.deadline, Date() > deadline { return true }
             }
             return false
         }
 
         // 装飾品割り当て(葉の内部)の中断判定。nodeCountに依らず即時で判定する
         let deadlineExceeded: () -> Bool = {
+            if Task.isCancelled { return true }
             guard let deadline = options.deadline else { return false }
             return Date() > deadline
         }

@@ -19,6 +19,8 @@ final class SearchResultsViewModel {
     private(set) var condition: SearchCondition
     private let weapon: Weapon?
     private var task: Task<Void, Never>?
+    /// detached探索タスクの中断用(detachedは親のキャンセルを継承しないため明示的に伝える)
+    private var cancelDetachedWork: [() -> Void] = []
 
     init(dependencies: AppDependencies, conditionViewModel: SearchConditionViewModel) {
         self.dependencies = dependencies
@@ -52,7 +54,7 @@ final class SearchResultsViewModel {
     }
 
     func retry() {
-        task?.cancel()
+        cancel()
         task = nil
         phase = .searching
         runSearch()
@@ -60,6 +62,8 @@ final class SearchResultsViewModel {
 
     func cancel() {
         task?.cancel()
+        cancelDetachedWork.forEach { $0() }
+        cancelDetachedWork.removeAll()
     }
 
     /// 代替候補タップ: 条件からスキルを外して再検索(条件画面側にも反映)
@@ -83,18 +87,22 @@ final class SearchResultsViewModel {
         task = Task {
             do {
                 let options = SearchEngine.Options(maxResults: 100, deadline: Date().addingTimeInterval(5))
-                let result = try await Task.detached(priority: .userInitiated) {
+                let searchWork = Task.detached(priority: .userInitiated) {
                     try engine.search(condition: condition, weapon: weapon, ownedCharms: ownedCharms, options: options)
-                }.value
+                }
+                cancelDetachedWork.append { searchWork.cancel() }
+                let result = try await searchWork.value
                 guard !Task.isCancelled else { return }
                 if result.sets.isEmpty {
                     phase = .reverseSearching
                     let outcomeOptions = CharmOracle.Options(deadline: Date().addingTimeInterval(4))
-                    let outcome = try await Task.detached(priority: .userInitiated) {
+                    let oracleWork = Task.detached(priority: .userInitiated) {
                         try oracle.reverseLookup(
                             condition: condition, weapon: weapon,
                             ownedCharms: ownedCharms, options: outcomeOptions)
-                    }.value
+                    }
+                    cancelDetachedWork.append { oracleWork.cancel() }
+                    let outcome = try await oracleWork.value
                     guard !Task.isCancelled else { return }
                     phase = .reverse(outcome)
                 } else {
