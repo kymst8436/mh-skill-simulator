@@ -29,8 +29,6 @@ struct CharmListView: View {
                 Color.mhBackground.ignoresSafeArea()
                 VStack(spacing: 0) {
                     tabBar
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
                         .mhEntrance(0)
                     switch tab {
                     case .owned: content
@@ -90,26 +88,11 @@ struct CharmListView: View {
         }
     }
 
-    /// 所持/ウィッシュリストの切替(SkillPicker分類フィルタと同型のセグメント)
+    /// 所持/ウィッシュリストの切替(下線式タブ。2026-08-26改訂)
     private var tabBar: some View {
-        HStack(spacing: 2) {
-            ForEach(Tab.allCases, id: \.self) { candidate in
-                let isSelected = tab == candidate
-                Button {
-                    tab = candidate
-                } label: {
-                    Text(candidate.rawValue)
-                        .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
-                        .foregroundStyle(isSelected ? Color.mhTextPrimary : Color.mhTextSecondary)
-                        .frame(maxWidth: .infinity, minHeight: 30)
-                        .background(isSelected ? Color.mhHairline : .clear)
-                        .clipShape(RoundedRectangle(cornerRadius: 2))
-                }
-            }
-        }
-        .padding(2)
-        .background(Color.mhSurfaceSubtle)
-        .clipShape(RoundedRectangle(cornerRadius: 2))
+        MHUnderlineTabs(
+            tabs: Tab.allCases.map { (tab: $0, label: $0.rawValue) },
+            selection: $tab)
     }
 
     // MARK: - ウィッシュリスト(2026-08-25追加)
