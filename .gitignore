@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# 上流ゲームデータのスナップショット(コミットしない。SOURCE.mdのcommit hashで再現可能)
+# 権利面の配慮: ゲーム由来データの著作権はカプコンにあるためリポジトリに含めない
+data/source/merged/
+
+# 生成物(tools/convert・tools/enumerate-charmsで再生成可能)
+data/generated/
+
+# Swift Package Manager
+.build/
+
+# Design canvas seeded output (re-generatable from design/mockups/*.dc.html)
+design/mockups/mh-simulator-screens.html
+
+# Xcode
+app/MHSimulator/build/
+app/MHSimulatorCore/build/
+xcuserdata/
+DerivedData/

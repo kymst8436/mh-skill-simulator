@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #D9A036; } a:hover { color: #E8B95A; }
+    .mincho { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
+    .sep { height: 1px; background: #2A2620; margin-left: 16px; }
+    .seclabel { font-size: 12px; letter-spacing: 1px; color: #6F675A; padding: 0 32px; margin: 16px 0 6px 0; }
+    .grp { background: #1E1B14; border: 1px solid #3A342A; border-radius: 2px; margin: 0 16px; }
+    .drow { display: flex; align-items: center; min-height: 40px; padding: 0 16px; gap: 10px; }
+    .dlabel { width: 44px; font-size: 13px; color: #6F675A; }
+    .dname { flex-grow: 1; font-size: 15px; color: #EDE6D4; }
+    .dslot { font-size: 14px; color: #A89F87; }
+    .star { font-size: 11px; color: #E3C87F; background: rgba(217, 160, 54, 0.10); border-radius: 2px; padding: 2px 6px; }
+  </style>
+</helmet>
+<div style="width: 390px; height: 844px; background: #14120D; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="background: #191712; border-bottom: 1px solid #3A342A; padding: 14px 16px 10px 16px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="width: 90px; display: flex; align-items: center; gap: 4px;">
+      <svg width="10" height="17" viewBox="0 0 10 17" fill="none"><path d="M9 1L2 8.5 9 16" stroke="#D9A036" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <div style="font-size: 16px; color: #D9A036;">検索結果</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 7px;">
+      <svg width="8" height="8" viewBox="0 0 10 10"><rect x="2" y="2" width="6" height="6" transform="rotate(45 5 5)" fill="#D9A036"></rect></svg>
+      <div class="mincho" style="font-size: 17px; font-weight: 600; color: #E8D9A8; letter-spacing: 1.5px;">装備詳細</div>
+    </div>
+    <div style="width: 90px;"></div>
+  </div>
+
+  <div style="flex-grow: 1; overflow: hidden; padding-bottom: 8px;">
+    <div class="grp" style="margin: 14px 16px 0 16px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: baseline; gap: 7px;">
+        <div style="font-size: 12px; color: #6F675A;">防御力</div>
+        <div class="mincho" style="font-size: 26px; font-weight: 700; color: #EDE6D4;">512</div>
+      </div>
+      <div style="display: flex; gap: 9px; font-size: 14px;">
+        <div style="color: #C25B4A;">火 -2</div>
+        <div style="color: #5B8FC2;">水 1</div>
+        <div style="color: #C9A227;">雷 0</div>
+        <div style="color: #5FA8C2;">氷 1</div>
+        <div style="color: #9678C8;">龍 3</div>
+      </div>
+    </div>
+
+    <div class="seclabel">装備</div>
+    <div class="grp">
+      <div class="drow"><div class="dlabel">武器</div><div class="dname">暁光の断剣</div><div class="dslot">③①</div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dlabel">頭</div><div class="dname">ゴアヘルムβ</div><div class="dslot">①</div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dlabel">胴</div><div class="dname">ゴアメイルβ</div><div class="dslot">③</div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dlabel">腕</div><div class="dname">アークアームβ</div><div class="dslot">②</div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dlabel">腰</div><div class="dname">ゴアコイルβ</div><div class="dslot">①</div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dlabel">脚</div><div class="dname">アークグリーヴβ</div><div class="dslot">②</div></div>
+      <div class="sep"></div>
+      <div class="drow">
+        <div class="dlabel">護石</div>
+        <div class="dname">攻撃Lv2・見切りLv1(所持護石)</div>
+        <div style="font-size: 11px; font-weight: 700; color: #14120D; background: #C46A5A; border-radius: 2px; padding: 1px 6px;">R7</div>
+        <div class="dslot">①</div>
+      </div>
+    </div>
+
+    <div class="seclabel">装飾品</div>
+    <div class="grp">
+      <div class="drow"><div class="dname">痛撃珠【3】</div><div class="dslot">→ 胴 スロ③</div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dname">挑戦珠【2】</div><div class="dslot">→ 腕 スロ②</div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dname">達人珠【1】</div><div class="dslot">→ 脚 スロ②</div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dname">体力珠【1】</div><div class="dslot">→ 頭 スロ①</div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dname">攻撃珠【1】</div><div class="dslot">→ 武器 スロ①</div></div>
+    </div>
+
+    <div class="seclabel">発動スキル</div>
+    <div class="grp">
+      <div class="drow"><div class="dname">攻撃Lv3</div><div class="star">★条件</div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dname">見切りLv2</div><div class="star">★条件</div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dname">弱点特効Lv3</div><div class="star">★条件</div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dname">挑戦者Lv2</div><div class="dslot"></div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dname">体力増強Lv1</div><div class="dslot"></div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dname">黒蝕竜の力Lv1</div><div class="dslot">シリーズ</div></div>
+      <div class="sep"></div>
+      <div class="drow"><div class="dname">ひるみ軽減Lv1</div><div class="dslot"></div></div>
+    </div>
+
+    <div class="seclabel">空きスロット</div>
+    <div class="grp">
+      <div class="drow"><div class="dname">武器 ③ / 防具 ①①</div></div>
+    </div>
+  </div>
+
+  <div style="background: #191712; border-top: 1px solid #3A342A; display: flex; padding: 6px 0 14px 0;">
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="#D9A036" stroke-width="2"></circle><path d="M15.5 15.5L21 21" stroke="#D9A036" stroke-width="2" stroke-linecap="round"></path></svg>
+      <div style="font-size: 10px; color: #D9A036;">検索</div>
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="14" r="6" stroke="#6F675A" stroke-width="2"></circle><path d="M9.5 5.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.7" stroke="#6F675A" stroke-width="2" stroke-linecap="round"></path></svg>
+      <div style="font-size: 10px; color: #6F675A;">護石</div>
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#6F675A" stroke-width="2"></circle><path d="M12 11v5" stroke="#6F675A" stroke-width="2" stroke-linecap="round"></path><circle cx="12" cy="8" r="1.2" fill="#6F675A"></circle></svg>
+      <div style="font-size: 10px; color: #6F675A;">情報</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

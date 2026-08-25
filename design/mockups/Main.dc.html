@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #D9A036; } a:hover { color: #E8B95A; }
+    .mincho { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
+    .sep { height: 1px; background: #2A2620; margin-left: 16px; }
+    .seclabel { font-size: 12px; letter-spacing: 1px; color: #6F675A; padding: 0 32px; margin: 20px 0 7px 0; }
+    .card { background: #1E1B14; border: 1px solid #3A342A; border-radius: 2px; }
+  </style>
+</helmet>
+<div style="width: 390px; height: 844px; background: #14120D; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="background: #191712; border-bottom: 1px solid #3A342A; padding: 14px 16px 10px 16px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="width: 64px;"></div>
+    <div style="display: flex; align-items: center; gap: 7px;">
+      <svg width="8" height="8" viewBox="0 0 10 10"><rect x="2" y="2" width="6" height="6" transform="rotate(45 5 5)" fill="#D9A036"></rect></svg>
+      <div class="mincho" style="font-size: 17px; font-weight: 600; color: #E8D9A8; letter-spacing: 1.5px;">検索条件</div>
+    </div>
+    <div style="width: 64px; text-align: right; font-size: 16px; color: #D9A036;">リセット</div>
+  </div>
+
+  <div style="flex-grow: 1; overflow: hidden;">
+    <div class="seclabel">武器</div>
+    <div class="card" style="margin: 0 16px;">
+      <div style="display: flex; align-items: center; min-height: 44px; padding: 0 16px; gap: 8px;">
+        <div style="flex-grow: 1; font-size: 16px; color: #EDE6D4;">スラッシュアックス 暁光の断剣</div>
+        <div style="font-size: 15px; color: #A89F87;">③①</div>
+        <svg width="8" height="14" viewBox="0 0 8 14" fill="none"><path d="M1 1l6 6-6 6" stroke="#6F675A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: baseline; justify-content: space-between; padding: 0 32px; margin: 20px 0 7px 0;">
+      <div style="font-size: 12px; letter-spacing: 1px; color: #6F675A;">スキル条件</div>
+      <div style="font-size: 15px; color: #D9A036;">+ 追加</div>
+    </div>
+    <div class="card" style="margin: 0 16px;">
+      <div style="display: flex; align-items: center; min-height: 48px; padding: 0 16px; gap: 10px;">
+        <div style="flex-grow: 1; font-size: 16px; color: #EDE6D4;">攻撃</div>
+        <div style="font-size: 16px; font-weight: 600; color: #D9A036;">Lv3</div>
+        <div style="display: flex; gap: 6px;">
+          <div style="width: 30px; height: 30px; border: 1px solid #3A342A; border-radius: 2px; display: flex; align-items: center; justify-content: center; color: #A89F87; font-size: 16px;">−</div>
+          <div style="width: 30px; height: 30px; border: 1px solid #3A342A; border-radius: 2px; display: flex; align-items: center; justify-content: center; color: #A89F87; font-size: 16px;">+</div>
+        </div>
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#C25B4A" stroke-width="1.5"></circle><path d="M6.5 11h9" stroke="#C25B4A" stroke-width="1.8" stroke-linecap="round"></path></svg>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; min-height: 48px; padding: 0 16px; gap: 10px;">
+        <div style="flex-grow: 1; font-size: 16px; color: #EDE6D4;">見切り</div>
+        <div style="font-size: 16px; font-weight: 600; color: #D9A036;">Lv2</div>
+        <div style="display: flex; gap: 6px;">
+          <div style="width: 30px; height: 30px; border: 1px solid #3A342A; border-radius: 2px; display: flex; align-items: center; justify-content: center; color: #A89F87; font-size: 16px;">−</div>
+          <div style="width: 30px; height: 30px; border: 1px solid #3A342A; border-radius: 2px; display: flex; align-items: center; justify-content: center; color: #A89F87; font-size: 16px;">+</div>
+        </div>
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#C25B4A" stroke-width="1.5"></circle><path d="M6.5 11h9" stroke="#C25B4A" stroke-width="1.8" stroke-linecap="round"></path></svg>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; min-height: 48px; padding: 0 16px; gap: 10px;">
+        <div style="flex-grow: 1; font-size: 16px; color: #EDE6D4;">弱点特効</div>
+        <div style="font-size: 16px; font-weight: 600; color: #D9A036;">Lv3</div>
+        <div style="display: flex; gap: 6px;">
+          <div style="width: 30px; height: 30px; border: 1px solid #3A342A; border-radius: 2px; display: flex; align-items: center; justify-content: center; color: #A89F87; font-size: 16px;">−</div>
+          <div style="width: 30px; height: 30px; border: 1px solid #3A342A; border-radius: 2px; display: flex; align-items: center; justify-content: center; color: #A89F87; font-size: 16px;">+</div>
+        </div>
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#C25B4A" stroke-width="1.5"></circle><path d="M6.5 11h9" stroke="#C25B4A" stroke-width="1.8" stroke-linecap="round"></path></svg>
+      </div>
+    </div>
+
+    <div style="margin: 28px 16px 0 16px;">
+      <div class="mincho" style="background: #D9A036; border-radius: 2px; min-height: 50px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; color: #1A1204; letter-spacing: 3px;">検索する</div>
+    </div>
+  </div>
+
+  <div style="height: 50px; background: #191712; border-top: 1px dashed #3A342A; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #6F675A;">広告バナー(320×50 プレースホルダ)</div>
+
+  <div style="background: #191712; border-top: 1px solid #3A342A; display: flex; padding: 6px 0 14px 0;">
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="#D9A036" stroke-width="2"></circle><path d="M15.5 15.5L21 21" stroke="#D9A036" stroke-width="2" stroke-linecap="round"></path></svg>
+      <div style="font-size: 10px; color: #D9A036;">検索</div>
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="14" r="6" stroke="#6F675A" stroke-width="2"></circle><path d="M9.5 5.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.7" stroke="#6F675A" stroke-width="2" stroke-linecap="round"></path></svg>
+      <div style="font-size: 10px; color: #6F675A;">護石</div>
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#6F675A" stroke-width="2"></circle><path d="M12 11v5" stroke="#6F675A" stroke-width="2" stroke-linecap="round"></path><circle cx="12" cy="8" r="1.2" fill="#6F675A"></circle></svg>
+      <div style="font-size: 10px; color: #6F675A;">情報</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

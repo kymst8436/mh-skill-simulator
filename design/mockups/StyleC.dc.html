@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #E8A33D; } a:hover { color: #F2B85C; }
+  </style>
+</helmet>
+<div style="width: 390px; height: 620px; background: #121212; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="padding: 18px 20px 12px 20px; display: flex; align-items: center; gap: 10px;">
+    <div style="font-size: 21px; font-weight: 700; color: #F2F2F2;">検索条件</div>
+    <div style="flex-grow: 1;"></div>
+    <div style="font-size: 15px; color: #E8A33D;">リセット</div>
+  </div>
+
+  <div style="padding: 8px 16px 0 16px; display: flex; flex-direction: column; gap: 12px;">
+    <div style="background: #1E1E1E; border-radius: 14px; padding: 13px 16px; display: flex; align-items: center; gap: 10px;">
+      <div style="flex-grow: 1; font-size: 16px; color: #F2F2F2;">攻撃</div>
+      <div style="font-size: 16px; color: #E8A33D; font-weight: 700;">Lv3</div>
+      <div style="display: flex; background: #2A2A2A; border-radius: 9px; overflow: hidden;">
+        <div style="padding: 6px 14px; font-size: 16px; color: #DADADA; border-right: 1px solid #3A3A3A;">−</div>
+        <div style="padding: 6px 14px; font-size: 16px; color: #DADADA;">+</div>
+      </div>
+    </div>
+
+    <div style="background: #1E1E1E; border-radius: 14px; padding: 15px 16px; display: flex; flex-direction: column; gap: 9px;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between;">
+        <div style="display: flex; align-items: baseline; gap: 7px;">
+          <div style="font-size: 12px; color: #8F8F8F;">防御力</div>
+          <div style="font-size: 24px; font-weight: 800; color: #FFFFFF;">512</div>
+        </div>
+        <div style="font-size: 13px; color: #8F8F8F;">空きスロ 武③ 防①①</div>
+      </div>
+      <div style="font-size: 14px; color: #C9C9C9;">ゴアヘルムβ 他4部位</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+        <div style="font-size: 12px; color: #F5CE8A; background: #33270F; border-radius: 7px; padding: 3px 9px;">攻撃Lv3</div>
+        <div style="font-size: 12px; color: #F5CE8A; background: #33270F; border-radius: 7px; padding: 3px 9px;">見切りLv2</div>
+        <div style="font-size: 12px; color: #B9B9B9; background: #2A2A2A; border-radius: 7px; padding: 3px 9px;">挑戦者Lv2</div>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <div style="font-size: 11px; color: #121212; background: #E8A33D; border-radius: 6px; padding: 2px 8px; font-weight: 800;">R7</div>
+        <div style="font-size: 11px; color: #9A9A9A;">護石: 攻撃Lv2・見切りLv1</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin: 18px 16px 0 16px;">
+    <div style="background: #E8A33D; border-radius: 13px; min-height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="font-size: 17px; font-weight: 700; color: #1A1204;">検索する</div>
+    </div>
+  </div>
+
+  <div style="flex-grow: 1;"></div>
+  <div style="padding: 14px 20px; border-top: 1px solid #2A2A2A; display: flex; align-items: baseline; justify-content: space-between;">
+    <div style="font-size: 15px; font-weight: 700; color: #F2F2F2;">C案 モダンダーク</div>
+    <div style="font-size: 11px; color: #8F8F8F;">今風ダークアプリ+アンバー。実装コスト最小級</div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":620}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

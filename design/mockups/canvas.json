@@ -1,0 +1,23 @@
+{
+  "pages": [
+    { "id": "page-mocks", "name": "画面モック" },
+    { "id": "page-styles", "name": "デザイン方向案" }
+  ],
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 390, "h": 844, "title": "検索条件" },
+    { "file": "SkillPicker.dc.html", "x": 450, "y": 0, "w": 390, "h": 844, "title": "スキル選択(sheet)" },
+    { "file": "Results.dc.html", "x": 900, "y": 0, "w": 390, "h": 844, "title": "検索結果" },
+    { "file": "ResultsEmpty.dc.html", "x": 1350, "y": 0, "w": 390, "h": 844, "title": "0件・逆引き" },
+    { "file": "Detail.dc.html", "x": 1800, "y": 0, "w": 390, "h": 844, "title": "装備詳細" },
+    { "file": "CharmEntry.dc.html", "x": 2250, "y": 0, "w": 390, "h": 844, "title": "護石入力(sheet)" },
+    { "file": "StyleA.dc.html", "x": 0, "y": 0, "w": 390, "h": 620, "title": "A案 狩猟ダーク", "page": "page-styles" },
+    { "file": "StyleB.dc.html", "x": 450, "y": 0, "w": 390, "h": 620, "title": "B案 ハンターノート", "page": "page-styles" },
+    { "file": "StyleC.dc.html", "x": 900, "y": 0, "w": 390, "h": 620, "title": "C案 モダンダーク", "page": "page-styles" },
+    { "file": "StyleD.dc.html", "x": 1350, "y": 0, "w": 390, "h": 620, "title": "D案 ネイティブ+最小", "page": "page-styles" }
+  ],
+  "annotations": [
+    { "id": "flow-note", "x": 0, "y": -150, "w": 560, "text": "画面設計.md準拠のiPhone縦モック。スタイルはDocs/DESIGN.md「狩猟ダーク・ミニマル」(2026-08-24決定)を適用済み。\n左から: 検索条件 → スキル選択(sheet) → 検索結果 → 0件時の逆引き → 装備詳細 → 護石入力(sheet)。\n広告バナーはルート画面下部のプレースホルダ。" },
+    { "id": "style-note", "x": 0, "y": -170, "w": 640, "text": "デザイン方向案(検討時の記録)。\n決定(2026-08-24): A案をミニマルに整理した「狩猟ダーク・ミニマル」を採用し、Docs/DESIGN.mdに規約化。画面モックページに適用済み。\nA案 狩猟ダーク / B案 ハンターノート / C案 モダンダーク / D案 ネイティブ+最小\n※ゲームUIの直接模倣はせず「想起させる独自デザイン」に留める方針(権利配慮)", "page": "page-styles" }
+  ],
+  "launch": { "view": "canvas", "page": "page-mocks" }
+}
