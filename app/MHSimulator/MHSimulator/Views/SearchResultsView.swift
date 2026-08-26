@@ -215,7 +215,7 @@ struct SearchResultsView: View {
                                     .font(.system(size: 14))
                                     .foregroundStyle(Color.mhTextSecondary)
                                     .multilineTextAlignment(.center)
-                                Button("再試行") { viewModel.retry() }
+                                Button("時間を延長して再試行") { viewModel.retry() }
                                     .font(.system(size: 15))
                                     .foregroundStyle(Color.mhAccent)
                             }

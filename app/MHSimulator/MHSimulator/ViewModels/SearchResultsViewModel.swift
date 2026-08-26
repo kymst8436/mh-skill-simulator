@@ -78,11 +78,10 @@ final class SearchResultsViewModel {
         runSearch()
     }
 
+    /// 同一入力での再試行: 探索は決定的で同じ場所で時間切れになるため、予算を延長して再実行する(2026-08-26)
     func retry() {
-        cancel()
-        task = nil
-        phase = .searching
-        runSearch()
+        retryAttempt = min(retryAttempt + 1, StageBudget.maxRetryAttempt)
+        restart()
     }
 
     func cancel() {
@@ -95,18 +94,36 @@ final class SearchResultsViewModel {
     func removeSkillAndRetry(_ id: SkillId) {
         conditionViewModel.removeSkill(id)
         condition = conditionViewModel.makeCondition()
-        retry()
+        retryAttempt = 0  // 入力が変わったので基準予算に戻す
+        restart()
     }
 
     /// 護石登録後の再検索(逆引き候補→登録→自動で組み直す)
     func reloadAndRetry() {
-        retry()
+        retryAttempt = 0  // 護石追加で入力が変わったので基準予算に戻す
+        restart()
     }
 
-    /// ステージ別の時間予算(検索/逆引きで独立。設計判断2026-08-26)
+    private func restart() {
+        cancel()
+        task = nil
+        phase = .searching
+        runSearch()
+    }
+
+    /// ステージ別の時間予算(検索/逆引きで独立。設計判断2026-08-26)。
+    /// 再試行ごとに2倍(検索5→10→20秒、逆引き4→8→16秒。上限4倍)
     private enum StageBudget {
-        static let search: Duration = .seconds(5)
-        static let reverseLookup: Duration = .seconds(4)
+        static let searchSeconds = 5
+        static let reverseLookupSeconds = 4
+        static let maxRetryAttempt = 2
+    }
+
+    /// 再試行回数(予算延長用。入力が変わる再検索でリセット)
+    private var retryAttempt = 0
+
+    private func stageBudget(baseSeconds: Int) -> Duration {
+        .seconds(baseSeconds << retryAttempt)
     }
 
     /// 1ステージをdetachedで実行し、時間予算超過でタスクをキャンセルする。
@@ -132,7 +149,7 @@ final class SearchResultsViewModel {
         let ownedCharms = dependencies.loadOwnedCharmsForSearch()
         task = Task {
             do {
-                let result = try await runStage(budget: StageBudget.search) {
+                let result = try await runStage(budget: stageBudget(baseSeconds: StageBudget.searchSeconds)) {
                     try engine.search(
                         condition: condition, weapon: weapon, ownedCharms: ownedCharms,
                         options: SearchEngine.Options(maxResults: 100))
@@ -140,7 +157,7 @@ final class SearchResultsViewModel {
                 guard !Task.isCancelled else { return }
                 if result.sets.isEmpty {
                     phase = .reverseSearching
-                    let outcome = try await runStage(budget: StageBudget.reverseLookup) {
+                    let outcome = try await runStage(budget: stageBudget(baseSeconds: StageBudget.reverseLookupSeconds)) {
                         try oracle.reverseLookup(
                             condition: condition, weapon: weapon, ownedCharms: ownedCharms)
                     }
