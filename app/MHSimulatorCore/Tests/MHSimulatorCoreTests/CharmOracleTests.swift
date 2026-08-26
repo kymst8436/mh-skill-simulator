@@ -13,7 +13,7 @@ final class CharmOracleTests: XCTestCase {
         let attack = TestSupport.skill(named: "攻撃")
         let condition = SearchCondition(requiredSkills: [attack.id: 1])
         let outcome = try oracle.reverseLookup(condition: condition, weapon: TestSupport.slotlessWeapon)
-        guard case .charms(let suggestions) = outcome else {
+        guard case .charms(let suggestions) = outcome.kind else {
             return XCTFail("護石候補が提示されるべき: \(outcome)")
         }
         XCTAssertFalse(suggestions.isEmpty)
@@ -30,7 +30,7 @@ final class CharmOracleTests: XCTestCase {
         let attack = TestSupport.skill(named: "攻撃")
         let condition = SearchCondition(requiredSkills: [attack.id: 3])
         let outcome = try oracle.reverseLookup(condition: condition, weapon: TestSupport.slotlessWeapon)
-        guard case .charms(let suggestions) = outcome else {
+        guard case .charms(let suggestions) = outcome.kind else {
             return XCTFail("護石候補が提示されるべき")
         }
         guard FileManager.default.fileExists(atPath: TestSupport.enumeratedDbPath) else {
@@ -61,10 +61,35 @@ final class CharmOracleTests: XCTestCase {
         let b = TestSupport.skill(named: "千刃竜の闘志")
         let condition = SearchCondition(requiredSkills: [a.id: 2, b.id: 2])
         let outcome = try oracle.reverseLookup(condition: condition)
-        guard case .relaxations(let skillIds) = outcome else {
+        guard case .relaxations(let skillIds) = outcome.kind else {
             return XCTFail("代替提示になるべき: \(outcome)")
         }
         XCTAssertEqual(Set(skillIds), Set([a.id, b.id]))
+    }
+
+    func testLeafBudgetTruncationIsReportedAsNonExhaustive() throws {
+        // 葉予算で打ち切った途中結果はisExhaustive=falseになる(UIが「時間切れ」と「真のゼロ件」を区別するため)
+        let attack = TestSupport.skill(named: "攻撃")
+        let condition = SearchCondition(requiredSkills: [attack.id: 1])
+        let outcome = try oracle.reverseLookup(
+            condition: condition, weapon: TestSupport.slotlessWeapon,
+            options: CharmOracle.Options(leafBudget: 1))
+        XCTAssertFalse(outcome.isExhaustive)
+    }
+
+    func testCancelledLookupStopsAndReportsNonExhaustive() async throws {
+        // キャンセル済みタスク内では途中で打ち切られ、網羅と主張しない
+        // (relaxationFallback含む全サブ処理が協調キャンセルに従う回帰確認。2026-08-26)
+        let attack = TestSupport.skill(named: "攻撃")
+        let mind = TestSupport.skill(named: "見切り")
+        let condition = SearchCondition(requiredSkills: [attack.id: 3, mind.id: 3])
+        let oracle = self.oracle
+        let work = Task.detached { [condition] () -> CharmOracle.Outcome in
+            withUnsafeCurrentTask { $0?.cancel() }  // 開始時点でキャンセル済みにする
+            return try oracle.reverseLookup(condition: condition, weapon: TestSupport.slotlessWeapon)
+        }
+        let outcome = try await work.value
+        XCTAssertFalse(outcome.isExhaustive)
     }
 
     func testSlotRequirementSuggestion() throws {
@@ -73,7 +98,7 @@ final class CharmOracleTests: XCTestCase {
         let mind = TestSupport.skill(named: "見切り")
         let condition = SearchCondition(requiredSkills: [attack.id: 2, mind.id: 2])
         let outcome = try oracle.reverseLookup(condition: condition, weapon: TestSupport.slotlessWeapon)
-        if case .charms(let suggestions) = outcome {
+        if case .charms(let suggestions) = outcome.kind {
             for suggestion in suggestions {
                 XCTAssertNotNil(
                     master.charmRules.minimumRarity(satisfying: suggestion.requirement),

@@ -81,8 +81,9 @@ struct SearchResultsView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .firstTextBaseline) {
+                    // truncatedは件数上限・時間予算どちらの打ち切りでもtrue(2026-08-26)
                     Text(result.truncated
-                         ? "\(result.sets.count)件(上限で打ち切り。条件を絞ると精度が上がります)"
+                         ? "\(result.sets.count)件(打ち切りあり。条件を絞ると精度が上がります)"
                          : "\(result.sets.count)件")
                         .font(.system(size: 13))
                         .foregroundStyle(Color.mhTextSecondary)
@@ -179,7 +180,7 @@ struct SearchResultsView: View {
                 notFoundHeader
                     .mhEntrance(0)
                 Group {
-                    switch outcome {
+                    switch outcome.kind {
                     case .charms(let suggestions):
                         MHSectionHeader(title: "この護石があれば組めます")
                         VStack(spacing: 10) {
@@ -189,6 +190,7 @@ struct SearchResultsView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, 7)
+                        if !outcome.isExhaustive { truncationNote }
                     case .relaxations(let skillIds):
                         MHSectionHeader(title: "このスキルを外せば組めます")
                         VStack(spacing: 10) {
@@ -198,18 +200,43 @@ struct SearchResultsView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, 7)
+                        if !outcome.isExhaustive { truncationNote }
                     case .none:
-                        Text("護石では埋まらない条件です。条件を見直してください")
-                            .font(.system(size: 14))
-                            .foregroundStyle(Color.mhTextSecondary)
+                        if outcome.isExhaustive {
+                            Text("護石では埋まらない条件です。条件を見直してください")
+                                .font(.system(size: 14))
+                                .foregroundStyle(Color.mhTextSecondary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.horizontal, 32)
+                        } else {
+                            // 時間予算内に探索しきれなかった(真のゼロ件とは区別する。2026-08-26)
+                            VStack(spacing: 10) {
+                                Text("時間内に狙える護石を見つけられませんでした")
+                                    .font(.system(size: 14))
+                                    .foregroundStyle(Color.mhTextSecondary)
+                                    .multilineTextAlignment(.center)
+                                Button("時間を延長して再試行") { viewModel.retry() }
+                                    .font(.system(size: 15))
+                                    .foregroundStyle(Color.mhAccent)
+                            }
                             .frame(maxWidth: .infinity)
                             .padding(.horizontal, 32)
+                        }
                     }
                 }
                 .mhEntrance(1)
             }
             .padding(.bottom, 24)
         }
+    }
+
+    /// 打ち切り注記(逆引きが時間予算・葉予算で途中終了した場合)
+    private var truncationNote: some View {
+        Text("時間の都合で探索を打ち切ったため、他にも候補がある可能性があります")
+            .font(.system(size: 12))
+            .foregroundStyle(Color.mhTextTertiary)
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
     }
 
     private func suggestionCard(_ suggestion: CharmOracle.CharmSuggestion) -> some View {

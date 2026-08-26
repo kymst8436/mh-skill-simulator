@@ -6,7 +6,7 @@ import XCTest
 /// 装飾品割り当ての全体容量上界がないと葉の内部でバックトラックが爆発し、
 /// デッドラインを無視して数分〜ハングしていた
 final class HeavyConditionTests: XCTestCase {
-    func testHeavyTenSkillConditionCompletesWithinDeadline() throws {
+    func testHeavyTenSkillConditionCompletesWithinDeadline() async throws {
         let master = TestSupport.master
         let engine = SearchEngine(master: master)
         let names: [(String, Int)] = [
@@ -21,13 +21,20 @@ final class HeavyConditionTests: XCTestCase {
         }
         let condition = SearchCondition(requiredSkills: required)
 
+        // アプリ実装と同じ「時間予算超過でタスクキャンセル」方式(協調キャンセルへの1本化。2026-08-26)
         let start = Date()
-        let result = try engine.search(
-            condition: condition, weapon: weapon,
-            options: .init(maxResults: 100, deadline: Date().addingTimeInterval(5)))
+        let work = Task.detached(priority: .userInitiated) {
+            try engine.search(condition: condition, weapon: weapon, options: .init(maxResults: 100))
+        }
+        let timer = Task {
+            try? await Task.sleep(for: .seconds(5))
+            work.cancel()
+        }
+        let result = try await work.value
+        timer.cancel()
         let elapsed = Date().timeIntervalSince(start)
 
-        // デッドライン+余裕内に必ず返る(以前はハング)
+        // 時間予算+余裕内に必ず返る(以前はハング)
         XCTAssertLessThan(elapsed, 6.0, "探索がデッドラインを大きく超過")
         // この条件は実際には組める(全体容量上界の導入で高速に発見できる)
         XCTAssertFalse(result.sets.isEmpty)
