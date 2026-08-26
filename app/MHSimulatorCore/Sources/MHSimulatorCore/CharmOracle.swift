@@ -11,25 +11,35 @@ public final class CharmOracle {
         public let minimumRarity: Int
     }
 
-    public enum Outcome: Equatable, Sendable {
-        /// 護石候補(最大N件。仕様Q-4: 仮10件)
-        case charms([CharmSuggestion])
-        /// 護石では埋まらない → 外せば組めるスキルの代替提示(仕様3.2 手順5)
-        case relaxations([SkillId])
-        /// 全スキルを外しても組めない(理論上ほぼ発生しない)
-        case none
+    public struct Outcome: Equatable, Sendable {
+        public enum Kind: Equatable, Sendable {
+            /// 護石候補(最大N件。仕様Q-4: 仮10件)
+            case charms([CharmSuggestion])
+            /// 護石では埋まらない → 外せば組めるスキルの代替提示(仕様3.2 手順5)
+            case relaxations([SkillId])
+            /// 全スキルを外しても組めない(理論上ほぼ発生しない)
+            case none
+        }
+
+        public let kind: Kind
+        /// false = キャンセル(時間予算超過)や葉予算で探索を打ち切った途中結果。
+        /// 「真のゼロ件」と「時間内に見つからなかった」をUIで区別するために持つ(2026-08-26)
+        public let isExhaustive: Bool
+
+        public init(kind: Kind, isExhaustive: Bool) {
+            self.kind = kind
+            self.isExhaustive = isExhaustive
+        }
     }
 
     public struct Options: Sendable {
         public var maxSuggestions: Int
         /// 緩和探索で訪問する葉の上限(発散防止)
         public var leafBudget: Int
-        public var deadline: Date?
 
-        public init(maxSuggestions: Int = 10, leafBudget: Int = 50_000, deadline: Date? = nil) {
+        public init(maxSuggestions: Int = 10, leafBudget: Int = 50_000) {
             self.maxSuggestions = maxSuggestions
             self.leafBudget = leafBudget
-            self.deadline = deadline
         }
     }
 
@@ -50,7 +60,7 @@ public final class CharmOracle {
             return try relaxationFallback(condition: condition, weapon: weapon, ownedCharms: ownedCharms)
         }
 
-        let requirements = try collectRequirements(
+        let (requirements, exhaustive) = try collectRequirements(
             condition: condition, weapon: weapon, options: options)
 
         var suggestions: [CharmSuggestion] = []
@@ -60,7 +70,10 @@ public final class CharmOracle {
             }
         }
         guard !suggestions.isEmpty else {
-            return try relaxationFallback(condition: condition, weapon: weapon, ownedCharms: ownedCharms)
+            // 候補ゼロが打ち切りによるものなら、fallbackの結果も網羅とは言えない
+            let fallback = try relaxationFallback(
+                condition: condition, weapon: weapon, ownedCharms: ownedCharms)
+            return Outcome(kind: fallback.kind, isExhaustive: fallback.isExhaustive && exhaustive)
         }
 
         // 入手しやすさ(レア度昇順)→要求の緩さ(仕様3.2 手順4)
@@ -68,7 +81,9 @@ public final class CharmOracle {
             if $0.minimumRarity != $1.minimumRarity { return $0.minimumRarity < $1.minimumRarity }
             return laxness($0.requirement) < laxness($1.requirement)
         }
-        return .charms(Array(suggestions.prefix(options.maxSuggestions)))
+        return Outcome(
+            kind: .charms(Array(suggestions.prefix(options.maxSuggestions))),
+            isExhaustive: exhaustive)
     }
 
     private func laxness(_ req: CharmRules.Requirement) -> Int {
@@ -77,36 +92,43 @@ public final class CharmOracle {
 
     // MARK: - 緩和探索(仕様3.2 手順1〜2)
 
-    /// 護石ワイルドカードの深さ優先探索で、到達可能な最良状態から護石要求を逆算する
+    /// 護石ワイルドカードの深さ優先探索で、到達可能な最良状態から護石要求を逆算する。
+    /// 戻り値のexhaustive: キャンセル・葉予算による打ち切りなしに全探索できたか
     private func collectRequirements(
         condition: SearchCondition,
         weapon: Weapon?,
         options: Options
-    ) throws -> Set<CharmRules.Requirement> {
+    ) throws -> (requirements: Set<CharmRules.Requirement>, exhaustive: Bool) {
         guard let prepared = try engine.prepare(
             condition: condition, weapon: weapon, ownedCharms: [], charmWildcard: true) else {
-            return []  // ボーナススキル到達不能: 護石では埋まらない
+            return ([], true)  // ボーナススキル到達不能: 護石では埋まらない(探索不要の確定)
         }
 
         var requirements: Set<CharmRules.Requirement> = []
         var leafCount = 0
         var nodeCount = 0
+        var aborted = false
 
-        func timedOut() -> Bool {
+        // 打ち切りは協調キャンセルに1本化(時間予算は呼び出し側がタスクキャンセルで課す。2026-08-26)
+        func cancelled() -> Bool {
             nodeCount += 1
-            if nodeCount % 1024 == 0 {
-                if Task.isCancelled { return true }
-                if let deadline = options.deadline, Date() > deadline { return true }
-            }
+            if nodeCount % 1024 == 0, Task.isCancelled { return true }
             return false
         }
 
         func dfs(_ depth: Int, _ state: inout SearchEngine.State) -> Bool {
-            if timedOut() { return false }
+            if cancelled() {
+                aborted = true
+                return false
+            }
             if depth == prepared.kindOrder.count {
                 leafCount += 1
-                visitLeaf(prepared, state, options: options, into: &requirements)
-                return leafCount < options.leafBudget
+                visitLeaf(prepared, state, into: &requirements)
+                if leafCount >= options.leafBudget {
+                    aborted = true
+                    return false
+                }
+                return true
             }
             let kind = prepared.kindOrder[depth]
             let remaining = Array(prepared.kindOrder[(depth + 1)...])
@@ -131,13 +153,12 @@ public final class CharmOracle {
             var state = SearchEngine.State(prepared: prepared, weapon: nil)
             _ = dfs(0, &state)
         }
-        return requirements
+        return (requirements, !aborted)
     }
 
     private func visitLeaf(
         _ prepared: SearchEngine.Prepared,
         _ state: SearchEngine.State,
-        options: Options,
         into requirements: inout Set<CharmRules.Requirement>
     ) {
         // ボーナススキルは護石で補えない
@@ -156,11 +177,7 @@ public final class CharmOracle {
         let slots = engine.collectSlots(prepared, state, charm: .none)
         let residual = DecorationAssigner.minimizeResidual(
             deficits: deficits, slots: slots, catalog: prepared.catalog,
-            shouldAbort: {
-                if Task.isCancelled { return true }
-                guard let deadline = options.deadline else { return false }
-                return Date() > deadline
-            })
+            shouldAbort: { Task.isCancelled })
         guard !residual.isEmpty else { return }
 
         // 要求バリエーション: 各不足スキルを「護石スキルで直接」か「護石スロット+装飾品」で賄う
@@ -217,17 +234,23 @@ public final class CharmOracle {
 
     // MARK: - 代替提示(仕様3.2 手順5)
 
-    /// 条件スキルを1つ外した場合に組めるかを試行し「外せば組めるスキル」を返す
+    /// 条件スキルを1つ外した場合に組めるかを試行し「外せば組めるスキル」を返す。
+    /// engine.searchは協調キャンセルに従うため、呼び出し側の時間予算超過でここも自動的に止まる
     private func relaxationFallback(
         condition: SearchCondition,
         weapon: Weapon?,
         ownedCharms: [Charm]
     ) throws -> Outcome {
         var removable: [SkillId] = []
+        var aborted = false
         guard condition.requiredSkills.count > 1 else {
-            return .none
+            return Outcome(kind: .none, isExhaustive: true)
         }
         for skillId in condition.requiredSkills.keys {
+            if Task.isCancelled {
+                aborted = true  // 残りスキルは未試行(時間内に検証しきれなかった)
+                break
+            }
             var reduced = condition.requiredSkills
             reduced.removeValue(forKey: skillId)
             let result = try engine.search(
@@ -236,8 +259,12 @@ public final class CharmOracle {
                 options: SearchEngine.Options(maxResults: 1))
             if !result.sets.isEmpty {
                 removable.append(skillId)
+            } else if Task.isCancelled {
+                aborted = true  // 0件はキャンセルによる途中打ち切りの可能性があり確定できない
+                break
             }
         }
-        return removable.isEmpty ? .none : .relaxations(removable.sorted())
+        let kind: Outcome.Kind = removable.isEmpty ? .none : .relaxations(removable.sorted())
+        return Outcome(kind: kind, isExhaustive: !aborted)
     }
 }

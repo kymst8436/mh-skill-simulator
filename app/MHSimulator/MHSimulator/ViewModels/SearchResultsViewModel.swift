@@ -103,6 +103,27 @@ final class SearchResultsViewModel {
         retry()
     }
 
+    /// ステージ別の時間予算(検索/逆引きで独立。設計判断2026-08-26)
+    private enum StageBudget {
+        static let search: Duration = .seconds(5)
+        static let reverseLookup: Duration = .seconds(4)
+    }
+
+    /// 1ステージをdetachedで実行し、時間予算超過でタスクをキャンセルする。
+    /// コア側は協調キャンセルで途中結果を返すため、超過時も部分結果が得られる
+    private func runStage<T: Sendable>(
+        budget: Duration, _ work: @escaping @Sendable () throws -> T
+    ) async throws -> T {
+        let stage = Task.detached(priority: .userInitiated) { try work() }
+        cancelDetachedWork.append { stage.cancel() }
+        let timer = Task {
+            try? await Task.sleep(for: budget)
+            stage.cancel()
+        }
+        defer { timer.cancel() }
+        return try await stage.value
+    }
+
     private func runSearch() {
         let engine = dependencies.engine
         let oracle = dependencies.oracle
@@ -111,23 +132,18 @@ final class SearchResultsViewModel {
         let ownedCharms = dependencies.loadOwnedCharmsForSearch()
         task = Task {
             do {
-                let options = SearchEngine.Options(maxResults: 100, deadline: Date().addingTimeInterval(5))
-                let searchWork = Task.detached(priority: .userInitiated) {
-                    try engine.search(condition: condition, weapon: weapon, ownedCharms: ownedCharms, options: options)
+                let result = try await runStage(budget: StageBudget.search) {
+                    try engine.search(
+                        condition: condition, weapon: weapon, ownedCharms: ownedCharms,
+                        options: SearchEngine.Options(maxResults: 100))
                 }
-                cancelDetachedWork.append { searchWork.cancel() }
-                let result = try await searchWork.value
                 guard !Task.isCancelled else { return }
                 if result.sets.isEmpty {
                     phase = .reverseSearching
-                    let outcomeOptions = CharmOracle.Options(deadline: Date().addingTimeInterval(4))
-                    let oracleWork = Task.detached(priority: .userInitiated) {
+                    let outcome = try await runStage(budget: StageBudget.reverseLookup) {
                         try oracle.reverseLookup(
-                            condition: condition, weapon: weapon,
-                            ownedCharms: ownedCharms, options: outcomeOptions)
+                            condition: condition, weapon: weapon, ownedCharms: ownedCharms)
                     }
-                    cancelDetachedWork.append { oracleWork.cancel() }
-                    let outcome = try await oracleWork.value
                     guard !Task.isCancelled else { return }
                     phase = .reverse(outcome)
                 } else {

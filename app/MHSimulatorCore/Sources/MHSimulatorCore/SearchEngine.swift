@@ -8,12 +8,9 @@ public final class SearchEngine {
     public struct Options: Sendable {
         /// 上限件数(仕様Q-3: 仮100件)
         public var maxResults: Int
-        /// 探索打ち切り時刻(仕様3.1: タイムアウト時は途中結果+フラグ)
-        public var deadline: Date?
 
-        public init(maxResults: Int = 100, deadline: Date? = nil) {
+        public init(maxResults: Int = 100) {
             self.maxResults = maxResults
-            self.deadline = deadline
         }
     }
 
@@ -39,37 +36,30 @@ public final class SearchEngine {
         var truncated = false
         var nodeCount = 0
 
-        func timedOut() -> Bool {
+        // 打ち切りは協調キャンセルに1本化(時間予算は呼び出し側がタスクキャンセルで課す。2026-08-26)
+        func cancelled() -> Bool {
             nodeCount += 1
-            if nodeCount % 1024 == 0 {
-                // タスクキャンセル(画面離脱等)も打ち切り扱い(2026-08-25)
-                if Task.isCancelled { return true }
-                if let deadline = options.deadline, Date() > deadline { return true }
-            }
+            if nodeCount % 1024 == 0, Task.isCancelled { return true }
             return false
         }
 
         // 装飾品割り当て(葉の内部)の中断判定。nodeCountに依らず即時で判定する
-        let deadlineExceeded: () -> Bool = {
-            if Task.isCancelled { return true }
-            guard let deadline = options.deadline else { return false }
-            return Date() > deadline
-        }
+        let shouldAbort: () -> Bool = { Task.isCancelled }
 
         func dfs(_ depth: Int, _ state: inout State) -> Bool {  // 戻り値: 探索継続するか
-            if timedOut() {
+            if cancelled() {
                 truncated = true
                 return false
             }
             if depth == prepared.kindOrder.count {
-                // 全部位確定 → 護石を試す(葉の内部でもデッドラインを効かせる。2026-08-24)
+                // 全部位確定 → 護石を試す(葉の内部でも中断を効かせる。2026-08-24)
                 for charm in prepared.charmCandidates {
-                    if timedOut() {
+                    if cancelled() {
                         truncated = true
                         return false
                     }
                     guard !upperBoundFails(prepared, state, remainingKinds: [], charm: charm) else { continue }
-                    if let set = finishLeaf(prepared, state, charm: charm, shouldAbort: deadlineExceeded) {
+                    if let set = finishLeaf(prepared, state, charm: charm, shouldAbort: shouldAbort) {
                         sets.append(set)
                         if sets.count >= options.maxResults {
                             truncated = true
@@ -419,7 +409,7 @@ public final class SearchEngine {
         }
 
         let slots = collectSlots(prepared, state, charm: charm)
-        // aborted(デッドライン超過)はnil扱い: 次のtimedOut()で探索全体が打ち切られる
+        // aborted(キャンセル)はnil扱い: 次のcancelled()で探索全体が打ち切られる
         guard case .assigned(let assignment) = DecorationAssigner.assign(
             deficits: deficits, slots: slots, catalog: prepared.catalog,
             shouldAbort: shouldAbort) else { return nil }
