@@ -46,19 +46,10 @@ struct AdditionalSkillsView: View {
     private var content: some View {
         switch viewModel.phase {
         case .judging:
-            if viewModel.entries.isEmpty {
-                judgingProgress
-                    .frame(maxHeight: .infinity)
-            } else {
-                // 続きを探す実行中: 確定済み一覧の上にプログレス(画面設計4.12の判定中(継続))
-                VStack(spacing: 0) {
-                    judgingProgress
-                        .padding(.vertical, 14)
-                    entryList(interactive: false)
-                }
-            }
+            judgingProgress
+                .frame(maxHeight: .infinity)
         case .list:
-            entryList(interactive: true)
+            entryList
         case .empty:
             MHEmptyState(
                 systemImage: "checkmark.seal",
@@ -88,32 +79,20 @@ struct AdditionalSkillsView: View {
         }
     }
 
-    private func entryList(interactive: Bool) -> some View {
+    private var entryList: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 10) {
-                Text(viewModel.pendingCount == 0
-                     ? "\(viewModel.entries.count)件のスキルを追加できます"
-                     : "\(viewModel.entries.count)件(時間内に判定しきれませんでした。残り\(viewModel.pendingCount)件)")
+                Text("\(viewModel.entries.count)件のスキルを追加できます")
                     .font(.system(size: 13))
                     .foregroundStyle(Color.mhTextSecondary)
                     .padding(.horizontal, 16)
-                if !viewModel.entries.isEmpty {
-                    Text("タップすると条件に追加して再検索します")
-                        .font(.system(size: 12))
-                        .foregroundStyle(Color.mhTextTertiary)
-                        .padding(.horizontal, 16)
-                }
+                Text("タップすると条件に追加して再検索します")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Color.mhTextTertiary)
+                    .padding(.horizontal, 16)
                 ForEach(viewModel.entries, id: \.self) { entry in
                     entryRow(entry)
                         .padding(.horizontal, 16)
-                        .disabled(!interactive)
-                }
-                if interactive && viewModel.pendingCount > 0 {
-                    MHPrimaryButton(title: "続きを探す(残り\(viewModel.pendingCount)件)") {
-                        viewModel.continueSearch()
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
                 }
             }
             .padding(.top, 4)

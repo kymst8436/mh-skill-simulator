@@ -2,8 +2,9 @@ import Foundation
 import Observation
 import MHSimulatorCore
 
-/// 追加スキルsheet(画面設計4.12)。表示時に判定を開始し、時間予算8秒(仕様Q-15)で打ち切る。
-/// F-2と異なりスキル単位で再開できるため、予算延長ではなく「続きを探す」(チェックポイント再開)を採る
+/// 追加スキルsheet(画面設計4.12)。表示時に判定を開始し、完了まで実行する。
+/// 時間予算は課さない(スキル単位の進捗表示があり、待てる/やめるはユーザーが選べるため。2026-08-26決定)。
+/// sheetを閉じると協調キャンセルで中断し、途中結果は破棄される
 @Observable
 final class AdditionalSkillsViewModel {
     enum Phase {
@@ -23,17 +24,10 @@ final class AdditionalSkillsViewModel {
     private(set) var entries: [AdditionalSkillFinder.Entry] = []
     private(set) var determinedCount = 0
     private(set) var targetCount = 0
-    private(set) var pendingCount = 0
 
-    /// 未判定分からの再開用(仕様3.5手順5)。sheetを閉じたらVMごと破棄される
-    private var checkpoint: AdditionalSkillFinder.Outcome?
-    /// 判定開始時に固定する所持護石(sheet表示中に入力は変わらない前提)
-    private var ownedCharms: [Charm]?
     private var task: Task<Void, Never>?
     private var cancelDetachedWork: [() -> Void] = []
-
-    /// ステージ時間予算(仕様Q-15)
-    private static let budget: Duration = .seconds(8)
+    private var hasStarted = false
 
     init(
         dependencies: AppDependencies,
@@ -57,28 +51,18 @@ final class AdditionalSkillsViewModel {
         }
     }
 
-    private var hasStarted = false
-
     func start() {
         guard !hasStarted else { return }
         hasStarted = true
-        run(resuming: nil)
-    }
-
-    /// 「続きを探す」: 未判定分のみ判定を再開(確定済みは再計算しない)
-    func continueSearch() {
-        guard phase == .list, pendingCount > 0 else { return }
-        phase = .judging
-        run(resuming: checkpoint)
+        run()
     }
 
     func retry() {
         cancel()
         task = nil
-        checkpoint = nil
         entries = []
         phase = .judging
-        run(resuming: nil)
+        run()
     }
 
     func cancel() {
@@ -91,18 +75,16 @@ final class AdditionalSkillsViewModel {
         onAdd(entry.skillId, entry.maxAddableLevel)
     }
 
-    private func run(resuming: AdditionalSkillFinder.Outcome?) {
+    private func run() {
         let finder = dependencies.additionalSkillFinder
         let condition = condition
         let weapon = weapon
-        let ownedCharms = self.ownedCharms ?? dependencies.loadOwnedCharmsForSearch()
-        self.ownedCharms = ownedCharms
+        let ownedCharms = dependencies.loadOwnedCharmsForSearch()
         task = Task {
             do {
                 let work = Task.detached(priority: .userInitiated) {
                     try finder.find(
                         condition: condition, weapon: weapon, ownedCharms: ownedCharms,
-                        resuming: resuming,
                         onSkillDetermined: { [weak self] determined, total in
                             Task { @MainActor [weak self] in
                                 self?.determinedCount = determined
@@ -111,21 +93,12 @@ final class AdditionalSkillsViewModel {
                         })
                 }
                 cancelDetachedWork.append { work.cancel() }
-                let timer = Task {
-                    try? await Task.sleep(for: Self.budget)
-                    work.cancel()
-                }
-                defer { timer.cancel() }
                 let outcome = try await work.value
                 guard !Task.isCancelled else { return }
-                checkpoint = outcome
                 entries = outcome.entries
                 determinedCount = outcome.determinedCount
                 targetCount = outcome.targetCount
-                pendingCount = outcome.pending.count
-                // 空=対象0または追加可能0件が確定した場合のみ(仕様3.5エッジケース)。
-                // 打ち切りで候補0のときはlist(0件+続きを探す)にする
-                phase = outcome.entries.isEmpty && outcome.isExhaustive ? .empty : .list
+                phase = outcome.entries.isEmpty ? .empty : .list
                 task = nil
             } catch {
                 guard !Task.isCancelled else { return }
