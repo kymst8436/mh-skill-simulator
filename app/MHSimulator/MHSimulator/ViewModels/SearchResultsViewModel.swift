@@ -98,6 +98,21 @@ final class SearchResultsViewModel {
         restart()
     }
 
+    /// 追加スキルタップ(F-9=画面設計4.12): 条件に追加して再検索(条件画面側にも反映)
+    func addSkillAndRetry(_ id: SkillId, level: Int) {
+        conditionViewModel.addSkill(id, level: level)
+        condition = conditionViewModel.makeCondition()
+        retryAttempt = 0  // 入力が変わったので基準予算に戻す
+        restart()
+    }
+
+    /// 追加スキルsheet用VM(sheet表示のたびに生成。閉じると判定状態ごと破棄=仕様3.5)
+    func makeAdditionalSkillsViewModel() -> AdditionalSkillsViewModel {
+        AdditionalSkillsViewModel(
+            dependencies: dependencies, condition: condition, weapon: weapon,
+            onAdd: { [weak self] id, level in self?.addSkillAndRetry(id, level: level) })
+    }
+
     /// 護石登録後の再検索(逆引き候補→登録→自動で組み直す)
     func reloadAndRetry() {
         retryAttempt = 0  // 護石追加で入力が変わったので基準予算に戻す
