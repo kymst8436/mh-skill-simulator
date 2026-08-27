@@ -230,6 +230,16 @@ struct CharmListView: View {
     private var filterMenu: some View {
         Menu {
             Section("フィルター") {
+                // すべて表示=フィルター全解除。未適用状態の表現も兼ねる(2026-08-27追加)
+                Button {
+                    viewModel.clearFilters()
+                } label: {
+                    if viewModel.isFilterActive {
+                        Text("すべて表示")
+                    } else {
+                        Label("すべて表示", systemImage: "checkmark")
+                    }
+                }
                 ForEach(CharmListViewModel.filterableRarities, id: \.self) { rarity in
                     Button {
                         viewModel.toggleRarityFilter(rarity)

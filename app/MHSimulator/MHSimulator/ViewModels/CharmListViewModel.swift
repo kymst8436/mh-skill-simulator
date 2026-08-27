@@ -137,6 +137,12 @@ final class CharmListViewModel {
         !searchText.trimmingCharacters(in: .whitespaces).isEmpty || isFilterActive
     }
 
+    /// 「すべて表示」: フィルター条件を全て解除する(2026-08-27追加)
+    func clearFilters() {
+        filterRarities.removeAll()
+        filterWeaponSlot = false
+    }
+
     func toggleRarityFilter(_ rarity: Int) {
         if filterRarities.contains(rarity) {
             filterRarities.remove(rarity)
