@@ -93,6 +93,18 @@ final class SearchConditionViewModel {
         persist()
     }
 
+    /// 追加スキル検索(F-9=画面設計4.12)からの反映: レベル指定で追加(既存スキルは後勝ちでレベル更新=仕様3.1)
+    func addSkill(_ id: SkillId, level: Int) {
+        guard let skill = dependencies.master.skills[id] else { return }
+        let clamped = min(max(1, level), skill.maxLevel)
+        if let index = conditions.firstIndex(where: { $0.id == id }) {
+            conditions[index].level = clamped
+        } else {
+            conditions.append(ConditionRow(skill: skill, level: clamped))
+        }
+        persist()
+    }
+
     func setLevel(_ id: SkillId, _ level: Int) {
         guard let index = conditions.firstIndex(where: { $0.id == id }) else { return }
         conditions[index].level = min(max(1, level), conditions[index].skill.maxLevel)

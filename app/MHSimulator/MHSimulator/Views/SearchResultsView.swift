@@ -8,6 +8,7 @@ struct SearchResultsView: View {
     @Binding var path: [SearchRoute]
     @State private var viewModel: SearchResultsViewModel
     @State private var entryTarget: CharmEntryTarget?
+    @State private var showsAdditionalSkills = false
 
     init(dependencies: AppDependencies, conditionViewModel: SearchConditionViewModel, path: Binding<[SearchRoute]>) {
         self.dependencies = dependencies
@@ -31,6 +32,9 @@ struct SearchResultsView: View {
             viewModel.loadWishlistRequirements()
         }
         .onDisappear { viewModel.cancel() }
+        .sheet(isPresented: $showsAdditionalSkills) {
+            AdditionalSkillsView(viewModel: viewModel.makeAdditionalSkillsViewModel())
+        }
         .sheet(item: $entryTarget) { target in
             // 逆引き候補→護石入力プリセット(画面設計4.7)。保存後は自動で再検索
             CharmEntryView(dependencies: dependencies, target: target) {
@@ -94,6 +98,20 @@ struct SearchResultsView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
+
+                // 追加スキル検索への導線(F-9=画面設計4.4構成要素8。1件以上のときのみ)
+                Button {
+                    showsAdditionalSkills = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "plus.circle")
+                            .font(.system(size: 14))
+                        Text("追加できるスキルを探す")
+                            .font(.system(size: 14, weight: .semibold))
+                    }
+                    .foregroundStyle(Color.mhAccent)
+                }
+                .padding(.horizontal, 16)
 
                 // 一覧先頭+5件ごとにネイティブ広告(画面設計§2。2026-08-24)
                 NativeAdSlot()

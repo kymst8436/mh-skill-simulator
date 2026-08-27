@@ -51,6 +51,24 @@ final class PerformanceTests: XCTestCase {
         XCTAssertLessThan(elapsed, 3.0, "性能予算超過(仕様6.1: 3秒以内)")
     }
 
+    func testAdditionalSkillFinderBudget() throws {
+        // 追加スキル検索: 条件スキル3個・所持護石100個で全スキル判定(仕様6.1目標10秒・実機確認はF9-5)。
+        // 時間予算による打ち切りは廃止(Q-15解決)のため、ここでは極端な劣化(最適化前は30秒)の回帰検出として15秒を上限にする
+        let condition = SearchCondition(requiredSkills: [
+            TestSupport.skill(named: "龍耐性").id: 2,
+            TestSupport.skill(named: "防御").id: 3,
+            TestSupport.skill(named: "回避性能").id: 2,
+        ])
+        let charms = makeOwnedCharms(100)
+        let finder = AdditionalSkillFinder(engine: engine)
+        let start = Date()
+        let outcome = try finder.find(condition: condition, ownedCharms: charms)
+        let elapsed = Date().timeIntervalSince(start)
+        print("追加スキル判定時間: \(String(format: "%.2f", elapsed))s / 対象\(outcome.targetCount)件・追加可\(outcome.entries.count)件")
+        XCTAssertTrue(outcome.isExhaustive)
+        XCTAssertLessThan(elapsed, 15.0, "判定時間の回帰(最適化前の水準に逆戻りの疑い)")
+    }
+
     func testReverseLookupBudget() throws {
         // 逆引き: 0件確定から2秒以内(仕様6.1)
         let attack = TestSupport.skill(named: "攻撃")

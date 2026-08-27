@@ -9,6 +9,9 @@ struct AppDependencies {
     let oracle: CharmOracle
     let userStore: UserStore
 
+    /// 追加スキル検索(F-9)。状態を持たないため都度生成でよい
+    var additionalSkillFinder: AdditionalSkillFinder { AdditionalSkillFinder(engine: engine) }
+
     /// 所持護石の表示名(「攻撃Lv2・見切りLv1」)
     func charmDisplayName(_ charm: OwnedCharm) -> String {
         charm.skills
