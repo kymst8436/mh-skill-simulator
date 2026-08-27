@@ -7,6 +7,8 @@ import MHSimulatorCore
 final class CharmListViewModel {
     let dependencies: AppDependencies
     private(set) var charms: [OwnedCharm] = []
+    /// 所持護石の検索語(2026-08-27追加。スキル名の部分一致・ひらがな/カタカナ同一視=mhContains)
+    var searchText = ""
     private(set) var wishlist: [WishlistItem] = []
     private(set) var isLoading = false
     private(set) var loadErrorMessage: String?
@@ -64,6 +66,13 @@ final class CharmListViewModel {
 
     func displayName(_ charm: OwnedCharm) -> String {
         dependencies.charmDisplayName(charm)
+    }
+
+    /// 検索語で絞り込んだ所持護石(表示名=スキル名連結に対する部分一致)
+    var filteredCharms: [OwnedCharm] {
+        let query = searchText.trimmingCharacters(in: .whitespaces)
+        guard !query.isEmpty else { return charms }
+        return charms.filter { displayName($0).mhContains(query) }
     }
 
     func slotText(_ charm: OwnedCharm) -> String {

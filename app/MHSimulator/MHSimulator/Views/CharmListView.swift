@@ -176,18 +176,61 @@ struct CharmListView: View {
                 actionTitle: "追加する") { entryTarget = .new }
                 .mhEntrance(1)
         } else {
-            charmList
-                .mhEntrance(1)
+            // 検索欄+一覧(2026-08-27追加。画面設計4.6)
+            VStack(spacing: 0) {
+                searchField
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 10)
+                if viewModel.filteredCharms.isEmpty {
+                    MHEmptyState(
+                        systemImage: "magnifyingglass",
+                        title: "該当する護石がありません",
+                        message: "検索語を変えてお試しください")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    charmList
+                }
+            }
+            .mhEntrance(1)
         }
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 15))
+                .foregroundStyle(Color.mhTextTertiary)
+            TextField("", text: $viewModel.searchText,
+                      prompt: Text("スキル名で検索").foregroundStyle(Color.mhTextTertiary))
+                .font(.system(size: 16))
+                .foregroundStyle(Color.mhTextPrimary)
+            if !viewModel.searchText.isEmpty {
+                Button {
+                    viewModel.searchText = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 15))
+                        .foregroundStyle(Color.mhTextTertiary)
+                }
+            }
+        }
+        .padding(.horizontal, 10)
+        .frame(minHeight: 38)
+        .background(Color.mhSurfaceSubtle)
+        .clipShape(RoundedRectangle(cornerRadius: 2))
+        .overlay(RoundedRectangle(cornerRadius: 2).stroke(Color.mhHairline, lineWidth: 1))
     }
 
     private var charmList: some View {
         ScrollView {
             LazyVStack(spacing: 10) {
-                ForEach(viewModel.charms) { charm in
+                ForEach(viewModel.filteredCharms) { charm in
                     charmRow(charm)
                 }
-                Text("\(viewModel.charms.count)個")
+                Text(viewModel.searchText.trimmingCharacters(in: .whitespaces).isEmpty
+                     ? "\(viewModel.charms.count)個"
+                     : "\(viewModel.filteredCharms.count)/\(viewModel.charms.count)個")
                     .font(.system(size: 13))
                     .foregroundStyle(Color.mhTextTertiary)
                     .padding(.top, 4)
@@ -203,6 +246,10 @@ struct CharmListView: View {
         } label: {
             MHCard {
                 HStack(spacing: 10) {
+                    // レア度バッジは行の先頭(2026-08-27改訂。画面設計4.6)
+                    if let rarity = charm.rarity {
+                        RarityBadge(rarity: rarity)
+                    }
                     Image(MHFormat.charmIconName)
                         .resizable()
                         .scaledToFit()
@@ -212,9 +259,6 @@ struct CharmListView: View {
                         .foregroundStyle(Color.mhTextPrimary)
                         .multilineTextAlignment(.leading)
                     Spacer()
-                    if let rarity = charm.rarity {
-                        RarityBadge(rarity: rarity)
-                    }
                     Text(viewModel.slotText(charm))
                         .font(.system(size: 14))
                         .foregroundStyle(Color.mhTextSecondary)
