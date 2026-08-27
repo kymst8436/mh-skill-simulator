@@ -176,17 +176,20 @@ struct CharmListView: View {
                 actionTitle: "追加する") { entryTarget = .new }
                 .mhEntrance(1)
         } else {
-            // 検索欄+一覧(2026-08-27追加。画面設計4.6)
+            // 検索欄+フィルター・並び替え+一覧(2026-08-27追加。画面設計4.6)
             VStack(spacing: 0) {
-                searchField
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    .padding(.bottom, 10)
+                HStack(spacing: 10) {
+                    searchField
+                    filterMenu
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 10)
                 if viewModel.filteredCharms.isEmpty {
                     MHEmptyState(
                         systemImage: "magnifyingglass",
                         title: "該当する護石がありません",
-                        message: "検索語を変えてお試しください")
+                        message: "検索語やフィルターを変えてお試しください")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     charmList
@@ -222,15 +225,66 @@ struct CharmListView: View {
         .overlay(RoundedRectangle(cornerRadius: 2).stroke(Color.mhHairline, lineWidth: 1))
     }
 
+    /// フィルター・並び替えメニュー(2026-08-27追加。画面設計4.6)。
+    /// フィルターは複数選択(OR条件)、選択中は先頭にチェックマーク。適用中はアイコンを強調表示
+    private var filterMenu: some View {
+        Menu {
+            Section("フィルター") {
+                ForEach(CharmListViewModel.filterableRarities, id: \.self) { rarity in
+                    Button {
+                        viewModel.toggleRarityFilter(rarity)
+                    } label: {
+                        if viewModel.filterRarities.contains(rarity) {
+                            Label("レア度\(rarity)", systemImage: "checkmark")
+                        } else {
+                            Text("レア度\(rarity)")
+                        }
+                    }
+                }
+                Button {
+                    viewModel.filterWeaponSlot.toggle()
+                } label: {
+                    if viewModel.filterWeaponSlot {
+                        Label("武器スロあり", systemImage: "checkmark")
+                    } else {
+                        Text("武器スロあり")
+                    }
+                }
+            }
+            Section("並び替え") {
+                ForEach(CharmListViewModel.SortOrder.allCases) { order in
+                    Button {
+                        viewModel.selectSortOrder(order)
+                    } label: {
+                        if viewModel.sortOrder == order {
+                            Label(order.rawValue, systemImage: "checkmark")
+                        } else {
+                            Text(order.rawValue)
+                        }
+                    }
+                }
+            }
+        } label: {
+            Image(systemName: "slider.horizontal.3")
+                .font(.system(size: 16, weight: viewModel.isFilterActive ? .semibold : .regular))
+                .foregroundStyle(viewModel.isFilterActive ? Color.mhAccent : Color.mhTextSecondary)
+                .frame(width: 38, height: 38)
+                .background(viewModel.isFilterActive ? Color.mhAccentDim : Color.mhSurfaceSubtle)
+                .clipShape(RoundedRectangle(cornerRadius: 2))
+                .overlay(RoundedRectangle(cornerRadius: 2)
+                    .stroke(viewModel.isFilterActive ? Color.mhAccent : Color.mhHairline, lineWidth: 1))
+        }
+    }
+
     private var charmList: some View {
         ScrollView {
             LazyVStack(spacing: 10) {
                 ForEach(viewModel.filteredCharms) { charm in
                     charmRow(charm)
                 }
-                Text(viewModel.searchText.trimmingCharacters(in: .whitespaces).isEmpty
-                     ? "\(viewModel.charms.count)個"
-                     : "\(viewModel.filteredCharms.count)/\(viewModel.charms.count)個")
+                Text(viewModel.isNarrowed
+                     ? "\(viewModel.filteredCharms.count)/\(viewModel.charms.count)個"
+                     : "\(viewModel.charms.count)個")
                     .font(.system(size: 13))
                     .foregroundStyle(Color.mhTextTertiary)
                     .padding(.top, 4)
