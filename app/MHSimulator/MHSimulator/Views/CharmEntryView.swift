@@ -9,6 +9,7 @@ struct CharmEntryView: View {
     @State private var viewModel: CharmEntryViewModel
     @State private var showsDiscardDialog = false
     @State private var showsDuplicateAlert = false
+    @State private var showsScanner = false
 
     init(dependencies: AppDependencies, target: CharmEntryTarget, onSaved: @escaping () -> Void) {
         self.dependencies = dependencies
@@ -50,6 +51,12 @@ struct CharmEntryView: View {
         } message: {
             Text("同じ護石を複数所持している場合はそのまま登録できます")
         }
+        .fullScreenCover(isPresented: $showsScanner) {
+            CharmScanView(dependencies: dependencies) { entries in
+                viewModel.applyScanned(entries)
+                showsScanner = false
+            }
+        }
     }
 
     private func attemptSave() {
@@ -72,6 +79,12 @@ struct CharmEntryView: View {
             VStack(alignment: .leading, spacing: 0) {
                 // 入場モーション: セクション単位(DESIGN.md §7.5)
                 Group {
+                    // カメラ読み取り(F-10。編集時は非表示=画面設計4.13)
+                    if !viewModel.isEditing {
+                        scanButton
+                            .padding(.horizontal, 16)
+                            .padding(.top, 16)
+                    }
                     MHSectionHeader(title: "スキル")
                         .padding(.top, 16)
                     MHCard {
@@ -131,6 +144,25 @@ struct CharmEntryView: View {
                 }
             }
             .padding(.bottom, 24)
+        }
+    }
+
+    /// ゲーム画面をかざしてスキルを自動入力(F-10。画面設計4.13)
+    private var scanButton: some View {
+        Button {
+            showsScanner = true
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "camera.viewfinder")
+                    .font(.system(size: 17, weight: .medium))
+                Text("カメラで読み取る")
+                    .font(.system(size: 16, weight: .semibold))
+            }
+            .foregroundStyle(Color.mhAccent)
+            .frame(maxWidth: .infinity, minHeight: 48)
+            .background(Color.mhAccentWash)
+            .clipShape(RoundedRectangle(cornerRadius: 2))
+            .overlay(RoundedRectangle(cornerRadius: 2).stroke(Color.mhAccent.opacity(0.4), lineWidth: 1))
         }
     }
 
