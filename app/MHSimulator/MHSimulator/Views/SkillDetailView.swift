@@ -181,6 +181,7 @@ struct SkillDetailView: View {
         let pieceOrder: Int
         let pieceKind: ArmorPieceKind
         let name: String
+        let slots: [Int]
         /// スキルレベル(シリーズ/グループスキルは部位数で発動するため出さない)
         let level: Int?
     }
@@ -198,6 +199,7 @@ struct SkillDetailView: View {
                     pieceOrder: pieceOrder[piece.kind] ?? 0,
                     pieceKind: piece.kind,
                     name: piece.name,
+                    slots: piece.slots,
                     level: skill.kind == .armor || skill.kind == .weapon
                         ? piece.skills[skill.id] : nil)
             }
@@ -223,6 +225,9 @@ struct SkillDetailView: View {
                     .font(.system(size: 15))
                     .foregroundStyle(Color.mhTextPrimary)
                 Spacer()
+                Text(MHFormat.slotSymbols(row.slots))
+                    .font(.system(size: 14))
+                    .foregroundStyle(Color.mhTextSecondary)
                 if let level = row.level {
                     Text("Lv\(level)")
                         .font(.system(size: 14, weight: .semibold))
