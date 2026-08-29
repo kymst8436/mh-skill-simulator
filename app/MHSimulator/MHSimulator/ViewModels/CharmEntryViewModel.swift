@@ -161,6 +161,19 @@ final class CharmEntryViewModel {
         }
     }
 
+    // MARK: - カメラ読み取り(F-10。画面設計4.13)
+
+    /// スキャン確定スキル(規則順に整列済み)を反映する。スロットは既存の自動絞り込みに任せる
+    func applyScanned(_ entries: [CharmRules.GroupEntry]) {
+        skill1 = nil
+        skill2 = nil
+        skill3 = nil
+        selectedSlot = nil
+        for (position, entry) in entries.prefix(3).enumerated() {
+            select(position: position, entry: entry)
+        }
+    }
+
     // MARK: - 保存(仕様3.3 手順6)
 
     func makeCharm() -> OwnedCharm {
