@@ -219,3 +219,17 @@ public enum SearchError: Error, Equatable, Sendable {
     case levelExceedsMax(SkillId)         // 目標レベルが上限超
     case unknownSkill(SkillId)
 }
+
+// MARK: - Codable準拠(マイセット保存=EquipmentSetのスナップショットJSON化。画面設計4.15 2026-08-29追加)
+// 自動合成は型宣言と同一ファイルのextensionでのみ働くため、ここにまとめて置く
+
+extension ArmorPieceKind: Codable {}
+extension ArmorPiece: Codable {}
+extension DecorationTarget: Codable {}
+extension Decoration: Codable {}
+extension Charm.Source: Codable {}
+extension Charm: Codable {}
+extension Weapon: Codable {}
+extension DecorationAssignment.SlotOwner: Codable {}
+extension DecorationAssignment: Codable {}
+extension EquipmentSet: Codable {}

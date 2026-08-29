@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// 3タブ構成(画面設計§2)。タブバーは自作MHTabBar(DESIGN.md §4)
+/// 4タブ構成(画面設計§2)。タブバーは自作MHTabBar(DESIGN.md §4)
 struct MainTabView: View {
     let dependencies: AppDependencies
     @State private var selection: MHTab = .search
@@ -11,6 +11,10 @@ struct MainTabView: View {
             TabView(selection: $selection) {
                 SearchConditionView(dependencies: dependencies)
                     .tag(MHTab.search)
+                    .toolbar(.hidden, for: .tabBar)
+
+                MySetListView(dependencies: dependencies)
+                    .tag(MHTab.mySets)
                     .toolbar(.hidden, for: .tabBar)
 
                 CharmListView(dependencies: dependencies)

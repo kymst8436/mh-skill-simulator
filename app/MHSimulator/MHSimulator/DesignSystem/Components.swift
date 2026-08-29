@@ -1,4 +1,5 @@
 import SwiftUI
+import MHSimulatorCore
 
 // 共通コンポーネント(Docs/DESIGN.md §5)。画面ローカルでの再実装をしないこと。
 
@@ -340,7 +341,7 @@ extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
 
 /// アプリのタブ
 enum MHTab: Hashable {
-    case search, charms, info
+    case search, mySets, charms, info
 }
 
 /// 自作タブバー(全幅フラット。OS標準TabBarは使わない。DESIGN.md §4)
@@ -356,6 +357,7 @@ struct MHTabBar: View {
     var body: some View {
         HStack(spacing: 0) {
             item(.search, icon: .system("magnifyingglass"), label: "検索")
+            item(.mySets, icon: .asset(MHFormat.pieceIconName(.chest)), label: "マイセット")
             item(.charms, icon: .asset(MHFormat.charmIconName), label: "護石")
             item(.info, icon: .system("info.circle"), label: "情報")
         }

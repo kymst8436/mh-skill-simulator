@@ -123,6 +123,74 @@ final class UserStoreTests: XCTestCase {
         XCTAssertLessThan(elapsed, 1.0)
         print("護石1,000件読込: \(String(format: "%.3f", elapsed))s")
     }
+    // MARK: - マイセット(画面設計4.15 2026-08-29追加)
+
+    func makeEquipmentSet() -> EquipmentSet {
+        let head = ArmorPiece(
+            id: 1, seriesId: 10, kind: .head, name: "テスト頭",
+            defenseMax: 60, resistances: [1, 2, 3, 4, 5], slots: [3, 1], skills: [100: 2])
+        let decoration = Decoration(id: 500, name: "攻撃珠", slotSize: 2, allowedOn: .armor, skills: [100: 1])
+        let charm = Charm(
+            source: .owned(UUID()), name: "攻撃+2",
+            skills: [100: 2], weaponSlots: [], armorSlots: [1])
+        let weapon = Weapon(id: 7, kind: "greatsword", name: "テスト大剣", rarity: 8, slots: [3], skills: [200: 1])
+        return EquipmentSet(
+            weapon: weapon,
+            pieces: [.head: head],
+            charm: charm,
+            decorations: [DecorationAssignment(
+                owner: .armor(.head), slotSize: 2, decoration: decoration, required: [100: 1])],
+            activeSkills: [100: 5, 200: 1],
+            totalDefenseMax: 60,
+            totalResistances: [1, 2, 3, 4, 5],
+            emptyWeaponSlots: [3],
+            emptyArmorSlots: [1])
+    }
+
+    func testSavedSetRoundTrip() throws {
+        let store = try UserStore(path: dbPath)
+        let set = makeEquipmentSet()
+        let item = SavedEquipmentSet(name: "テストセット", set: set, conditionSkills: [100: 5])
+        try store.insertSavedSet(item)
+
+        let loaded = try store.loadSavedSets()
+        XCTAssertEqual(loaded.count, 1)
+        let first = try XCTUnwrap(loaded.first)
+        XCTAssertEqual(first.id, item.id)
+        XCTAssertEqual(first.name, "テストセット")
+        XCTAssertEqual(first.conditionSkills, [100: 5])
+        // EquipmentSetのスナップショットが丸ごと復元される(値埋め込み)
+        XCTAssertEqual(first.set.weapon?.name, "テスト大剣")
+        XCTAssertEqual(first.set.weapon?.skills, [200: 1])
+        XCTAssertEqual(first.set.pieces[.head]?.name, "テスト頭")
+        XCTAssertEqual(first.set.pieces[.head]?.slots, [3, 1])
+        XCTAssertEqual(first.set.charm.source, set.charm.source)
+        XCTAssertEqual(first.set.charm.skills, [100: 2])
+        XCTAssertEqual(first.set.decorations.count, 1)
+        XCTAssertEqual(first.set.decorations[0].decoration.name, "攻撃珠")
+        XCTAssertEqual(first.set.decorations[0].owner, .armor(.head))
+        XCTAssertEqual(first.set.decorations[0].required, [100: 1])
+        XCTAssertEqual(first.set.activeSkills, [100: 5, 200: 1])
+        XCTAssertEqual(first.set.totalDefenseMax, 60)
+        XCTAssertEqual(first.set.totalResistances, [1, 2, 3, 4, 5])
+        XCTAssertEqual(first.set.emptyWeaponSlots, [3])
+        XCTAssertEqual(first.set.emptyArmorSlots, [1])
+
+        try store.deleteSavedSet(id: item.id)
+        XCTAssertTrue(try store.loadSavedSets().isEmpty)
+    }
+
+    func testSavedSetOrderIsCreatedAtDescending() throws {
+        let store = try UserStore(path: dbPath)
+        let older = SavedEquipmentSet(
+            name: "古いセット", set: makeEquipmentSet(),
+            createdAt: Date(timeIntervalSinceNow: -100))
+        let newer = SavedEquipmentSet(name: "新しいセット", set: makeEquipmentSet())
+        try store.insertSavedSet(older)
+        try store.insertSavedSet(newer)
+        XCTAssertEqual(try store.loadSavedSets().map(\.name), ["新しいセット", "古いセット"])
+    }
+
     func testWishlistRoundTrip() throws {
         let store = try UserStore(path: dbPath)
         let item = WishlistItem(

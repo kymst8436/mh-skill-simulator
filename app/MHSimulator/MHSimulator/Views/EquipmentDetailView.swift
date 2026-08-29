@@ -1,13 +1,19 @@
 import SwiftUI
 import MHSimulatorCore
 
-/// 装備詳細(画面設計4.5)。検索結果1件の内訳を表示専用で確認する
+/// 装備詳細(画面設計4.5)。検索結果1件の内訳を確認し、マイセットへ保存できる(画面設計4.15 2026-08-29追加)
 struct EquipmentDetailView: View {
     let dependencies: AppDependencies
     let item: EquipmentSetItem
     let condition: SearchCondition
+    /// マイセット保存ボタンを出すか(マイセットタブから開いた詳細ではfalse。画面設計4.15)
+    var allowsSave = true
     @Environment(\.dismiss) private var dismiss
     @State private var detailSkill: Skill?
+    @State private var showsSaveAlert = false
+    @State private var saveName = ""
+    @State private var didSaveToMySets = false
+    @State private var saveErrorMessage: String?
 
     private var weapon: Weapon? { item.set.weapon }
 
@@ -26,9 +32,56 @@ struct EquipmentDetailView: View {
         }
         .mhNavigationTitle("装備詳細")
         .navigationBarBackButtonHidden(true)
-        .toolbar { MHBackButton { dismiss() } }
+        .toolbar {
+            MHBackButton { dismiss() }
+            if allowsSave {
+                // 二重保存防止のため保存後は無効化(同じセットを複数回保存する用途は想定しない)
+                MHToolbarButton(title: didSaveToMySets ? "保存済み" : "保存", isEnabled: !didSaveToMySets) {
+                    saveName = defaultSaveName
+                    showsSaveAlert = true
+                }
+            }
+        }
         .sheet(item: $detailSkill) { skill in
             SkillDetailView(master: master, skill: skill)
+        }
+        .alert("マイセットに保存", isPresented: $showsSaveAlert) {
+            TextField("セット名", text: $saveName)
+            Button("保存") { saveToMySets() }
+            Button("キャンセル", role: .cancel) {}
+        } message: {
+            Text("この装備セットをマイセットタブに保存します")
+        }
+        .alert(
+            saveErrorMessage ?? "",
+            isPresented: Binding(
+                get: { saveErrorMessage != nil },
+                set: { if !$0 { saveErrorMessage = nil } })
+        ) {
+            Button("OK") {}
+        }
+    }
+
+    // MARK: - マイセット保存(画面設計4.15 2026-08-29追加)
+
+    /// 既定のセット名(条件スキル最大2件。条件がなければ「装備セット」)
+    private var defaultSaveName: String {
+        let names = sortedSkills.filter(\.isCondition).map(\.name)
+        guard !names.isEmpty else { return "装備セット" }
+        return names.prefix(2).joined(separator: "・") + (names.count > 2 ? " ほか" : "")
+    }
+
+    private func saveToMySets() {
+        let trimmed = saveName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let saved = SavedEquipmentSet(
+            name: trimmed.isEmpty ? defaultSaveName : trimmed,
+            set: equipment,
+            conditionSkills: condition.requiredSkills)
+        do {
+            try dependencies.userStore.insertSavedSet(saved)
+            didSaveToMySets = true
+        } catch {
+            saveErrorMessage = "保存できませんでした。端末の空き容量をご確認ください"
         }
     }
 
