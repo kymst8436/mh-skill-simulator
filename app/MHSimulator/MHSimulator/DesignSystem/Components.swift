@@ -347,11 +347,17 @@ enum MHTab: Hashable {
 struct MHTabBar: View {
     @Binding var selection: MHTab
 
+    /// タブアイコン: SF Symbolまたはアセット(テンプレート描画で選択色に追従)
+    private enum TabIcon {
+        case system(String)
+        case asset(String)
+    }
+
     var body: some View {
         HStack(spacing: 0) {
-            item(.search, icon: "magnifyingglass", label: "検索")
-            item(.charms, icon: "seal", label: "護石")
-            item(.info, icon: "info.circle", label: "情報")
+            item(.search, icon: .system("magnifyingglass"), label: "検索")
+            item(.charms, icon: .asset(MHFormat.charmIconName), label: "護石")
+            item(.info, icon: .system("info.circle"), label: "情報")
         }
         .padding(.top, 7)
         .padding(.bottom, 2)
@@ -361,13 +367,24 @@ struct MHTabBar: View {
         }
     }
 
-    private func item(_ tab: MHTab, icon: String, label: String) -> some View {
+    private func item(_ tab: MHTab, icon: TabIcon, label: String) -> some View {
         Button {
             selection = tab
         } label: {
             VStack(spacing: 3) {
-                Image(systemName: icon)
-                    .font(.system(size: 20, weight: .regular))
+                Group {
+                    switch icon {
+                    case .system(let name):
+                        Image(systemName: name)
+                            .font(.system(size: 20, weight: .regular))
+                    case .asset(let name):
+                        Image(name)
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                    }
+                }
+                .frame(width: 24, height: 24)
                 Text(label)
                     .font(.system(size: 10))
             }
