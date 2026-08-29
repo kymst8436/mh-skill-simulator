@@ -120,10 +120,15 @@ struct DecorationAssigner {
                 .filter { deco in deco.skills.contains { remaining[$0.key, default: 0] > 0 } }
                 .sorted { contribution($0) > contribution($1) }
             for deco in useful {
+                // この枠が実際に埋める不足分を記録する(代替可能表示=仕様3.1手順5)
+                var consumed: [SkillId: Int] = [:]
                 for (skill, level) in deco.skills {
-                    remaining[skill, default: 0] -= level
+                    let before = remaining[skill, default: 0]
+                    if before > 0 { consumed[skill] = min(level, before) }
+                    remaining[skill, default: 0] = before - level
                 }
-                assignment.append(DecorationAssignment(owner: slot.owner, slotSize: slot.size, decoration: deco))
+                assignment.append(DecorationAssignment(
+                    owner: slot.owner, slotSize: slot.size, decoration: deco, required: consumed))
                 if solve(index + 1) { return true }
                 assignment.removeLast()
                 for (skill, level) in deco.skills {

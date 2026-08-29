@@ -12,10 +12,25 @@ nonisolated struct EquipmentFilters: Codable, Equatable {
     var pinnedCharmId: Int32?
     /// 除外する生産護石の系統ID
     var excludedCharmIds: [Int32] = []
+    /// 除外する装飾品のid(簡易所持数管理=F-7拡張。2026-08-29追加)
+    var excludedDecorations: [Int32] = []
+
+    init() {}
+
+    /// 後方互換デコード: 追加キーが無い旧JSONでも既存設定を失わない
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        pinnedPieces = try container.decodeIfPresent([String: Int64].self, forKey: .pinnedPieces) ?? [:]
+        excludedPieces = try container.decodeIfPresent([Int64].self, forKey: .excludedPieces) ?? []
+        pinnedCharmId = try container.decodeIfPresent(Int32.self, forKey: .pinnedCharmId)
+        excludedCharmIds = try container.decodeIfPresent([Int32].self, forKey: .excludedCharmIds) ?? []
+        excludedDecorations = try container.decodeIfPresent([Int32].self, forKey: .excludedDecorations) ?? []
+    }
 
     var isEmpty: Bool {
         pinnedPieces.isEmpty && excludedPieces.isEmpty
             && pinnedCharmId == nil && excludedCharmIds.isEmpty
+            && excludedDecorations.isEmpty
     }
 
     func pinnedPieceId(for kind: ArmorPieceKind) -> Int64? {
@@ -50,6 +65,11 @@ nonisolated struct EquipmentFilters: Codable, Equatable {
         guard !excludedCharmIds.contains(id) else { return }
         excludedCharmIds.append(id)
         if pinnedCharmId == id { pinnedCharmId = nil }
+    }
+
+    mutating func addExcludedDecoration(_ id: Int32) {
+        guard !excludedDecorations.contains(id) else { return }
+        excludedDecorations.append(id)
     }
 
     // MARK: - SearchCondition用の変換

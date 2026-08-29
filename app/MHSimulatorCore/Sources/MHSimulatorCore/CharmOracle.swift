@@ -193,7 +193,9 @@ public final class CharmOracle {
                 if mask & (1 << index) == 0 {
                     directSkills[skillId] = deficit
                 } else {
-                    guard let plan = slotPlan(for: skillId, deficit: deficit) else {
+                    guard let plan = slotPlan(
+                        for: skillId, deficit: deficit,
+                        excluding: prepared.excludedDecorationIds) else {
                         feasible = false
                         break
                     }
@@ -211,11 +213,16 @@ public final class CharmOracle {
     }
 
     /// 不足スキルを装飾品で賄う場合の必要スロット(最小サイズ×個数)
-    private func slotPlan(for skillId: SkillId, deficit: Int) -> (isWeapon: Bool, sizes: [Int])? {
+    private func slotPlan(
+        for skillId: SkillId, deficit: Int, excluding excludedIds: Set<Int32>
+    ) -> (isWeapon: Bool, sizes: [Int])? {
         // 最大レベル→最小サイズの装飾品を選ぶ。防具スロットを優先(護石は防具スロ中心のため)
         func best(_ target: DecorationTarget) -> Decoration? {
             master.decorations
-                .filter { $0.allowedOn == target && ($0.skills[skillId] ?? 0) > 0 }
+                .filter {
+                    $0.allowedOn == target && ($0.skills[skillId] ?? 0) > 0
+                        && !excludedIds.contains($0.id)
+                }
                 .max {
                     let l0 = $0.skills[skillId]!, l1 = $1.skills[skillId]!
                     return l0 != l1 ? l0 < l1 : $0.slotSize > $1.slotSize

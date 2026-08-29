@@ -21,6 +21,7 @@ struct SearchSettingsView: View {
         case excludePiece
         case pinCharm
         case excludeCharm
+        case excludeDecoration
 
         var id: String {
             switch self {
@@ -28,6 +29,7 @@ struct SearchSettingsView: View {
             case .excludePiece: "exclude-piece"
             case .pinCharm: "pin-charm"
             case .excludeCharm: "exclude-charm"
+            case .excludeDecoration: "exclude-decoration"
             }
         }
     }
@@ -68,9 +70,15 @@ struct SearchSettingsView: View {
                                     excludedCharmRow(charmId)
                                     separator
                                 }
+                                ForEach(filters.excludedDecorations, id: \.self) { decorationId in
+                                    excludedDecorationRow(decorationId)
+                                    separator
+                                }
                                 addRow("防具を除外に追加") { pickerTarget = .excludePiece }
                                 separator
                                 addRow("生産護石を除外に追加") { pickerTarget = .excludeCharm }
+                                separator
+                                addRow("装飾品を除外に追加") { pickerTarget = .excludeDecoration }
                             }
                         }
                         .padding(.horizontal, 16)
@@ -235,6 +243,38 @@ struct SearchSettingsView: View {
         .frame(minHeight: 48)
     }
 
+    private func excludedDecorationRow(_ decorationId: Int32) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: "diamond")
+                .font(.system(size: 18, weight: .light))
+                .foregroundStyle(Color.mhTextSecondary)
+                .frame(width: 24, height: 24)
+            if let deco = master.decorations.first(where: { $0.id == decorationId }) {
+                Text(deco.name)
+                    .font(.system(size: 15))
+                    .foregroundStyle(Color.mhTextPrimary)
+                    .lineLimit(1)
+                Text(MHFormat.slotSymbols([deco.slotSize]))
+                    .font(.system(size: 14))
+                    .foregroundStyle(Color.mhTextSecondary)
+            } else {
+                Text("不明な装飾品")
+                    .font(.system(size: 15))
+                    .foregroundStyle(Color.mhTextTertiary)
+            }
+            Spacer()
+            Button {
+                filters.excludedDecorations.removeAll { $0 == decorationId }
+            } label: {
+                Image(systemName: "minus.circle")
+                    .font(.system(size: 20, weight: .light))
+                    .foregroundStyle(Color.mhDestructive)
+            }
+        }
+        .padding(.horizontal, 16)
+        .frame(minHeight: 48)
+    }
+
     private func addRow(_ title: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 8) {
@@ -314,7 +354,126 @@ struct SearchSettingsView: View {
                     }
                 }
             }
+        case .excludeDecoration:
+            DecorationPickerView(
+                master: master,
+                excludedIds: Set(filters.excludedDecorations)
+            ) { decorationId in
+                if filters.excludedDecorations.contains(decorationId) {
+                    filters.excludedDecorations.removeAll { $0 == decorationId }
+                } else {
+                    filters.addExcludedDecoration(decorationId)
+                }
+            }
         }
+    }
+}
+
+// MARK: - 装飾品ピッカー
+
+/// 装飾品選択sheet(検索設定の除外用)。タップでトグル(連続追加)・OKで閉じる
+private struct DecorationPickerView: View {
+    @Environment(\.dismiss) private var dismiss
+    let master: MasterDatabase
+    let excludedIds: Set<Int32>
+    let onToggle: (Int32) -> Void
+
+    @State private var searchText = ""
+
+    private var visibleDecorations: [Decoration] {
+        master.decorations
+            .filter { $0.name.mhContains(searchText) }
+            .sorted {
+                if $0.slotSize != $1.slotSize { return $0.slotSize < $1.slotSize }
+                return $0.name.compare($1.name, locale: Locale(identifier: "ja_JP")) == .orderedAscending
+            }
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            pickerHeader(title: "除外する装飾品", showsDone: true) { dismiss() }
+            searchField
+                .padding(.horizontal, 16)
+                .padding(.bottom, 10)
+            Rectangle().fill(Color.mhHairline).frame(height: 1)
+            decorationList
+        }
+        .background(Color.mhBackgroundElevated)
+        .presentationDragIndicator(.visible)
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 15))
+                .foregroundStyle(Color.mhTextTertiary)
+            TextField("", text: $searchText,
+                      prompt: Text("装飾品名で検索").foregroundStyle(Color.mhTextTertiary))
+                .font(.system(size: 16))
+                .foregroundStyle(Color.mhTextPrimary)
+        }
+        .padding(.horizontal, 10)
+        .frame(minHeight: 38)
+        .background(Color.mhSurfaceSubtle)
+        .clipShape(RoundedRectangle(cornerRadius: 2))
+        .overlay(RoundedRectangle(cornerRadius: 2).stroke(Color.mhHairline, lineWidth: 1))
+    }
+
+    private var decorationList: some View {
+        ZStack {
+            Color.mhBackground.ignoresSafeArea()
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(visibleDecorations, id: \.id) { deco in
+                        decorationRow(deco)
+                        rowSeparator
+                    }
+                }
+            }
+        }
+    }
+
+    private func decorationRow(_ deco: Decoration) -> some View {
+        let isMarked = excludedIds.contains(deco.id)
+        let summary = deco.skills
+            .compactMap { skillId, level in
+                master.skills[skillId].map { MHFormat.skillLine($0.name, level) }
+            }
+            .sorted()
+            .joined(separator: "・")
+        return Button {
+            onToggle(deco.id)
+        } label: {
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(deco.name)
+                        .font(.system(size: 16))
+                        .foregroundStyle(Color.mhTextPrimary)
+                    if !summary.isEmpty {
+                        Text(summary)
+                            .font(.system(size: 12))
+                            .foregroundStyle(Color.mhTextTertiary)
+                            .lineLimit(1)
+                    }
+                }
+                Spacer()
+                Text(MHFormat.slotSymbols([deco.slotSize]))
+                    .font(.system(size: 14))
+                    .foregroundStyle(Color.mhTextSecondary)
+                if isMarked {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(Color.mhAccent)
+                }
+            }
+            .padding(.horizontal, 16)
+            .frame(minHeight: 52)
+            .background(isMarked ? Color.mhAccentWash : .clear)
+        }
+    }
+
+    private var rowSeparator: some View {
+        Rectangle().fill(Color.mhHairlineFaint).frame(height: 1).padding(.leading, 16)
     }
 }
 

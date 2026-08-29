@@ -209,13 +209,33 @@ struct EquipmentDetailView: View {
         } else {
             ForEach(Array(equipment.decorations.enumerated()), id: \.offset) { index, assignment in
                 row {
-                    name(assignment.decoration.name)
+                    name(decorationLabel(assignment))
                     Spacer()
                     slot("→ \(ownerLabel(assignment.owner)) スロ\(MHFormat.slotSymbols([assignment.slotSize]))")
                 }
                 if index < equipment.decorations.count - 1 { separator }
             }
         }
+    }
+
+    /// 代替可能な枠は具体名の代わりに「<スキル名>の珠【サイズ】いずれか」(画面設計4.5。2026-08-29)。
+    /// 条件: 必要分が単一スキル かつ 枠サイズ以下で必要分を満たせる装飾品(除外適用後)が2種類以上
+    private func decorationLabel(_ assignment: DecorationAssignment) -> String {
+        guard assignment.required.count == 1,
+              let (skillId, level) = assignment.required.first,
+              let skillName = master.skills[skillId]?.name else {
+            return assignment.decoration.name
+        }
+        let target: DecorationTarget = switch assignment.owner {
+        case .weapon, .charmWeapon: .weapon
+        case .armor, .charmArmor: .armor
+        }
+        let alternatives = master.decorations(
+            satisfying: assignment.required, target: target, maxSize: assignment.slotSize,
+            excluding: condition.excludedDecorationIds)
+        guard alternatives.count >= 2 else { return assignment.decoration.name }
+        let levelText = level >= 2 ? "Lv\(level)" : ""
+        return "\(skillName)\(levelText)の珠【\(assignment.slotSize)】いずれか"
     }
 
     private func ownerLabel(_ owner: DecorationAssignment.SlotOwner) -> String {

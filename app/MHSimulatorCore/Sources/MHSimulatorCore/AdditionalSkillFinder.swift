@@ -146,7 +146,8 @@ public final class AdditionalSkillFinder {
             pinnedPieceIds: condition.pinnedPieceIds,
             excludedPieceIds: condition.excludedPieceIds,
             pinnedFixedCharmId: condition.pinnedFixedCharmId,
-            excludedFixedCharmIds: condition.excludedFixedCharmIds)
+            excludedFixedCharmIds: condition.excludedFixedCharmIds,
+            excludedDecorationIds: condition.excludedDecorationIds)
 
         // 武器未指定時の高速化: 有望武器1本に固定した制限付き探索を先に試す。
         // 武器固定は探索空間の制限なので、成立すれば全体でも成立(健全)。
@@ -222,7 +223,7 @@ public final class AdditionalSkillFinder {
         // 装飾品の1スロットあたり最大寄与(スロットサイズ不問の上界)
         var bestArmorDeco: [SkillId: Int] = [:]
         var bestWeaponDeco: [SkillId: Int] = [:]
-        for deco in master.decorations {
+        for deco in master.decorations where !condition.excludedDecorationIds.contains(deco.id) {
             for (skillId, level) in deco.skills {
                 switch deco.allowedOn {
                 case .armor: bestArmorDeco[skillId] = max(bestArmorDeco[skillId] ?? 0, level)

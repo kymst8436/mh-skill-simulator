@@ -168,6 +168,23 @@ public final class MasterDatabase {
     static func decodeSlots(_ json: String) -> [Int] {
         (try? JSONDecoder().decode([Int].self, from: Data(json.utf8))) ?? []
     }
+
+    /// 必要分(required)を満たし、指定スロットに収まる装飾品(除外適用後)。
+    /// 装備詳細の「いずれか」表示の判定に使う(仕様3.1手順5・画面設計4.5)
+    public func decorations(
+        satisfying required: [SkillId: Int],
+        target: DecorationTarget,
+        maxSize: Int,
+        excluding excludedIds: Set<Int32> = []
+    ) -> [Decoration] {
+        guard !required.isEmpty else { return [] }
+        return decorations.filter { deco in
+            deco.allowedOn == target
+                && deco.slotSize <= maxSize
+                && !excludedIds.contains(deco.id)
+                && required.allSatisfy { (deco.skills[$0.key] ?? 0) >= $0.value }
+        }
+    }
 }
 
 // MARK: - SQLite薄ラッパ

@@ -123,6 +123,8 @@ public final class SearchEngine {
         let charmMaxSlotCount: Int
         let bestDecoLevel: [SkillId: Int]  // 1スロットあたり最大寄与(ターゲット不問の上界)
         let bonusContrib: [Int32: Set<SkillId>]  // seriesId → 条件中のボーナススキル
+        /// 除外装飾品(F-7)。Catalogには適用済み。逆引きのスロット計画(CharmOracle)でも参照する
+        let excludedDecorationIds: Set<Int32>
     }
 
     /// 条件検証と候補の枝刈り。ボーナススキルが提供不能ならnil(即0件)。
@@ -242,8 +244,12 @@ public final class SearchEngine {
             }
         }
 
+        // 除外装飾品(F-7)は劣候補除去(Catalog内)より先に外す
+        let usableDecorations = master.decorations.filter {
+            !condition.excludedDecorationIds.contains($0.id)
+        }
         let catalog = DecorationAssigner.Catalog(
-            decorations: master.decorations, targetSkills: Set(condSkills))
+            decorations: usableDecorations, targetSkills: Set(condSkills))
 
         var maxAdd: [ArmorPieceKind: [SkillId: Int]] = [:]
         var maxSlotCount: [ArmorPieceKind: Int] = [:]
@@ -302,7 +308,8 @@ public final class SearchEngine {
             charmCandidates: charmCandidates, weaponCandidates: weaponCandidates, catalog: catalog,
             maxAdd: maxAdd, maxSlotCount: maxSlotCount, bonusAvail: bonusAvail,
             charmMaxSkill: charmMaxSkill, charmMaxSlotCount: charmMaxSlotCount,
-            bestDecoLevel: bestDecoLevel, bonusContrib: bonusContrib)
+            bestDecoLevel: bestDecoLevel, bonusContrib: bonusContrib,
+            excludedDecorationIds: condition.excludedDecorationIds)
     }
 
     // MARK: - 探索状態
