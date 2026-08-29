@@ -14,8 +14,11 @@ final class AdFreeCenter {
 
     private static let expiryKey = "adFree.expiry"
 
-    /// 全広告を非表示にすべきか(期限到来で自動的にfalseへ戻る)
-    private(set) var isAdFree = false
+    /// 全広告を非表示にすべきか(リワード期限内またはPro版。2026-08-29 Pro版追加)
+    var isAdFree: Bool { isRewardActive || ProStore.shared.isPro }
+
+    /// リワード報酬による非表示が有効か(期限到来で自動的にfalseへ戻る)
+    private(set) var isRewardActive = false
     private var expiry: Date?
     private var expiryTask: Task<Void, Never>?
 
@@ -47,14 +50,14 @@ final class AdFreeCenter {
         return remaining >= TimeInterval(Self.maxHours) * 3600 - 60
     }
 
-    /// 期限からisAdFreeを再評価し、期限到来で自動復帰するタイマーを張り直す
+    /// 期限からisRewardActiveを再評価し、期限到来で自動復帰するタイマーを張り直す
     private func revalidate() {
         expiryTask?.cancel()
         guard let expiry, expiry > Date() else {
-            isAdFree = false
+            isRewardActive = false
             return
         }
-        isAdFree = true
+        isRewardActive = true
         expiryTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(expiry.timeIntervalSinceNow))
             guard !Task.isCancelled else { return }

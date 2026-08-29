@@ -273,6 +273,15 @@ public final class UserStore {
         return items
     }
 
+    /// マイセットの件数(無料版の保存上限判定用。2026-08-29追加)
+    public func countSavedSets() throws -> Int {
+        var count = 0
+        try query("SELECT COUNT(*) FROM SavedSet") { stmt in
+            count = Int(sqlite3_column_int64(stmt, 0))
+        }
+        return count
+    }
+
     public func insertSavedSet(_ item: SavedEquipmentSet) throws {
         let setData = try JSONEncoder().encode(item.set)
         try transaction {

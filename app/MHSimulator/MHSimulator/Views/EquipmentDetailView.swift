@@ -14,6 +14,8 @@ struct EquipmentDetailView: View {
     @State private var saveName = ""
     @State private var didSaveToMySets = false
     @State private var saveErrorMessage: String?
+    @State private var showsSetLimitAlert = false
+    @State private var showsProSheet = false
 
     private var weapon: Weapon? { item.set.weapon }
 
@@ -37,6 +39,11 @@ struct EquipmentDetailView: View {
             if allowsSave {
                 // 二重保存防止のため保存後は無効化(同じセットを複数回保存する用途は想定しない)
                 MHToolbarButton(title: didSaveToMySets ? "保存済み" : "保存", isEnabled: !didSaveToMySets) {
+                    // 無料版はマイセット5個まで(2026-08-29追加)。上限到達時はPro版への導線を出す
+                    guard canSaveMoreSets else {
+                        showsSetLimitAlert = true
+                        return
+                    }
                     saveName = defaultSaveName
                     showsSaveAlert = true
                 }
@@ -60,6 +67,15 @@ struct EquipmentDetailView: View {
         ) {
             Button("OK") {}
         }
+        .alert("マイセットの上限", isPresented: $showsSetLimitAlert) {
+            Button("Pro版について") { showsProSheet = true }
+            Button("キャンセル", role: .cancel) {}
+        } message: {
+            Text("無料版で保存できるマイセットは\(ProStore.freeMySetLimit)個までです。Pro版にアップグレードすると上限なく保存できます")
+        }
+        .sheet(isPresented: $showsProSheet) {
+            NavigationStack { ProPurchaseView() }
+        }
     }
 
     // MARK: - マイセット保存(画面設計4.15 2026-08-29追加)
@@ -71,7 +87,18 @@ struct EquipmentDetailView: View {
         return names.prefix(2).joined(separator: "・") + (names.count > 2 ? " ほか" : "")
     }
 
+    /// 無料版の上限判定(Pro版は無制限)。件数取得に失敗した場合は保存を妨げない
+    private var canSaveMoreSets: Bool {
+        if ProStore.shared.isPro { return true }
+        guard let count = try? dependencies.userStore.countSavedSets() else { return true }
+        return count < ProStore.freeMySetLimit
+    }
+
     private func saveToMySets() {
+        guard canSaveMoreSets else {
+            showsSetLimitAlert = true
+            return
+        }
         let trimmed = saveName.trimmingCharacters(in: .whitespacesAndNewlines)
         let saved = SavedEquipmentSet(
             name: trimmed.isEmpty ? defaultSaveName : trimmed,

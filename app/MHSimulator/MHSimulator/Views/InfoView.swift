@@ -4,6 +4,7 @@ import MHSimulatorCore
 /// 情報タブ(画面設計4.8)
 struct InfoView: View {
     let dependencies: AppDependencies
+    private let proStore = ProStore.shared
 
     private var appVersion: String {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
@@ -17,6 +18,12 @@ struct InfoView: View {
                 Color.mhBackground.ignoresSafeArea()
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
+                        // Pro版へのアップグレード導線(情報タブ最上部に強調カードで表示。2026-08-29追加)
+                        proCard
+                            .padding(.horizontal, 16)
+                            .padding(.top, 20)
+                            .mhEntrance(0)
+
                         Group {
                             MHSectionHeader(title: "このアプリについて")
                                 .padding(.top, 20)
@@ -32,7 +39,7 @@ struct InfoView: View {
                             .padding(.horizontal, 16)
                             .padding(.top, 7)
                         }
-                        .mhEntrance(0)
+                        .mhEntrance(1)
 
                         MHCard {
                             NavigationLink {
@@ -53,14 +60,19 @@ struct InfoView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, 20)
-                        .mhEntrance(1)
+                        .mhEntrance(2)
 
                         Text("本アプリは非公式のファンメイドアプリです")
                             .font(.system(size: 12))
                             .foregroundStyle(Color.mhTextTertiary)
                             .padding(.horizontal, 32)
                             .padding(.top, 10)
-                            .mhEntrance(2)
+                            .mhEntrance(3)
+
+                        #if DEBUG
+                        developerSection
+                            .mhEntrance(4)
+                        #endif
                     }
                     .padding(.bottom, 24)
                 }
@@ -68,6 +80,90 @@ struct InfoView: View {
             .mhNavigationTitle("情報")
         }
     }
+
+    /// Pro版アップグレードの強調カード(アンバー面の縁取り+ウォッシュ背景で通常カードより目立たせる)
+    private var proCard: some View {
+        NavigationLink {
+            ProPurchaseView()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: proStore.isPro ? "checkmark.seal.fill" : "sparkles")
+                    .font(.system(size: 22))
+                    .foregroundStyle(Color.mhAccent)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(proStore.isPro ? "Pro版をご利用中" : "Pro版にアップグレード")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(Color.mhTitleGold)
+                    Text(proStore.isPro
+                        ? "マイセット上限なし・全ての広告が非表示"
+                        : "マイセット上限なし・全ての広告が非表示に")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Color.mhTextSecondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Color.mhAccent)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(Color.mhAccentWash)
+            .clipShape(RoundedRectangle(cornerRadius: 2))
+            .overlay(
+                RoundedRectangle(cornerRadius: 2)
+                    .stroke(Color.mhAccentDim, lineWidth: 1)
+            )
+        }
+    }
+
+    #if DEBUG
+    /// 開発者ツール(DEBUGビルド限定。本番ビルドにはセクションごと存在せず、常にStoreKitの購入状態が参照される)
+    private var developerSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            MHSectionHeader(title: "開発者ツール(デバッグビルドのみ)")
+                .padding(.top, 28)
+            MHCard {
+                VStack(spacing: 0) {
+                    debugModeRow("StoreKitの購入状態を参照", mode: .storeKit)
+                    separator
+                    debugModeRow("Pro版として動作", mode: .forcePro)
+                    separator
+                    debugModeRow("無料版として動作", mode: .forceFree)
+                    separator
+                    infoRow("StoreKit購入状態", proStore.entitledPro ? "Pro版" : "未購入")
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 7)
+            Text("本番ビルドではこの設定は存在せず、常にStoreKitの購入状態のみが参照されます")
+                .font(.system(size: 11))
+                .foregroundStyle(Color.mhTextTertiary)
+                .padding(.horizontal, 32)
+                .padding(.top, 6)
+        }
+    }
+
+    private func debugModeRow(_ title: String, mode: ProStore.DebugProMode) -> some View {
+        Button {
+            proStore.debugProMode = mode
+        } label: {
+            HStack {
+                Text(title)
+                    .font(.system(size: 15))
+                    .foregroundStyle(Color.mhTextPrimary)
+                Spacer()
+                if proStore.debugProMode == mode {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(Color.mhAccent)
+                }
+            }
+            .padding(.horizontal, 16)
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+    }
+    #endif
 
     private var separator: some View {
         Rectangle().fill(Color.mhHairlineFaint).frame(height: 1).padding(.leading, 16)

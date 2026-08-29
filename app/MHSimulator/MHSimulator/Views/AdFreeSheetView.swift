@@ -26,16 +26,19 @@ struct AdFreeIcon: View {
     }
 }
 
-/// 検索タブ左上の広告非表示ボタン(画面設計§2 2026-08-29追加)
+/// 検索タブ左上の広告非表示ボタン(画面設計§2 2026-08-29追加)。
+/// Pro版では常時広告非表示のため表示しない
 struct AdFreeToolbarButton: ToolbarContent {
     let action: () -> Void
 
     var body: some ToolbarContent {
-        if #available(iOS 26.0, *) {
-            ToolbarItem(placement: .topBarLeading) { button }
-                .sharedBackgroundVisibility(.hidden)
-        } else {
-            ToolbarItem(placement: .topBarLeading) { button }
+        if !ProStore.shared.isPro {
+            if #available(iOS 26.0, *) {
+                ToolbarItem(placement: .topBarLeading) { button }
+                    .sharedBackgroundVisibility(.hidden)
+            } else {
+                ToolbarItem(placement: .topBarLeading) { button }
+            }
         }
     }
 
