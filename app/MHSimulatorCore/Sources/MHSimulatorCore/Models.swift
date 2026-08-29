@@ -147,19 +147,23 @@ public struct SearchCondition: Sendable {
     public let pinnedFixedCharmId: Int32?
     /// 除外する生産護石の系統ID集合
     public let excludedFixedCharmIds: Set<Int32>
+    /// 除外する装飾品のid集合(割り当て候補から外す。簡易所持数管理=F-7拡張 2026-08-29)
+    public let excludedDecorationIds: Set<Int32>
 
     public init(
         requiredSkills: [SkillId: Int],
         pinnedPieceIds: [ArmorPieceKind: Int64] = [:],
         excludedPieceIds: Set<Int64> = [],
         pinnedFixedCharmId: Int32? = nil,
-        excludedFixedCharmIds: Set<Int32> = []
+        excludedFixedCharmIds: Set<Int32> = [],
+        excludedDecorationIds: Set<Int32> = []
     ) {
         self.requiredSkills = requiredSkills
         self.pinnedPieceIds = pinnedPieceIds
         self.excludedPieceIds = excludedPieceIds
         self.pinnedFixedCharmId = pinnedFixedCharmId
         self.excludedFixedCharmIds = excludedFixedCharmIds
+        self.excludedDecorationIds = excludedDecorationIds
     }
 }
 
@@ -173,6 +177,16 @@ public struct DecorationAssignment: Sendable {
     public let owner: SlotOwner
     public let slotSize: Int
     public let decoration: Decoration
+    /// この枠が実際に埋めた不足分(スキル→レベル。割り当て時に記録)。
+    /// 必要分を満たす別の装飾品と交換しても成立が崩れない(装備詳細の代替可能表示=仕様3.1手順5)
+    public let required: [SkillId: Int]
+
+    public init(owner: SlotOwner, slotSize: Int, decoration: Decoration, required: [SkillId: Int] = [:]) {
+        self.owner = owner
+        self.slotSize = slotSize
+        self.decoration = decoration
+        self.required = required
+    }
 }
 
 public struct EquipmentSet: Sendable {
