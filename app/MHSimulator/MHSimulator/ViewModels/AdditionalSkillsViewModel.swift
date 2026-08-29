@@ -15,6 +15,8 @@ final class AdditionalSkillsViewModel {
     }
 
     private let dependencies: AppDependencies
+    /// スキル詳細sheet(4.14)がマスタ参照に使う
+    var master: MasterDatabase { dependencies.master }
     private let condition: SearchCondition
     private let weapon: Weapon?
     /// 行タップ時に呼ぶ(SearchResultsViewModel.addSkillAndRetry)

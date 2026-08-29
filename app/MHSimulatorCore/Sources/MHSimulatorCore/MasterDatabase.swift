@@ -40,11 +40,19 @@ public final class MasterDatabase {
         charmRulesVersion = meta.1
         sourceCommit = meta.2
 
+        var levelEffects: [SkillId: [Int: String]] = [:]
+        try db.query("SELECT skillId, level, effectJa FROM SkillRank") { row in
+            levelEffects[SkillId(row.int(0)), default: [:]][Int(row.int(1))] = row.string(2)
+        }
         var skills: [SkillId: Skill] = [:]
-        try db.query("SELECT id, nameJa, kind, maxLevel FROM Skill") { row in
+        try db.query("SELECT id, nameJa, kind, maxLevel, descriptionJa FROM Skill") { row in
             let kind = SkillKind(rawValue: row.string(2))!
             let id = SkillId(row.int(0))
-            skills[id] = Skill(id: id, name: row.string(1), kind: kind, maxLevel: Int(row.int(3)))
+            let summary = row.string(4)  // NULLは空文字で返るためisEmptyで畳む
+            skills[id] = Skill(
+                id: id, name: row.string(1), kind: kind, maxLevel: Int(row.int(3)),
+                summary: summary.isEmpty ? nil : summary,
+                levelEffects: levelEffects[id] ?? [:])
         }
         self.skills = skills
 
@@ -184,6 +192,24 @@ public final class MasterDatabase {
                 && !excludedIds.contains(deco.id)
                 && required.allSatisfy { (deco.skills[$0.key] ?? 0) >= $0.value }
         }
+    }
+
+    /// スキルを持つ防具(シリーズ/グループスキルは付与部位そのもの。スキル詳細=画面設計4.14)
+    public func armorPieces(withSkill skillId: SkillId) -> [ArmorPiece] {
+        armorPieces.filter { $0.skills[skillId] != nil }
+    }
+
+    /// シリーズ/グループスキルの発動条件(部位数→発動レベル)。
+    /// 同一スキルの規則は全シリーズで共通(bundled.db実測)のためマージして返す
+    public func bonusRanks(forSkill skillId: SkillId) -> [Int: Int] {
+        var merged: [Int: Int] = [:]
+        for series in armorSeries.values {
+            for bonus in [series.setBonus, series.groupBonus].compactMap({ $0 })
+            where bonus.skillId == skillId {
+                merged.merge(bonus.ranksByPieces) { max($0, $1) }
+            }
+        }
+        return merged
     }
 }
 

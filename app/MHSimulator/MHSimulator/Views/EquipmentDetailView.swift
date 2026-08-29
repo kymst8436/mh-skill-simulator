@@ -7,6 +7,7 @@ struct EquipmentDetailView: View {
     let item: EquipmentSetItem
     let condition: SearchCondition
     @Environment(\.dismiss) private var dismiss
+    @State private var detailSkill: Skill?
 
     private var weapon: Weapon? { item.set.weapon }
 
@@ -26,6 +27,9 @@ struct EquipmentDetailView: View {
         .mhNavigationTitle("装備詳細")
         .navigationBarBackButtonHidden(true)
         .toolbar { MHBackButton { dismiss() } }
+        .sheet(item: $detailSkill) { skill in
+            SkillDetailView(master: master, skill: skill)
+        }
     }
 
     private var scrollContent: some View {
@@ -268,6 +272,8 @@ struct EquipmentDetailView: View {
                 Spacer()
                 contributorIcons(entry.contributors)
             }
+            .contentShape(Rectangle())
+            .mhSkillDetailContextMenu { detailSkill = master.skills[entry.id] }
             if index < sorted.count - 1 { separator }
         }
     }
@@ -288,6 +294,8 @@ struct EquipmentDetailView: View {
                 Spacer()
                 contributorIcons(entry.contributors)
             }
+            .contentShape(Rectangle())
+            .mhSkillDetailContextMenu { detailSkill = master.skills[entry.id] }
             if index < rows.count - 1 { separator }
         }
     }
@@ -342,6 +350,7 @@ struct EquipmentDetailView: View {
     }
 
     private struct SkillRow {
+        let id: SkillId
         let name: String
         let level: Int
         let kind: SkillKind
@@ -350,6 +359,7 @@ struct EquipmentDetailView: View {
     }
 
     private struct InactiveBonusRow {
+        let id: SkillId
         let name: String
         let kind: SkillKind
         let currentPieces: Int
@@ -362,7 +372,7 @@ struct EquipmentDetailView: View {
             .compactMap { id, level -> SkillRow? in
                 guard let skill = master.skills[id] else { return nil }
                 return SkillRow(
-                    name: skill.name, level: level, kind: skill.kind,
+                    id: id, name: skill.name, level: level, kind: skill.kind,
                     isCondition: condition.requiredSkills[id] != nil,
                     contributors: contributors(of: id, kind: skill.kind))
             }
@@ -396,7 +406,7 @@ struct EquipmentDetailView: View {
             .compactMap { skillId, count -> InactiveBonusRow? in
                 guard let skill = master.skills[skillId] else { return nil }
                 return InactiveBonusRow(
-                    name: skill.name, kind: skill.kind,
+                    id: skillId, name: skill.name, kind: skill.kind,
                     currentPieces: count,
                     requiredPieces: minPieces[skillId] ?? 0,
                     contributors: contributors(of: skillId, kind: skill.kind))

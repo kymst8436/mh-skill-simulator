@@ -6,6 +6,7 @@ struct SkillPickerView: View {
     @Environment(\.dismiss) private var dismiss
     let conditionViewModel: SearchConditionViewModel
     @State private var viewModel: SkillPickerViewModel
+    @State private var detailSkill: Skill?
 
     init(conditionViewModel: SearchConditionViewModel) {
         self.conditionViewModel = conditionViewModel
@@ -36,6 +37,9 @@ struct SkillPickerView: View {
         }
         .background(Color.mhBackgroundElevated)
         .presentationDragIndicator(.visible)
+        .sheet(item: $detailSkill) { skill in
+            SkillDetailView(master: conditionViewModel.dependencies.master, skill: skill)
+        }
     }
 
     private var header: some View {
@@ -168,5 +172,6 @@ struct SkillPickerView: View {
             .frame(minHeight: 48)
             .background(selectedRow != nil ? Color.mhAccentWash : .clear)
         }
+        .mhSkillDetailContextMenu { detailSkill = skill }
     }
 }
