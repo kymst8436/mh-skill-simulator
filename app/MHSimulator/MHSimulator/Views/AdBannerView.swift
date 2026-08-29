@@ -7,13 +7,19 @@ enum AdConfig {
     // 開発中はGoogle公式テストユニット(本番ユニットへの誤クリック防止)
     static let searchBannerUnitId = "ca-app-pub-3940256099942544/2934735716"
     static let charmBannerUnitId = "ca-app-pub-3940256099942544/2934735716"
+    static let mySetBannerUnitId = "ca-app-pub-3940256099942544/2934735716"
     static let nativeAdUnitId = "ca-app-pub-3940256099942544/3986624511"
     static let detailNativeAdUnitId = "ca-app-pub-3940256099942544/3986624511"
+    static let interstitialUnitId = "ca-app-pub-3940256099942544/4411468910"
+    static let rewardedUnitId = "ca-app-pub-3940256099942544/1712485313"
     #else
     static let searchBannerUnitId = "ca-app-pub-4797364772307900/3487951268"
     static let charmBannerUnitId = "ca-app-pub-4797364772307900/9861787926"
+    static let mySetBannerUnitId = "ca-app-pub-4797364772307900/6182501598"
     static let nativeAdUnitId = "ca-app-pub-4797364772307900/3052836992"
     static let detailNativeAdUnitId = "ca-app-pub-4797364772307900/7840279766"
+    static let interstitialUnitId = "ca-app-pub-4797364772307900/1062976209"
+    static let rewardedUnitId = "ca-app-pub-4797364772307900/3695939059"
     #endif
 }
 
@@ -23,7 +29,8 @@ struct AdBannerView: View {
     @State private var isCollapsed = false
 
     var body: some View {
-        if !isCollapsed {
+        // 広告非表示期間中はロードも表示もしない(画面設計§2 2026-08-29)
+        if !AdFreeCenter.shared.isAdFree && !isCollapsed {
             BannerRepresentable(
                 adUnitId: adUnitId,
                 onFailure: { isCollapsed = true },

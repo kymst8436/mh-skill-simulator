@@ -15,6 +15,7 @@ struct CharmListView: View {
     @State private var pendingDelete: OwnedCharm?
     @State private var tab: Tab = .owned
     @State private var showsWishlistEntry = false
+    @State private var showsAdFreeSheet = false
     /// ウィッシュリスト行タップ→護石入力プリセット(保存でリストから消す)
     @State private var wishlistEntryTarget: WishlistItem?
 
@@ -43,12 +44,19 @@ struct CharmListView: View {
             .mhNavigationTitle("護石")
             .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.charmBannerUnitId) }
             .toolbar {
+                // 広告非表示(リワード)。左上に自作アイコン(画面設計§2 2026-08-29追加)
+                AdFreeToolbarButton {
+                    showsAdFreeSheet = true
+                }
                 MHToolbarButton(title: "+ 追加") {
                     switch tab {
                     case .owned: entryTarget = .new
                     case .wishlist: showsWishlistEntry = true
                     }
                 }
+            }
+            .sheet(isPresented: $showsAdFreeSheet) {
+                AdFreeSheetView()
             }
             .task { viewModel.load() }
             .sheet(item: $entryTarget) { target in

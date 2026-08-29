@@ -25,7 +25,13 @@ struct SearchResultsView: View {
         }
         .mhNavigationTitle("検索結果")
         .navigationBarBackButtonHidden(true)
-        .toolbar { MHBackButton { path.removeLast() } }
+        .toolbar {
+            MHBackButton {
+                path.removeLast()
+                // 検索条件へ戻る=自然な区切りでインタースティシャル(画面設計§2 2026-08-29)
+                InterstitialAdCoordinator.shared.presentAfterReturnIfEligible()
+            }
+        }
         .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.searchBannerUnitId) }
         .task {
             viewModel.start()
