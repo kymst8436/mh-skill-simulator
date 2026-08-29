@@ -50,6 +50,13 @@ struct NativeAdSlot: View {
     private static let refreshInterval: TimeInterval = 90
 
     var body: some View {
+        // 広告非表示期間中はスロットごと外す(ロードも定期更新も行わない。画面設計§2 2026-08-29)
+        if !AdFreeCenter.shared.isAdFree {
+            slotContent
+        }
+    }
+
+    private var slotContent: some View {
         // 空表示でもonAppearが発火するよう、常に幅を持つコンテナにする
         VStack(spacing: 0) {
             if let ad = box.nativeAd {

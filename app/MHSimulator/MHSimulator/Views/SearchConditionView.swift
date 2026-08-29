@@ -24,6 +24,7 @@ struct SearchConditionView: View {
     @State private var path: [SearchRoute] = []
     @State private var showsSkillPicker = false
     @State private var showsSearchSettings = false
+    @State private var showsAdFreeSheet = false
     @State private var detailSkill: Skill?
 
     init(dependencies: AppDependencies) {
@@ -73,6 +74,10 @@ struct SearchConditionView: View {
             .mhNavigationTitle("検索条件")
             .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.searchBannerUnitId) }
             .toolbar {
+                // 広告非表示(リワード)。左上に自作アイコン(画面設計§2 2026-08-29追加)
+                AdFreeToolbarButton {
+                    showsAdFreeSheet = true
+                }
                 // 検索設定(固定・除外)。設定ありのときは赤バッジ(画面設計4.1 2026-08-24改訂)
                 MHToolbarIconButton(
                     systemImage: "gearshape",
@@ -80,6 +85,9 @@ struct SearchConditionView: View {
                 ) {
                     showsSearchSettings = true
                 }
+            }
+            .sheet(isPresented: $showsAdFreeSheet) {
+                AdFreeSheetView()
             }
             .sheet(isPresented: $showsSkillPicker) {
                 SkillPickerView(conditionViewModel: viewModel)
@@ -118,6 +126,8 @@ struct SearchConditionView: View {
     /// 画面下部固定の検索ボタン(2026-08-24改訂)
     private var searchButtonBar: some View {
         MHPrimaryButton(title: "検索する", isEnabled: viewModel.canSearch) {
+            // インタースティシャルの頻度カウント(表示は結果から戻るとき。画面設計§2 2026-08-29)
+            InterstitialAdCoordinator.shared.recordSearch()
             path.append(.results)
         }
         .padding(.horizontal, 16)
