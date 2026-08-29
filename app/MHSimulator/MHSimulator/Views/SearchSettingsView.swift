@@ -379,10 +379,16 @@ private struct DecorationPickerView: View {
     let onToggle: (Int32) -> Void
 
     @State private var searchText = ""
+    /// 装着先フィルター(空=すべて。複数ON=OR)
+    @State private var targetFilters: Set<DecorationTarget> = []
+    /// スロットサイズフィルター(空=すべて。複数ON=OR)
+    @State private var sizeFilters: Set<Int> = []
 
     private var visibleDecorations: [Decoration] {
         master.decorations
             .filter { $0.name.mhContains(searchText) }
+            .filter { targetFilters.isEmpty || targetFilters.contains($0.allowedOn) }
+            .filter { sizeFilters.isEmpty || sizeFilters.contains($0.slotSize) }
             .sorted {
                 if $0.slotSize != $1.slotSize { return $0.slotSize < $1.slotSize }
                 return $0.name.compare($1.name, locale: Locale(identifier: "ja_JP")) == .orderedAscending
@@ -395,11 +401,51 @@ private struct DecorationPickerView: View {
             searchField
                 .padding(.horizontal, 16)
                 .padding(.bottom, 10)
+            filterBar
+                .padding(.horizontal, 16)
+                .padding(.bottom, 10)
             Rectangle().fill(Color.mhHairline).frame(height: 1)
             decorationList
         }
         .background(Color.mhBackgroundElevated)
         .presentationDragIndicator(.visible)
+    }
+
+    /// 装着先・スロットサイズのON/OFFフィルター
+    private var filterBar: some View {
+        HStack(spacing: 8) {
+            filterChip("武器", isOn: targetFilters.contains(.weapon)) {
+                toggle(&targetFilters, .weapon)
+            }
+            filterChip("防具", isOn: targetFilters.contains(.armor)) {
+                toggle(&targetFilters, .armor)
+            }
+            Rectangle().fill(Color.mhHairline).frame(width: 1, height: 20)
+            ForEach([3, 2, 1], id: \.self) { size in
+                filterChip(MHFormat.slotSymbols([size]), isOn: sizeFilters.contains(size)) {
+                    toggle(&sizeFilters, size)
+                }
+            }
+            Spacer()
+        }
+    }
+
+    private func toggle<T: Hashable>(_ set: inout Set<T>, _ value: T) {
+        if set.contains(value) { set.remove(value) } else { set.insert(value) }
+    }
+
+    private func filterChip(_ label: String, isOn: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(label)
+                .font(.system(size: 13, weight: isOn ? .semibold : .regular))
+                .foregroundStyle(isOn ? Color.mhTextPrimary : Color.mhTextSecondary)
+                .padding(.horizontal, 12)
+                .frame(minHeight: 28)
+                .background(isOn ? Color.mhHairline : Color.mhSurfaceSubtle)
+                .clipShape(RoundedRectangle(cornerRadius: 2))
+                .overlay(RoundedRectangle(cornerRadius: 2).stroke(
+                    isOn ? Color.mhAccent.opacity(0.5) : Color.mhHairline, lineWidth: 1))
+        }
     }
 
     private var searchField: some View {
