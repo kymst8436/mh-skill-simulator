@@ -43,6 +43,27 @@ final class CharmScanParserTests: XCTestCase {
         XCTAssertEqual(
             reading?.skills,
             [entry("攻撃", 3), entry("早食い", 2), entry("体力回復量ＵＰ", 1)])
+        // RARE 7表記からレア度を読み取る(このスキル構成のスロット候補と整合)
+        XCTAssertEqual(reading?.rarity, 7)
+    }
+
+    func testInconsistentRarityIsDropped() {
+        // 規則上あり得ないレア度(RARE 1)の誤読はnilに落とす(スキルは採用)
+        let items = sample1.map {
+            $0.text == "RARE 7" ? CharmScanParser.ObservedText(text: "RARE 1", x: $0.x, y: $0.y) : $0
+        }
+        let reading = parser.parse(items)
+        XCTAssertNotNil(reading)
+        XCTAssertEqual(reading?.skills, parser.parse(sample1)?.skills)
+        XCTAssertEqual(reading?.rarity, nil)
+    }
+
+    func testRarityNilWhenNotVisible() {
+        // RARE行が枠外などで読めない場合はrarity=nilで成立する
+        let items = sample1.filter { $0.text != "RARE 7" }
+        let reading = parser.parse(items)
+        XCTAssertNotNil(reading)
+        XCTAssertEqual(reading?.rarity, nil)
     }
 
     func testParseIsOrderIndependent() {

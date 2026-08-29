@@ -13,6 +13,8 @@ final class CharmEntryViewModel {
     var skill2: CharmRules.GroupEntry?
     var skill3: CharmRules.GroupEntry?
     var selectedSlot: CharmRules.RaritySlots?
+    /// カメラ読み取りで確定したレア度(スロット候補を絞る。手動でスキルを変えると解除=F-10)
+    private(set) var scannedRarity: Int?
     var memo = ""
     private(set) var isSaving = false
     var saveErrorMessage: String?
@@ -84,6 +86,7 @@ final class CharmEntryViewModel {
 
     /// 選択と後段の連鎖無効化(スキル1変更→2・3があり得なければクリア)
     func select(position: Int, entry: CharmRules.GroupEntry?) {
+        scannedRarity = nil  // 手動変更で読み取りレア度の絞り込みを解除
         switch position {
         case 0: skill1 = entry
         case 1: skill2 = entry
@@ -105,9 +108,17 @@ final class CharmEntryViewModel {
         Array([skill1, skill2, skill3].prefix(position)).compactMap { $0 }
     }
 
+    /// 現在の絞り込み条件でのスロット候補集合(読み取りレア度があればそのレア度のみ)
+    private func availableSlotCandidates() -> Set<CharmRules.RaritySlots> {
+        let all = rules.slotCandidates(for: chosenPrefix)
+        guard let scannedRarity else { return all }
+        let filtered = all.filter { $0.rarity == scannedRarity }
+        return filtered.isEmpty ? all : filtered  // 矛盾時は絞り込みを諦めて全候補
+    }
+
     /// スロット・レア度候補。レア度昇順→スロット数降順(仕様3.3 手順4)
     var slotCandidates: [CharmRules.RaritySlots] {
-        var list = rules.slotCandidates(for: chosenPrefix).sorted {
+        var list = availableSlotCandidates().sorted {
             if $0.rarity != $1.rarity { return $0.rarity < $1.rarity }
             let count0 = $0.slots.weaponSlots.count + $0.slots.armorSlots.count
             let count1 = $1.slots.weaponSlots.count + $1.slots.armorSlots.count
@@ -121,7 +132,7 @@ final class CharmEntryViewModel {
     }
 
     private func refreshSlotSelection() {
-        let candidates = rules.slotCandidates(for: chosenPrefix)
+        let candidates = availableSlotCandidates()
         if let selectedSlot, !candidates.contains(selectedSlot) {
             self.selectedSlot = nil
         }
@@ -163,8 +174,9 @@ final class CharmEntryViewModel {
 
     // MARK: - カメラ読み取り(F-10。画面設計4.13)
 
-    /// スキャン確定スキル(規則順に整列済み)を反映する。スロットは既存の自動絞り込みに任せる
-    func applyScanned(_ entries: [CharmRules.GroupEntry]) {
+    /// スキャン確定スキル(規則順に整列済み)と読み取りレア度を反映する。
+    /// レア度が読めていればスロット候補をそのレア度に絞る(候補1つなら自動選択)
+    func applyScanned(_ entries: [CharmRules.GroupEntry], rarity: Int?) {
         skill1 = nil
         skill2 = nil
         skill3 = nil
@@ -172,6 +184,8 @@ final class CharmEntryViewModel {
         for (position, entry) in entries.prefix(3).enumerated() {
             select(position: position, entry: entry)
         }
+        scannedRarity = rarity
+        refreshSlotSelection()
     }
 
     // MARK: - 保存(仕様3.3 手順6)
@@ -221,5 +235,13 @@ final class CharmEntryViewModel {
 
     func slotLabel(_ slot: CharmRules.RaritySlots) -> String {
         MHFormat.emptySlotSummary(weapon: slot.slots.weaponSlots, armor: slot.slots.armorSlots)
+    }
+
+    /// スロットセクションの注記(読み取りレア度で絞り込み中はその旨を示す)
+    var slotNote: String {
+        if let scannedRarity {
+            return "読み取ったレア度(RARE \(scannedRarity))で候補を絞り込んでいます"
+        }
+        return "スキル構成から自動で候補を絞り込みます"
     }
 }

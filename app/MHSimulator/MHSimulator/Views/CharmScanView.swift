@@ -9,7 +9,7 @@ struct CharmScanView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: CharmScanViewModel
 
-    init(dependencies: AppDependencies, onScanned: @escaping ([CharmRules.GroupEntry]) -> Void) {
+    init(dependencies: AppDependencies, onScanned: @escaping ([CharmRules.GroupEntry], Int?) -> Void) {
         _viewModel = State(initialValue: CharmScanViewModel(
             dependencies: dependencies, onScanned: onScanned))
     }
@@ -137,14 +137,15 @@ private struct CharmScanCameraView: UIViewRepresentable {
         let view = PreviewView()
         view.previewLayer.videoGravity = .resizeAspectFill
         context.coordinator.start(attachingTo: view.previewLayer)
+        context.coordinator.updateGeometry(guideRect: guideRect, viewSize: nil)
         view.onLayout = { [weak coordinator = context.coordinator] layer in
-            coordinator?.updateRegionOfInterest(guideRect: guideRect, previewLayer: layer)
+            coordinator?.updateGeometry(guideRect: nil, viewSize: layer.bounds.size)
         }
         return view
     }
 
     func updateUIView(_ view: PreviewView, context: Context) {
-        context.coordinator.updateRegionOfInterest(guideRect: guideRect, previewLayer: view.previewLayer)
+        context.coordinator.updateGeometry(guideRect: guideRect, viewSize: view.bounds.size)
     }
 
     static func dismantleUIView(_ view: PreviewView, coordinator: Coordinator) {
@@ -168,10 +169,14 @@ private struct CharmScanCameraView: UIViewRepresentable {
         private let session = AVCaptureSession()
         private let sessionQueue = DispatchQueue(label: "charm-scan.session")
         private let videoQueue = DispatchQueue(label: "charm-scan.vision")
-        /// Vision座標系(原点左下・正規化)のROI。プレビューレイアウト確定後に設定される
-        private let roiLock = NSLock()
-        private var regionOfInterest: CGRect?
+        /// ガイド枠とプレビューサイズ(ビュー座標)。フレーム処理時に画像座標へ変換する
+        private let geometryLock = NSLock()
+        private var guideRect: CGRect?
+        private var viewSize: CGSize?
         private var isProcessing = false
+
+        /// ガイド枠の許容マージン(枠ぴったりに収めた際のはみ出しを吸収する。各辺25%拡張)
+        private static let guideMargin: CGFloat = 0.25
 
         init(parser: CharmScanParser, onReading: @escaping (CharmScanParser.Reading?) -> Void) {
             self.parser = parser
@@ -216,18 +221,34 @@ private struct CharmScanCameraView: UIViewRepresentable {
             }
         }
 
-        /// ガイド枠(ビュー座標)→Vision ROI(原点左下・正規化)。レイアウト変化ごとに更新
-        func updateRegionOfInterest(guideRect: CGRect, previewLayer: AVCaptureVideoPreviewLayer) {
-            guard previewLayer.bounds.width > 0 else { return }
-            let metadataRect = previewLayer.metadataOutputRectConverted(fromLayerRect: guideRect)
-            let vision = CGRect(
-                x: metadataRect.minX,
-                y: 1 - metadataRect.maxY,
-                width: metadataRect.width,
-                height: metadataRect.height)
-            roiLock.lock()
-            regionOfInterest = vision.intersection(CGRect(x: 0, y: 0, width: 1, height: 1))
-            roiLock.unlock()
+        /// ガイド枠・プレビューサイズの更新(nilの引数は保持値を維持)
+        func updateGeometry(guideRect: CGRect?, viewSize: CGSize?) {
+            geometryLock.lock()
+            if let guideRect { self.guideRect = guideRect }
+            if let viewSize, viewSize.width > 0 { self.viewSize = viewSize }
+            geometryLock.unlock()
+        }
+
+        /// ガイド枠(ビュー座標)を正規化画像座標(原点左上)へ変換し、マージン分拡張する。
+        /// プレビューはアスペクトフィル表示のため、はみ出し分のオフセットを補正する
+        static func normalizedGuideRect(
+            guide: CGRect, viewSize: CGSize, imageSize: CGSize, margin: CGFloat
+        ) -> CGRect? {
+            guard viewSize.width > 0, viewSize.height > 0,
+                  imageSize.width > 0, imageSize.height > 0 else { return nil }
+            let scale = max(viewSize.width / imageSize.width, viewSize.height / imageSize.height)
+            let displayed = CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
+            let offset = CGPoint(
+                x: (displayed.width - viewSize.width) / 2,
+                y: (displayed.height - viewSize.height) / 2)
+            let normalized = CGRect(
+                x: (guide.minX + offset.x) / displayed.width,
+                y: (guide.minY + offset.y) / displayed.height,
+                width: guide.width / displayed.width,
+                height: guide.height / displayed.height)
+            return normalized
+                .insetBy(dx: -normalized.width * margin, dy: -normalized.height * margin)
+                .intersection(CGRect(x: 0, y: 0, width: 1, height: 1))
         }
 
         func captureOutput(
@@ -235,17 +256,26 @@ private struct CharmScanCameraView: UIViewRepresentable {
             didOutput sampleBuffer: CMSampleBuffer,
             from connection: AVCaptureConnection
         ) {
-            roiLock.lock()
-            let roi = regionOfInterest
-            roiLock.unlock()
-            guard !isProcessing, let roi, !roi.isEmpty else { return }
+            geometryLock.lock()
+            let guide = guideRect
+            let view = viewSize
+            geometryLock.unlock()
+            guard !isProcessing, let guide, let view,
+                  let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+            let imageSize = CGSize(
+                width: CVPixelBufferGetWidth(pixelBuffer),
+                height: CVPixelBufferGetHeight(pixelBuffer))
+            // 全フレームを認識し、ガイド枠(マージン付き)内のテキストだけ採用する。
+            // ROI指定は使わない(座標変換ズレで枠と認識領域が食い違う事故を避ける。F10-4フィードバック)
+            guard let filterRect = Self.normalizedGuideRect(
+                guide: guide, viewSize: view, imageSize: imageSize, margin: Self.guideMargin)
+            else { return }
             isProcessing = true
 
             let request = VNRecognizeTextRequest()
             request.recognitionLevel = .accurate
             request.recognitionLanguages = ["ja-JP", "en-US"]
             request.usesLanguageCorrection = true
-            request.regionOfInterest = roi
 
             let handler = VNImageRequestHandler(cmSampleBuffer: sampleBuffer, orientation: .up)
             try? handler.perform([request])
@@ -254,10 +284,11 @@ private struct CharmScanCameraView: UIViewRepresentable {
                 guard let candidate = observation.topCandidates(1).first,
                       candidate.confidence >= 0.3 else { return nil }
                 // yは上→下に増える読み取り順へ変換(Visionは原点左下)
-                return CharmScanParser.ObservedText(
-                    text: candidate.string,
+                let center = CGPoint(
                     x: observation.boundingBox.midX,
                     y: 1 - observation.boundingBox.midY)
+                guard filterRect.contains(center) else { return nil }
+                return CharmScanParser.ObservedText(text: candidate.string, x: center.x, y: center.y)
             }
             let reading = parser.parse(observations)
             DispatchQueue.main.async { [self] in
