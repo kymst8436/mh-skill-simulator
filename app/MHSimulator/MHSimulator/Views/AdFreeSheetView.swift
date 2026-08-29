@@ -1,22 +1,28 @@
 import SwiftUI
 
-/// 広告非表示ボタンの自作アイコン(「AD」バッジにバツ印を重ねた見た目)
+/// 広告非表示ボタンの自作アイコン(「AD」バッジに禁止マーク風の斜線を重ねた見た目)
 struct AdFreeIcon: View {
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            Text("AD")
-                .font(.system(size: 9, weight: .heavy))
-                .padding(.horizontal, 3)
-                .padding(.vertical, 1.5)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 2)
-                        .stroke(lineWidth: 1.3)
-                )
-            Image(systemName: "xmark")
-                .font(.system(size: 11, weight: .heavy))
-                .offset(x: 13, y: 8)
-        }
-        .frame(width: 26, height: 21, alignment: .topLeading)
+        Text("AD")
+            .font(.system(size: 9, weight: .heavy))
+            .padding(.horizontal, 3)
+            .padding(.vertical, 1.5)
+            .overlay(
+                RoundedRectangle(cornerRadius: 2)
+                    .stroke(lineWidth: 1.3)
+            )
+            .overlay {
+                // 斜線(左上→右下)。下地色の縁取りで「AD」の文字と重なっても判読できるようにする
+                ZStack {
+                    Capsule()
+                        .fill(Color.mhBackground)
+                        .frame(width: 27, height: 4)
+                    Capsule()
+                        .frame(width: 27, height: 2)
+                }
+                .rotationEffect(.degrees(30))
+            }
+            .frame(width: 26, height: 21)
     }
 }
 

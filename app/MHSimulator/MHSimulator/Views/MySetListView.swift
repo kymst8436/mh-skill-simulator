@@ -34,6 +34,7 @@ struct MySetListView: View {
                 content
             }
             .mhNavigationTitle("マイセット")
+            .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.mySetBannerUnitId) }
             .task { viewModel.load() }
             .navigationDestination(for: MySetRoute.self) { route in
                 switch route {
