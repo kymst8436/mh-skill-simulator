@@ -134,6 +134,10 @@ struct CharmListView: View {
         } label: {
             MHCard {
                 HStack(spacing: 10) {
+                    // レア度バッジは所持護石と同じく行の先頭(2026-08-29改訂。画面設計4.6)
+                    if let rarity = viewModel.minimumRarity(item) {
+                        RarityBadge(rarity: rarity)
+                    }
                     Image(MHFormat.charmIconName)
                         .resizable()
                         .scaledToFit()
@@ -143,9 +147,6 @@ struct CharmListView: View {
                         .foregroundStyle(Color.mhTextPrimary)
                         .multilineTextAlignment(.leading)
                     Spacer()
-                    if let rarity = viewModel.minimumRarity(item) {
-                        RarityBadge(rarity: rarity)
-                    }
                     Image(systemName: "chevron.right")
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(Color.mhTextTertiary)
