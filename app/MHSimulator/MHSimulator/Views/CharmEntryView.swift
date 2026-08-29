@@ -52,8 +52,8 @@ struct CharmEntryView: View {
             Text("同じ護石を複数所持している場合はそのまま登録できます")
         }
         .fullScreenCover(isPresented: $showsScanner) {
-            CharmScanView(dependencies: dependencies) { entries in
-                viewModel.applyScanned(entries)
+            CharmScanView(dependencies: dependencies) { entries, rarity in
+                viewModel.applyScanned(entries, rarity: rarity)
                 showsScanner = false
             }
         }
@@ -110,7 +110,7 @@ struct CharmEntryView: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 6)
-                    note("スキル構成から自動で候補を絞り込みます")
+                    note(viewModel.slotNote)
                 }
                 .mhEntrance(1)
 

@@ -16,9 +16,11 @@ public struct CharmScanParser: Sendable {
         }
     }
 
-    /// 解釈成立した護石(スキルは規則順に整列済み)
+    /// 解釈成立した護石(スキルは規則順に整列済み)。
+    /// rarityはゲーム画面のRARE表記から(読めない・規則と矛盾する場合はnil)
     public struct Reading: Hashable, Sendable {
         public let skills: [CharmRules.GroupEntry]
+        public let rarity: Int?
     }
 
     private let rules: CharmRules
@@ -46,12 +48,15 @@ public struct CharmScanParser: Sendable {
         guard items.contains(where: { $0.text.contains("の護石") }),
               items.contains(where: { $0.text.contains("装備スキル") }) else { return nil }
 
-        // スキル名とLvトークンをそれぞれ読み取り順で収集
+        // スキル名・Lv・レア度トークンをそれぞれ読み取り順で収集
         var names: [SkillId] = []
         var levels: [Int] = []
+        var rarity: Int?
         for item in items {
             if let level = Self.levelToken(item.text) {
                 levels.append(level)
+            } else if let value = Self.rarityToken(item.text) {
+                rarity = value
             } else if let id = matchSkillName(item.text) {
                 names.append(id)
             }
@@ -61,7 +66,11 @@ public struct CharmScanParser: Sendable {
 
         let entries = zip(names, levels).map { CharmRules.GroupEntry(skillId: $0, level: $1) }
         guard let ordered = ruleValidOrder(entries) else { return nil }
-        return Reading(skills: ordered)
+        // レア度はスキル構成のスロット候補と整合する場合のみ採用(誤読はnilに落とす)
+        if let value = rarity, !rules.slotCandidates(for: ordered).contains(where: { $0.rarity == value }) {
+            rarity = nil
+        }
+        return Reading(skills: ordered, rarity: rarity)
     }
 
     // MARK: - 正規化・トークン判定
@@ -77,6 +86,13 @@ public struct CharmScanParser: Sendable {
     /// 護石レベル行「lv1/1」は完全形でないため自然に除外される
     static func levelToken(_ normalized: String) -> Int? {
         guard normalized.count == 3, normalized.hasPrefix("lv"),
+              let digit = normalized.last?.wholeNumberValue, digit >= 1 else { return nil }
+        return digit
+    }
+
+    /// 正規化済み文字列が単独のレア度表記(rare1〜rare9)なら値を返す
+    static func rarityToken(_ normalized: String) -> Int? {
+        guard normalized.count == 5, normalized.hasPrefix("rare"),
               let digit = normalized.last?.wholeNumberValue, digit >= 1 else { return nil }
         return digit
     }

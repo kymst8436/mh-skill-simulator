@@ -19,14 +19,15 @@ final class CharmScanViewModel {
 
     private(set) var permission: Permission = .undetermined
     let parser: CharmScanParser
-    /// 完了時に確定スキル(規則順)を渡す。呼び出しはMainActor・一度だけ
-    let onScanned: ([CharmRules.GroupEntry]) -> Void
+    /// 完了時に確定スキル(規則順)と読み取れたレア度を渡す。呼び出しはMainActor・一度だけ
+    let onScanned: ([CharmRules.GroupEntry], Int?) -> Void
 
-    private var lastReading: CharmScanParser.Reading?
+    private var lastSkills: [CharmRules.GroupEntry]?
+    private var lastRarity: Int?
     private var stableCount = 0
     private var isFinished = false
 
-    init(dependencies: AppDependencies, onScanned: @escaping ([CharmRules.GroupEntry]) -> Void) {
+    init(dependencies: AppDependencies, onScanned: @escaping ([CharmRules.GroupEntry], Int?) -> Void) {
         self.parser = CharmScanParser(
             skillNames: dependencies.master.skills.mapValues(\.name),
             rules: dependencies.master.charmRules)
@@ -55,23 +56,28 @@ final class CharmScanViewModel {
         }
     }
 
-    /// 1フレーム分の解釈結果を受けて安定判定する(MainActorから呼ぶ)
+    /// 1フレーム分の解釈結果を受けて安定判定する(MainActorから呼ぶ)。
+    /// 安定判定はスキル構成のみで行う(レア度行は枠位置次第で読めたり読めなかったりするため、
+    /// 揺れても安定を妨げず、連続一致中に読めた最新値を採用する)
     func handle(reading: CharmScanParser.Reading?) {
         guard !isFinished else { return }
         guard let reading else {
-            lastReading = nil
+            lastSkills = nil
+            lastRarity = nil
             stableCount = 0
             return
         }
-        if reading == lastReading {
+        if reading.skills == lastSkills {
             stableCount += 1
         } else {
-            lastReading = reading
+            lastSkills = reading.skills
+            lastRarity = nil
             stableCount = 1
         }
+        if let rarity = reading.rarity { lastRarity = rarity }
         guard stableCount >= Self.requiredStableFrames else { return }
         isFinished = true
         UINotificationFeedbackGenerator().notificationOccurred(.success)
-        onScanned(reading.skills)
+        onScanned(reading.skills, lastRarity)
     }
 }
