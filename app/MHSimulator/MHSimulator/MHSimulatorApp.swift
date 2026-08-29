@@ -8,6 +8,8 @@ struct MHSimulatorApp: App {
     init() {
         MHTheme.configureAppearance()
         MobileAds.shared.start()
+        // 起動時にPro権利の検証とトランザクション監視を開始する(広告表示判定より先に走らせる)
+        _ = ProStore.shared
     }
 
     var body: some Scene {

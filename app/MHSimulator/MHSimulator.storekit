@@ -1,0 +1,33 @@
+{
+  "identifier" : "8F3A6C2E-5D14-4B9A-9E71-2C0A4F8B1D63",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "500",
+      "familyShareable" : false,
+      "internalID" : "6C0F1A2B-3D4E-5F60-7182-93A4B5C6D7E8",
+      "localizations" : [
+        {
+          "description" : "マイセット上限なし・全ての広告が非表示",
+          "displayName" : "Pro版",
+          "locale" : "ja_JP"
+        }
+      ],
+      "productID" : "com.yssdev.MHSimulator.Pro",
+      "referenceName" : "Pro",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

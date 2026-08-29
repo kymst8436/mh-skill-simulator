@@ -180,6 +180,17 @@ final class UserStoreTests: XCTestCase {
         XCTAssertTrue(try store.loadSavedSets().isEmpty)
     }
 
+    func testCountSavedSets() throws {
+        let store = try UserStore(path: dbPath)
+        XCTAssertEqual(try store.countSavedSets(), 0)
+        let item = SavedEquipmentSet(name: "セット1", set: makeEquipmentSet())
+        try store.insertSavedSet(item)
+        try store.insertSavedSet(SavedEquipmentSet(name: "セット2", set: makeEquipmentSet()))
+        XCTAssertEqual(try store.countSavedSets(), 2)
+        try store.deleteSavedSet(id: item.id)
+        XCTAssertEqual(try store.countSavedSets(), 1)
+    }
+
     func testSavedSetOrderIsCreatedAtDescending() throws {
         let store = try UserStore(path: dbPath)
         let older = SavedEquipmentSet(
