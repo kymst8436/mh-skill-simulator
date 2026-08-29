@@ -53,11 +53,36 @@ public struct OwnedCharm: Identifiable, Equatable, Sendable {
     }
 }
 
+/// マイセット(検索結果の装備セットを丸ごと保存したスナップショット。画面設計4.15 2026-08-29追加)。
+/// EquipmentSetを値埋め込みのままJSON保存するため、後から所持護石を削除・編集しても表示が崩れない
+public struct SavedEquipmentSet: Identifiable, Sendable {
+    public var id: UUID
+    public var name: String
+    public var set: EquipmentSet
+    /// 保存時の条件スキル(装備詳細の「★条件」表示を再現するため)
+    public var conditionSkills: [SkillId: Int]
+    public var createdAt: Date
+
+    public init(
+        id: UUID = UUID(),
+        name: String,
+        set: EquipmentSet,
+        conditionSkills: [SkillId: Int] = [:],
+        createdAt: Date = Date()
+    ) {
+        self.id = id
+        self.name = name
+        self.set = set
+        self.conditionSkills = conditionSkills
+        self.createdAt = createdAt
+    }
+}
+
 /// user.db(仕様4.3 / 5章)。WALモード・1操作1トランザクション。
 /// 起動時にintegrity_checkを行い、破損時は退避→再作成→通知(didRecoverFromCorruption)。
 /// SQLiteアクセスは素のC API(Q-5改訂 2026-08-24: GRDB仮決定を撤回し依存ゼロを維持)。
 public final class UserStore {
-    public static let schemaVersion = 4  // v4: WishlistItemテーブル追加(2026-08-25)
+    public static let schemaVersion = 5  // v5: SavedSetテーブル追加=マイセット(2026-08-29)
 
     public enum StoreError: Error {
         case cannotOpen(String)
@@ -229,6 +254,64 @@ public final class UserStore {
         }
     }
 
+    // MARK: - マイセット(画面設計4.15 2026-08-29追加)
+
+    /// 登録日時降順。デコードできない行はスキップする(将来の形式変更に対する保険)
+    public func loadSavedSets() throws -> [SavedEquipmentSet] {
+        var items: [SavedEquipmentSet] = []
+        try query("SELECT id, name, equipmentSet, conditionSkills, createdAt FROM SavedSet ORDER BY createdAt DESC") { stmt in
+            let idText = String(cString: sqlite3_column_text(stmt, 0))
+            let setJson = String(cString: sqlite3_column_text(stmt, 2))
+            guard let set = try? JSONDecoder().decode(EquipmentSet.self, from: Data(setJson.utf8)) else { return }
+            items.append(SavedEquipmentSet(
+                id: UUID(uuidString: idText) ?? UUID(),
+                name: String(cString: sqlite3_column_text(stmt, 1)),
+                set: set,
+                conditionSkills: Self.decodeSkillLevels(String(cString: sqlite3_column_text(stmt, 3))),
+                createdAt: Date(timeIntervalSince1970: sqlite3_column_double(stmt, 4))))
+        }
+        return items
+    }
+
+    public func insertSavedSet(_ item: SavedEquipmentSet) throws {
+        let setData = try JSONEncoder().encode(item.set)
+        try transaction {
+            try exec(
+                "INSERT INTO SavedSet (id, name, equipmentSet, conditionSkills, createdAt) VALUES (?,?,?,?,?)",
+                [
+                    .text(item.id.uuidString),
+                    .text(item.name),
+                    .text(String(decoding: setData, as: UTF8.self)),
+                    .text(Self.encodeSkillLevels(item.conditionSkills)),
+                    .real(item.createdAt.timeIntervalSince1970),
+                ])
+        }
+    }
+
+    public func deleteSavedSet(id: UUID) throws {
+        try transaction {
+            try exec("DELETE FROM SavedSet WHERE id = ?", [.text(id.uuidString)])
+        }
+    }
+
+    private static func encodeSkillLevels(_ skills: [SkillId: Int]) -> String {
+        let rows = skills.map { ["skillId": Int64($0.key), "level": Int64($0.value)] }
+            .sorted { ($0["skillId"] ?? 0) < ($1["skillId"] ?? 0) }
+        guard let data = try? JSONEncoder().encode(rows) else { return "[]" }
+        return String(decoding: data, as: UTF8.self)
+    }
+
+    private static func decodeSkillLevels(_ json: String) -> [SkillId: Int] {
+        guard let data = json.data(using: .utf8),
+              let rows = try? JSONDecoder().decode([[String: Int64]].self, from: data) else { return [:] }
+        var result: [SkillId: Int] = [:]
+        for row in rows {
+            guard let skillId = row["skillId"], let level = row["level"] else { continue }
+            result[SkillId(truncatingIfNeeded: skillId)] = Int(level)
+        }
+        return result
+    }
+
     // MARK: - AppState(仕様4.3)
 
     public func loadSelectedWeaponId() throws -> Int64? {
@@ -382,6 +465,15 @@ public final class UserStore {
             )
             """)
         try exec("""
+            CREATE TABLE IF NOT EXISTS SavedSet (
+              id TEXT PRIMARY KEY,
+              name TEXT NOT NULL,
+              equipmentSet TEXT NOT NULL,
+              conditionSkills TEXT NOT NULL,
+              createdAt REAL NOT NULL
+            )
+            """)
+        try exec("""
             CREATE TABLE IF NOT EXISTS AppState (
               id INTEGER PRIMARY KEY CHECK (id = 1),
               schemaVersion INTEGER NOT NULL,
@@ -413,6 +505,7 @@ public final class UserStore {
                 try? exec("ALTER TABLE AppState ADD COLUMN searchFilters TEXT")
             }
             // v3→v4: WishlistItemテーブルはcreateSchemaのCREATE IF NOT EXISTSで作成される
+            // v4→v5: SavedSetテーブルも同様にcreateSchemaで作成される
             try exec("UPDATE AppState SET schemaVersion = ?", [.int(Int64(Self.schemaVersion))])
         }
     }

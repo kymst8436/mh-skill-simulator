@@ -340,7 +340,7 @@ extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
 
 /// アプリのタブ
 enum MHTab: Hashable {
-    case search, charms, info
+    case search, mySets, charms, info
 }
 
 /// 自作タブバー(全幅フラット。OS標準TabBarは使わない。DESIGN.md §4)
@@ -356,6 +356,7 @@ struct MHTabBar: View {
     var body: some View {
         HStack(spacing: 0) {
             item(.search, icon: .system("magnifyingglass"), label: "検索")
+            item(.mySets, icon: .system("bookmark"), label: "マイセット")
             item(.charms, icon: .asset(MHFormat.charmIconName), label: "護石")
             item(.info, icon: .system("info.circle"), label: "情報")
         }
