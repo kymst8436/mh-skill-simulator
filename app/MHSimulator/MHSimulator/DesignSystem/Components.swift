@@ -357,7 +357,7 @@ struct MHTabBar: View {
     var body: some View {
         HStack(spacing: 0) {
             item(.search, icon: .system("magnifyingglass"), label: "検索")
-            item(.mySets, icon: .asset(MHFormat.pieceIconName(.head)), label: "マイセット")
+            item(.mySets, icon: .asset(MHFormat.pieceIconName(.chest)), label: "マイセット")
             item(.charms, icon: .asset(MHFormat.charmIconName), label: "護石")
             item(.info, icon: .system("info.circle"), label: "情報")
         }

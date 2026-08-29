@@ -83,7 +83,7 @@ struct MySetListView: View {
             MHEmptyState(
                 systemImage: "bookmark",
                 title: "マイセットはまだありません",
-                message: "検索結果の装備詳細画面の [保存] から装備セットを保存できます")
+                message: "検索結果からマイセットを追加できます")
                 .mhEntrance(0)
         } else {
             ScrollView {
