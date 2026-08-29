@@ -124,6 +124,7 @@ final class SearchConditionViewModel {
             pinnedPieceIds: equipmentFilters.pinnedPieceIdsByKind,
             excludedPieceIds: Set(equipmentFilters.excludedPieces),
             pinnedFixedCharmId: equipmentFilters.pinnedCharmId,
-            excludedFixedCharmIds: Set(equipmentFilters.excludedCharmIds))
+            excludedFixedCharmIds: Set(equipmentFilters.excludedCharmIds),
+            excludedDecorationIds: Set(equipmentFilters.excludedDecorations))
     }
 }
