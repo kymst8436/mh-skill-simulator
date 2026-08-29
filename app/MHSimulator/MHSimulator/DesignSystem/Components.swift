@@ -1,4 +1,5 @@
 import SwiftUI
+import MHSimulatorCore
 
 // 共通コンポーネント(Docs/DESIGN.md §5)。画面ローカルでの再実装をしないこと。
 
@@ -356,7 +357,7 @@ struct MHTabBar: View {
     var body: some View {
         HStack(spacing: 0) {
             item(.search, icon: .system("magnifyingglass"), label: "検索")
-            item(.mySets, icon: .system("bookmark"), label: "マイセット")
+            item(.mySets, icon: .asset(MHFormat.pieceIconName(.head)), label: "マイセット")
             item(.charms, icon: .asset(MHFormat.charmIconName), label: "護石")
             item(.info, icon: .system("info.circle"), label: "情報")
         }
