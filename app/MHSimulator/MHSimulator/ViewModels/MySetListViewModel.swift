@@ -12,11 +12,11 @@ final class MySetListViewModel {
     private(set) var isDeleting = false
     var deleteErrorMessage: String?
 
-    /// 一覧行の日付表示(登録日)
+    /// 一覧行の日付表示(登録日)。表示言語のロケール順序で年月日を並べる
     private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy/M/d"
-        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.locale = Locale.current
+        formatter.setLocalizedDateFormatFromTemplate("yMd")
         return formatter
     }()
 
@@ -30,7 +30,7 @@ final class MySetListViewModel {
         do {
             savedSets = try dependencies.userStore.loadSavedSets()
         } catch {
-            loadErrorMessage = "マイセットを読み込めませんでした"
+            loadErrorMessage = String(localized: "マイセットを読み込めませんでした")
         }
         isLoading = false
     }
@@ -42,7 +42,7 @@ final class MySetListViewModel {
             try dependencies.userStore.deleteSavedSet(id: item.id)
             savedSets.removeAll { $0.id == item.id }
         } catch {
-            deleteErrorMessage = "削除できませんでした。端末の空き容量をご確認ください"
+            deleteErrorMessage = String(localized: "削除できませんでした。端末の空き容量をご確認ください")
         }
         isDeleting = false
     }
@@ -60,7 +60,7 @@ final class MySetListViewModel {
                 return $0.name < $1.name
             }
             .map { MHFormat.skillLine($0.name, $0.level) }
-        return lines.joined(separator: "・")
+        return lines.joined(separator: String(localized: "・"))
     }
 
     func dateText(_ item: SavedEquipmentSet) -> String {

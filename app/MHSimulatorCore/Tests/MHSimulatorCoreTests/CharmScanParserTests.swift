@@ -140,4 +140,54 @@ final class CharmScanParserTests: XCTestCase {
         XCTAssertNil(CharmScanParser.editDistance("火耐性", "砲術", limit: 1))
         XCTAssertEqual(CharmScanParser.editDistance("攻撃", "攻撃", limit: 1), 0)
     }
+
+    // MARK: - 多言語プロファイル
+
+    /// 英語画面相当: sample1と同じ護石を英語DBのスキル名+英語プロファイルで解釈できる。
+    /// スキル名・護石名はハードコードせずDB(bundled.db)の英語名から組み立てる
+    func testParsesEnglishSample() throws {
+        let en = try MasterDatabase(path: TestSupport.bundledDbPath, language: .en)
+        let parser = CharmScanParser(
+            skillNames: en.skills.mapValues(\.name),
+            rules: en.charmRules,
+            profile: .profile(for: .en, randomCharmNames: en.randomCharmNames))
+        func enName(_ ja: String) -> String { en.skills[TestSupport.skill(named: ja).id]!.name }
+        let items: [CharmScanParser.ObservedText] = [
+            .init(text: en.randomCharmNames[0], x: 0.15, y: 0.20),
+            .init(text: "RARE 7", x: 0.6, y: 0.27),
+            .init(text: "Equipped Skills", x: 0.1, y: 0.45),
+            .init(text: enName("攻撃"), x: 0.15, y: 0.52),
+            .init(text: "Lv3", x: 0.75, y: 0.55),
+            .init(text: enName("早食い"), x: 0.15, y: 0.62),
+            .init(text: "Lv2", x: 0.75, y: 0.65),
+            .init(text: enName("体力回復量ＵＰ"), x: 0.15, y: 0.72),
+            .init(text: "Lv1", x: 0.75, y: 0.75),
+        ]
+        let reading = parser.parse(items)
+        XCTAssertEqual(reading?.skills, [entry("攻撃", 3), entry("早食い", 2), entry("体力回復量ＵＰ", 1)])
+        XCTAssertEqual(reading?.rarity, 7)
+    }
+
+    /// 日本語アンカーのままでは英語画面は解釈されない(誤爆防止の確認)
+    func testJapaneseProfileRejectsEnglishScreen() throws {
+        let en = try MasterDatabase(path: TestSupport.bundledDbPath, language: .en)
+        let japaneseParser = CharmScanParser(
+            skillNames: en.skills.mapValues(\.name), rules: en.charmRules)
+        let items: [CharmScanParser.ObservedText] = [
+            .init(text: en.randomCharmNames[0], x: 0.15, y: 0.20),
+            .init(text: "Equipped Skills", x: 0.1, y: 0.45),
+        ]
+        XCTAssertNil(japaneseParser.parse(items))
+    }
+
+    func testLocalizedTokens() {
+        // フランス語: "Niv. 3" / "Rareté 7" 形式
+        XCTAssertEqual(CharmScanParser.levelToken(
+            CharmScanParser.normalize("Niv. 3"), prefixes: ["niv", "lv"]), 3)
+        XCTAssertEqual(CharmScanParser.rarityToken(
+            CharmScanParser.normalize("Rareté 7"), prefixes: ["rareté", "rare"]), 7)
+        // 従来形式の互換
+        XCTAssertEqual(CharmScanParser.levelToken(CharmScanParser.normalize("Lv.2")), 2)
+        XCTAssertNil(CharmScanParser.levelToken(CharmScanParser.normalize("Lv 1/1")))
+    }
 }

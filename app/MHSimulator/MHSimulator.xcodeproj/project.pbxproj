@@ -197,10 +197,16 @@
 				};
 			};
 			buildConfigurationList = E026B871303AC25300DD74CA /* Build configuration list for PBXProject "MHSimulator" */;
-			developmentRegion = en;
+			developmentRegion = ja;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				ja,
 				en,
+				fr,
+				de,
+				es,
+				"pt-BR",
+				ko,
 				Base,
 			);
 			mainGroup = E026B86D303AC25300DD74CA;

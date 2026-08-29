@@ -47,8 +47,8 @@ final class AdditionalSkillsViewModel {
     func skillLabel(_ id: SkillId) -> String {
         guard let skill = dependencies.master.skills[id] else { return "?" }
         switch skill.kind {
-        case .set: return skill.name + "(シリーズ)"
-        case .group: return skill.name + "(グループ)"
+        case .set: return skill.name + String(localized: "(シリーズ)")
+        case .group: return skill.name + String(localized: "(グループ)")
         case .armor, .weapon: return skill.name
         }
     }

@@ -41,7 +41,7 @@ struct SearchSettingsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     Group {
-                        MHSectionHeader(title: "固定(必ず使う)")
+                        MHSectionHeader(title: String(localized: "固定(必ず使う)"))
                             .padding(.top, 4)
                         MHCard {
                             VStack(spacing: 0) {
@@ -58,7 +58,7 @@ struct SearchSettingsView: View {
                     .mhEntrance(1)
 
                     Group {
-                        MHSectionHeader(title: "除外(使わない)")
+                        MHSectionHeader(title: String(localized: "除外(使わない)"))
                             .padding(.top, 20)
                         MHCard {
                             VStack(spacing: 0) {
@@ -74,11 +74,11 @@ struct SearchSettingsView: View {
                                     excludedDecorationRow(decorationId)
                                     separator
                                 }
-                                addRow("防具を除外に追加") { pickerTarget = .excludePiece }
+                                addRow(String(localized: "防具を除外に追加")) { pickerTarget = .excludePiece }
                                 separator
-                                addRow("生産護石を除外に追加") { pickerTarget = .excludeCharm }
+                                addRow(String(localized: "生産護石を除外に追加")) { pickerTarget = .excludeCharm }
                                 separator
-                                addRow("装飾品を除外に追加") { pickerTarget = .excludeDecoration }
+                                addRow(String(localized: "装飾品を除外に追加")) { pickerTarget = .excludeDecoration }
                             }
                         }
                         .padding(.horizontal, 16)
@@ -226,7 +226,7 @@ struct SearchSettingsView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
-            Text(fixedCharm(charmId)?.name ?? "不明な護石")
+            Text(fixedCharm(charmId)?.name ?? String(localized: "不明な護石"))
                 .font(.system(size: 15))
                 .foregroundStyle(Color.mhTextPrimary)
                 .lineLimit(1)
@@ -391,13 +391,13 @@ private struct DecorationPickerView: View {
             .filter { sizeFilters.isEmpty || sizeFilters.contains($0.slotSize) }
             .sorted {
                 if $0.slotSize != $1.slotSize { return $0.slotSize < $1.slotSize }
-                return $0.name.compare($1.name, locale: Locale(identifier: "ja_JP")) == .orderedAscending
+                return $0.name.localizedStandardCompare($1.name) == .orderedAscending
             }
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            pickerHeader(title: "除外する装飾品", showsDone: true) { dismiss() }
+            pickerHeader(title: String(localized: "除外する装飾品"), showsDone: true) { dismiss() }
             searchField
                 .padding(.horizontal, 16)
                 .padding(.bottom, 10)
@@ -414,10 +414,10 @@ private struct DecorationPickerView: View {
     /// 装着先・スロットサイズのON/OFFフィルター
     private var filterBar: some View {
         HStack(spacing: 8) {
-            filterChip("武器", isOn: targetFilters.contains(.weapon)) {
+            filterChip(String(localized: "武器"), isOn: targetFilters.contains(.weapon)) {
                 toggle(&targetFilters, .weapon)
             }
-            filterChip("防具", isOn: targetFilters.contains(.armor)) {
+            filterChip(String(localized: "防具"), isOn: targetFilters.contains(.armor)) {
                 toggle(&targetFilters, .armor)
             }
             Rectangle().fill(Color.mhHairline).frame(width: 1, height: 20)
@@ -486,7 +486,7 @@ private struct DecorationPickerView: View {
                 master.skills[skillId].map { MHFormat.skillLine($0.name, level) }
             }
             .sorted()
-            .joined(separator: "・")
+            .joined(separator: String(localized: "・"))
         return Button {
             onToggle(deco.id)
         } label: {
@@ -567,13 +567,15 @@ private struct ArmorPiecePickerView: View {
                 guard let s0 = master.armorSeries[$0.seriesId],
                       let s1 = master.armorSeries[$1.seriesId] else { return $0.name < $1.name }
                 if s0.rarity != s1.rarity { return s0.rarity > s1.rarity }
-                return $0.name.compare($1.name, locale: Locale(identifier: "ja_JP")) == .orderedAscending
+                return $0.name.localizedStandardCompare($1.name) == .orderedAscending
             }
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            pickerHeader(title: isPin ? "固定する防具" : "除外する防具", showsDone: !isPin) { dismiss() }
+            pickerHeader(
+                title: isPin ? String(localized: "固定する防具") : String(localized: "除外する防具"),
+                showsDone: !isPin) { dismiss() }
             searchField
                 .padding(.horizontal, 16)
                 .padding(.bottom, 10)
@@ -713,7 +715,7 @@ private struct ArmorPiecePickerView: View {
                 return MHFormat.skillLine(skill.name, level)
             }
             .sorted()
-            .joined(separator: "・")
+            .joined(separator: String(localized: "・"))
     }
 
     private var checkmark: some View {
@@ -775,12 +777,14 @@ private struct FixedCharmPickerView: View {
                 guard charm.name.mhContains(searchText) else { return nil }
                 return (id, charm)
             }
-            .sorted { $0.1.name.compare($1.1.name, locale: Locale(identifier: "ja_JP")) == .orderedAscending }
+            .sorted { $0.1.name.localizedStandardCompare($1.1.name) == .orderedAscending }
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            pickerHeader(title: isPin ? "固定する護石" : "除外する護石", showsDone: !isPin) { dismiss() }
+            pickerHeader(
+                title: isPin ? String(localized: "固定する護石") : String(localized: "除外する護石"),
+                showsDone: !isPin) { dismiss() }
             searchField
                 .padding(.horizontal, 16)
                 .padding(.bottom, 10)
@@ -850,7 +854,7 @@ private struct FixedCharmPickerView: View {
                 master.skills[skillId].map { MHFormat.skillLine($0.name, level) }
             }
             .sorted()
-            .joined(separator: "・")
+            .joined(separator: String(localized: "・"))
         return Button {
             if isPin {
                 onSelect(id)

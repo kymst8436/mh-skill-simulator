@@ -1,0 +1,79 @@
+{
+  "sourceLanguage": "ja",
+  "strings": {
+    "CFBundleDisplayName": {
+      "comment": "Bundle display name",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "new",
+            "value": "MHSimulator"
+          }
+        }
+      },
+      "shouldTranslate": false
+    },
+    "CFBundleName": {
+      "comment": "Bundle name",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "new",
+            "value": "MHSimulator"
+          }
+        }
+      },
+      "shouldTranslate": false
+    },
+    "NSCameraUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Kamera wird verwendet, um Talisman-Informationen vom Spielbildschirm zu lesen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The camera is used to read charm information from your game screen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La cámara se utiliza para leer la información de los amuletos en la pantalla del juego."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'appareil photo sert à lire les informations des talismans sur l'écran de jeu."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ゲーム画面の護石情報を読み取るためにカメラを使用します"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "게임 화면의 호석 정보를 읽기 위해 카메라를 사용합니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A câmera é usada para ler as informações de amuletos na tela do jogo."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

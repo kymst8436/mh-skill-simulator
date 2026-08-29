@@ -24,17 +24,19 @@ struct CharmEntryView: View {
                 if viewModel.rulesUnavailable {
                     MHEmptyState(
                         systemImage: "exclamationmark.triangle",
-                        title: "護石データを更新してください")
+                        title: String(localized: "護石データを更新してください"))
                 } else {
                     form
                 }
             }
-            .mhNavigationTitle(viewModel.isEditing ? "護石を編集" : "護石を登録")
+            .mhNavigationTitle(viewModel.isEditing
+                ? String(localized: "護石を編集")
+                : String(localized: "護石を登録"))
             .toolbar {
-                MHToolbarButton(title: "キャンセル", placement: .topBarLeading) {
+                MHToolbarButton(title: String(localized: "キャンセル"), placement: .topBarLeading) {
                     if viewModel.isDirty { showsDiscardDialog = true } else { dismiss() }
                 }
-                MHToolbarButton(title: "保存", isEnabled: viewModel.canSave, isProminent: true) {
+                MHToolbarButton(title: String(localized: "保存"), isEnabled: viewModel.canSave, isProminent: true) {
                     attemptSave()
                 }
             }
@@ -85,25 +87,25 @@ struct CharmEntryView: View {
                             .padding(.horizontal, 16)
                             .padding(.top, 16)
                     }
-                    MHSectionHeader(title: "スキル")
+                    MHSectionHeader(title: String(localized: "スキル"))
                         .padding(.top, 16)
                     MHCard {
                         VStack(spacing: 0) {
-                            skillRow(position: 0, label: "スキル1", entry: viewModel.skill1, enabled: true, allowsNone: false)
+                            skillRow(position: 0, label: String(localized: "スキル1"), entry: viewModel.skill1, enabled: true, allowsNone: false)
                             separator
-                            skillRow(position: 1, label: "スキル2", entry: viewModel.skill2, enabled: viewModel.skill1 != nil, allowsNone: true)
+                            skillRow(position: 1, label: String(localized: "スキル2"), entry: viewModel.skill2, enabled: viewModel.skill1 != nil, allowsNone: true)
                             separator
-                            skillRow(position: 2, label: "スキル3", entry: viewModel.skill3, enabled: viewModel.skill2 != nil, allowsNone: true)
+                            skillRow(position: 2, label: String(localized: "スキル3"), entry: viewModel.skill3, enabled: viewModel.skill2 != nil, allowsNone: true)
                         }
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 6)
-                    note("抽選規則上あり得る組み合わせだけが選べます")
+                    note(String(localized: "抽選規則上あり得る組み合わせだけが選べます"))
                 }
                 .mhEntrance(0)
 
                 Group {
-                    MHSectionHeader(title: "スロット・レア度")
+                    MHSectionHeader(title: String(localized: "スロット・レア度"))
                         .padding(.top, 20)
                     MHCard {
                         slotSection
@@ -115,7 +117,7 @@ struct CharmEntryView: View {
                 .mhEntrance(1)
 
                 Group {
-                    MHSectionHeader(title: "メモ")
+                    MHSectionHeader(title: String(localized: "メモ"))
                         .padding(.top, 20)
                     MHCard {
                         TextField("", text: $viewModel.memo,
@@ -187,7 +189,8 @@ struct CharmEntryView: View {
                 Text(label)
                     .font(.system(size: 13))
                     .foregroundStyle(Color.mhTextTertiary)
-                    .frame(width: 62, alignment: .leading)
+                    .fixedSize()
+                    .frame(minWidth: 62, alignment: .leading)
                 Text(viewModel.entryLabel(entry))
                     .font(.system(size: 16))
                     .foregroundStyle(entry == nil ? Color.mhTextTertiary : Color.mhTextPrimary)
@@ -208,8 +211,8 @@ struct CharmEntryView: View {
         let candidates = viewModel.slotCandidates
         if candidates.isEmpty {
             Text(viewModel.skill1 == nil
-                 ? "スキル1を選択してください"
-                 : "この構成の護石はありません。スキル2・3も選択してください")
+                 ? String(localized: "スキル1を選択してください")
+                 : String(localized: "この構成の護石はありません。スキル2・3も選択してください"))
                 .font(.system(size: 13))
                 .foregroundStyle(Color.mhTextTertiary)
                 .multilineTextAlignment(.center)

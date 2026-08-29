@@ -21,12 +21,12 @@ struct CustomWeaponForm: View {
 
     private var setSkills: [Skill] {
         master.skills.values.filter { $0.kind == .set }
-            .sorted { $0.name.compare($1.name, locale: Locale(identifier: "ja_JP")) == .orderedAscending }
+            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
     }
 
     private var groupSkills: [Skill] {
         master.skills.values.filter { $0.kind == .group }
-            .sorted { $0.name.compare($1.name, locale: Locale(identifier: "ja_JP")) == .orderedAscending }
+            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
     }
 
     var body: some View {
@@ -39,7 +39,7 @@ struct CustomWeaponForm: View {
 
     /// 下部固定の設定ボタン(検索するボタンと同様。2026-08-24改訂)
     private var applyButtonBar: some View {
-        MHPrimaryButton(title: "この構成で設定", isEnabled: hasContent) {
+        MHPrimaryButton(title: String(localized: "この構成で設定"), isEnabled: hasContent) {
             conditionViewModel.selectCustomWeapon(config)
             onApplied()
         }
@@ -56,7 +56,7 @@ struct CustomWeaponForm: View {
             VStack(alignment: .leading, spacing: 0) {
                 // 入場モーション: 武器選択画面のチップ(0)に続きセクション順(DESIGN.md §7.5)
                 Group {
-                    MHSectionHeader(title: "スロット")
+                    MHSectionHeader(title: String(localized: "スロット"))
                         .padding(.top, 4)
                     MHCard {
                         VStack(spacing: 0) {
@@ -72,7 +72,7 @@ struct CustomWeaponForm: View {
                 .mhEntrance(1)
 
                 Group {
-                    MHSectionHeader(title: "シリーズスキル(1部位分として加算)")
+                    MHSectionHeader(title: String(localized: "シリーズスキル(1部位分として加算)"))
                         .padding(.top, 20)
                     MHCard {
                         skillMenuRow(
@@ -85,7 +85,7 @@ struct CustomWeaponForm: View {
                 .mhEntrance(2)
 
                 Group {
-                    MHSectionHeader(title: "グループスキル(1部位分として加算)")
+                    MHSectionHeader(title: String(localized: "グループスキル(1部位分として加算)"))
                         .padding(.top, 20)
                     MHCard {
                         skillMenuRow(
@@ -128,7 +128,8 @@ struct CustomWeaponForm: View {
                 }
             } label: {
                 HStack(spacing: 6) {
-                    Text(config.slots[index] == 0 ? "なし" : MHFormat.slotSymbols([config.slots[index]]))
+                    Text(config.slots[index] == 0
+                        ? String(localized: "なし") : MHFormat.slotSymbols([config.slots[index]]))
                         .font(.system(size: 16))
                         .foregroundStyle(Color.mhAccent)
                     Image(systemName: "chevron.up.chevron.down")
@@ -147,7 +148,7 @@ struct CustomWeaponForm: View {
         onSelect: @escaping (SkillId?) -> Void
     ) -> some View {
         HStack {
-            Text(selection.flatMap { master.skills[$0]?.name } ?? "(なし)")
+            Text(selection.flatMap { master.skills[$0]?.name } ?? String(localized: "(なし)"))
                 .font(.system(size: 16))
                 .foregroundStyle(selection == nil ? Color.mhTextTertiary : Color.mhTextPrimary)
             Spacer()

@@ -41,7 +41,8 @@ struct SearchConditionView: View {
                         VStack(alignment: .leading, spacing: 0) {
                             // 入場モーション: 武器(0)→スキル条件(1)→検索ボタン(2)。DESIGN.md §7.5
                             Group {
-                                MHSectionHeader(title: "武器", actionTitle: "リセット") {
+                                MHSectionHeader(title: String(localized: "武器"),
+                                                actionTitle: String(localized: "リセット")) {
                                     viewModel.reset()
                                 }
                                     .padding(.top, 20)
@@ -57,7 +58,7 @@ struct SearchConditionView: View {
                             .mhEntrance(0)
 
                             Group {
-                                MHSectionHeader(title: "スキル条件")
+                                MHSectionHeader(title: String(localized: "スキル条件"))
                                     .padding(.top, 20)
                                 conditionList
                                     .padding(.horizontal, 16)
@@ -71,7 +72,7 @@ struct SearchConditionView: View {
                         .mhEntrance(2)
                 }
             }
-            .mhNavigationTitle("検索条件")
+            .mhNavigationTitle(String(localized: "検索条件"))
             .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.searchBannerUnitId) }
             .toolbar {
                 // 広告非表示(リワード)。左上に自作アイコン(画面設計§2 2026-08-29追加)
@@ -125,7 +126,7 @@ struct SearchConditionView: View {
 
     /// 画面下部固定の検索ボタン(2026-08-24改訂)
     private var searchButtonBar: some View {
-        MHPrimaryButton(title: "検索する", isEnabled: viewModel.canSearch) {
+        MHPrimaryButton(title: String(localized: "検索する"), isEnabled: viewModel.canSearch) {
             // インタースティシャルの頻度カウント(表示は結果から戻るとき。画面設計§2 2026-08-29)
             InterstitialAdCoordinator.shared.recordSearch()
             path.append(.results)

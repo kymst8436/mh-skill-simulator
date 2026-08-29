@@ -57,14 +57,14 @@ struct AdditionalSkillsView: View {
         case .empty:
             MHEmptyState(
                 systemImage: "checkmark.seal",
-                title: "追加できるスキルはありません",
-                message: "現在の条件はスキル枠を使い切っています。条件を減らすと余裕が生まれます")
+                title: String(localized: "追加できるスキルはありません"),
+                message: String(localized: "現在の条件はスキル枠を使い切っています。条件を減らすと余裕が生まれます"))
                 .frame(maxHeight: .infinity)
         case .failed:
             MHEmptyState(
                 systemImage: "exclamationmark.triangle",
-                title: "判定できませんでした",
-                actionTitle: "再試行") { viewModel.retry() }
+                title: String(localized: "判定できませんでした"),
+                actionTitle: String(localized: "再試行")) { viewModel.retry() }
                 .frame(maxHeight: .infinity)
         }
     }

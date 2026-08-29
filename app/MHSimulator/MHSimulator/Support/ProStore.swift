@@ -108,14 +108,14 @@ final class ProStore {
         defer { phase = .idle }
         await loadProductIfNeeded()
         guard let product else {
-            purchaseErrorMessage = "商品情報を取得できませんでした。通信環境をご確認のうえ再度お試しください"
+            purchaseErrorMessage = String(localized: "商品情報を取得できませんでした。通信環境をご確認のうえ再度お試しください")
             return
         }
         do {
             switch try await product.purchase() {
             case .success(let verification):
                 guard case .verified(let transaction) = verification else {
-                    purchaseErrorMessage = "購入を確認できませんでした。購入の復元をお試しください"
+                    purchaseErrorMessage = String(localized: "購入を確認できませんでした。購入の復元をお試しください")
                     return
                 }
                 setPro(true)
@@ -127,7 +127,7 @@ final class ProStore {
                 break
             }
         } catch {
-            purchaseErrorMessage = "購入処理に失敗しました。時間をおいて再度お試しください"
+            purchaseErrorMessage = String(localized: "購入処理に失敗しました。時間をおいて再度お試しください")
         }
     }
 
@@ -139,11 +139,11 @@ final class ProStore {
             try await AppStore.sync()
             await refreshEntitlement()
             if !entitledPro {
-                purchaseErrorMessage = "復元できる購入が見つかりませんでした"
+                purchaseErrorMessage = String(localized: "復元できる購入が見つかりませんでした")
             }
         } catch {
             if case StoreKitError.userCancelled = error { return }
-            purchaseErrorMessage = "購入の復元に失敗しました。時間をおいて再度お試しください"
+            purchaseErrorMessage = String(localized: "購入の復元に失敗しました。時間をおいて再度お試しください")
         }
     }
 

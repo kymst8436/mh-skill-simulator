@@ -1,5 +1,91 @@
 import Foundation
 
+/// 護石カメラ読み取りの言語別プロファイル。
+/// ゲーム画面の見出し・Lv/レア度表記は言語ごとに異なるため、照合語彙をここに集約する。
+/// 護石名アンカーはbundled.dbの鑑定護石名(randomCharmNames)を注入して補強する。
+/// 注意: 日本語以外の見出し・表記はゲーム画面の実写で未検証(2026-08-29)。
+/// 実機スクリーンショットで確認したらこの表を修正すること。
+public struct CharmScanProfile: Sendable {
+    /// 護石パネルであることのアンカー(題名の断片。正規化前でよい)
+    public let charmAnchors: [String]
+    /// 「装備スキル」見出しのアンカー(部分一致。アイコン巻き込み誤読を許容)
+    public let equippedSkillsAnchors: [String]
+    /// スキルレベル表記の接頭辞(例 "lv"。"lv3"/"lv.3" を受理)
+    public let levelPrefixes: [String]
+    /// レア度表記の接頭辞(例 "rare")
+    public let rarityPrefixes: [String]
+
+    public init(
+        charmAnchors: [String],
+        equippedSkillsAnchors: [String],
+        levelPrefixes: [String],
+        rarityPrefixes: [String]
+    ) {
+        self.charmAnchors = charmAnchors
+        self.equippedSkillsAnchors = equippedSkillsAnchors
+        self.levelPrefixes = levelPrefixes
+        self.rarityPrefixes = rarityPrefixes
+    }
+
+    /// 従来挙動(日本語画面)と互換のプロファイル
+    public static let japanese = profile(for: .ja, randomCharmNames: [])
+
+    /// 言語別プロファイル。randomCharmNamesにはMasterDatabase.randomCharmNames(選択言語)を渡す
+    public static func profile(for language: DataLanguage, randomCharmNames: [String]) -> CharmScanProfile {
+        let base: CharmScanProfile
+        switch language {
+        case .ja:
+            base = CharmScanProfile(
+                charmAnchors: ["の護石"],
+                equippedSkillsAnchors: ["装備スキル"],
+                levelPrefixes: ["lv"],
+                rarityPrefixes: ["rare"])
+        case .en:
+            base = CharmScanProfile(
+                charmAnchors: ["charm"],
+                equippedSkillsAnchors: ["equippedskills"],
+                levelPrefixes: ["lv"],
+                rarityPrefixes: ["rare"])
+        case .fr:
+            base = CharmScanProfile(
+                charmAnchors: ["talisman"],
+                equippedSkillsAnchors: ["talentséquipés"],
+                levelPrefixes: ["niv", "lv"],
+                rarityPrefixes: ["rareté", "rare"])
+        case .de:
+            base = CharmScanProfile(
+                charmAnchors: ["talisman"],
+                equippedSkillsAnchors: ["ausgerüstetefertigkeiten"],
+                levelPrefixes: ["lv"],
+                rarityPrefixes: ["seltenheit", "rare"])
+        case .es:
+            base = CharmScanProfile(
+                charmAnchors: ["amuleto"],
+                equippedSkillsAnchors: ["habilidadesequipadas"],
+                levelPrefixes: ["nv", "lv"],
+                rarityPrefixes: ["rareza", "rare"])
+        case .ptBR:
+            base = CharmScanProfile(
+                charmAnchors: ["amuleto"],
+                equippedSkillsAnchors: ["habilidadesequipadas"],
+                levelPrefixes: ["nv", "lv"],
+                rarityPrefixes: ["raridade", "rare"])
+        case .ko:
+            base = CharmScanProfile(
+                charmAnchors: ["호석"],
+                equippedSkillsAnchors: ["장비스킬"],
+                levelPrefixes: ["lv"],
+                rarityPrefixes: ["레어도", "레어", "rare"])
+        }
+        guard !randomCharmNames.isEmpty else { return base }
+        return CharmScanProfile(
+            charmAnchors: base.charmAnchors + randomCharmNames,
+            equippedSkillsAnchors: base.equippedSkillsAnchors,
+            levelPrefixes: base.levelPrefixes,
+            rarityPrefixes: base.rarityPrefixes)
+    }
+}
+
 /// 護石カメラ読み取り(F-10)のOCR結果解釈。仕様3.6の解釈規則を実装する。
 /// カメラ・Visionには依存しない(入力は認識済みテキスト+正規化座標)。
 public struct CharmScanParser: Sendable {
@@ -26,14 +112,27 @@ public struct CharmScanParser: Sendable {
     private let rules: CharmRules
     /// 正規化済みスキル名 → SkillId(同名衝突はマスタ上ないが、あれば後勝ちで許容)
     private let normalizedNames: [String: SkillId]
+    /// 正規化済みアンカー・トークン表記(プロファイル由来)
+    private let charmAnchors: [String]
+    private let equippedSkillsAnchors: [String]
+    private let levelPrefixes: [String]
+    private let rarityPrefixes: [String]
 
-    public init(skillNames: [SkillId: String], rules: CharmRules) {
+    public init(
+        skillNames: [SkillId: String],
+        rules: CharmRules,
+        profile: CharmScanProfile = .japanese
+    ) {
         self.rules = rules
         var names: [String: SkillId] = [:]
         for (id, name) in skillNames {
             names[Self.normalize(name)] = id
         }
         self.normalizedNames = names
+        self.charmAnchors = profile.charmAnchors.map(Self.normalize)
+        self.equippedSkillsAnchors = profile.equippedSkillsAnchors.map(Self.normalize)
+        self.levelPrefixes = profile.levelPrefixes.map(Self.normalize)
+        self.rarityPrefixes = profile.rarityPrefixes.map(Self.normalize)
     }
 
     /// 1フレーム分の認識結果を解釈する。護石として成立しなければnil(読み取り継続)
@@ -45,17 +144,18 @@ public struct CharmScanParser: Sendable {
         items.sort { $0.y != $1.y ? $0.y < $1.y : $0.x < $1.x }
 
         // アンカー: 護石パネルであること(部分一致。見出しはアイコン巻き込み誤読があるため)
-        guard items.contains(where: { $0.text.contains("の護石") }),
-              items.contains(where: { $0.text.contains("装備スキル") }) else { return nil }
+        guard items.contains(where: { item in charmAnchors.contains { item.text.contains($0) } }),
+              items.contains(where: { item in equippedSkillsAnchors.contains { item.text.contains($0) } })
+        else { return nil }
 
         // スキル名・Lv・レア度トークンをそれぞれ読み取り順で収集
         var names: [SkillId] = []
         var levels: [Int] = []
         var rarity: Int?
         for item in items {
-            if let level = Self.levelToken(item.text) {
+            if let level = Self.levelToken(item.text, prefixes: levelPrefixes) {
                 levels.append(level)
-            } else if let value = Self.rarityToken(item.text) {
+            } else if let value = Self.rarityToken(item.text, prefixes: rarityPrefixes) {
                 rarity = value
             } else if let id = matchSkillName(item.text) {
                 names.append(id)
@@ -82,19 +182,26 @@ public struct CharmScanParser: Sendable {
             .filter { !$0.isWhitespace }
     }
 
-    /// 正規化済み文字列が単独のレベル表記(lv1〜lv9)なら値を返す。
+    /// 正規化済み文字列が単独のレベル表記(接頭辞+数字1〜9。"lv3"/"niv.3"等)なら値を返す。
     /// 護石レベル行「lv1/1」は完全形でないため自然に除外される
-    static func levelToken(_ normalized: String) -> Int? {
-        guard normalized.count == 3, normalized.hasPrefix("lv"),
-              let digit = normalized.last?.wholeNumberValue, digit >= 1 else { return nil }
-        return digit
+    static func levelToken(_ normalized: String, prefixes: [String] = ["lv"]) -> Int? {
+        Self.prefixedDigit(normalized, prefixes: prefixes)
     }
 
-    /// 正規化済み文字列が単独のレア度表記(rare1〜rare9)なら値を返す
-    static func rarityToken(_ normalized: String) -> Int? {
-        guard normalized.count == 5, normalized.hasPrefix("rare"),
-              let digit = normalized.last?.wholeNumberValue, digit >= 1 else { return nil }
-        return digit
+    /// 正規化済み文字列が単独のレア度表記("rare5"/"rareté5"等)なら値を返す
+    static func rarityToken(_ normalized: String, prefixes: [String] = ["rare"]) -> Int? {
+        Self.prefixedDigit(normalized, prefixes: prefixes)
+    }
+
+    /// 接頭辞(+任意の".")+1桁数字(1〜9)の完全形なら値を返す
+    private static func prefixedDigit(_ normalized: String, prefixes: [String]) -> Int? {
+        for prefix in prefixes where normalized.hasPrefix(prefix) {
+            var rest = normalized.dropFirst(prefix.count)
+            if rest.first == "." { rest = rest.dropFirst() }
+            guard rest.count == 1, let digit = rest.first?.wholeNumberValue, digit >= 1 else { continue }
+            return digit
+        }
+        return nil
     }
 
     /// スキル名照合: 完全一致→曖昧一致(編集距離1以内かつ唯一最小)。仕様3.6

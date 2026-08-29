@@ -153,7 +153,7 @@ struct AdFreeSheetView: View {
     private func playButtonBarContent(atLimit: Bool) -> some View {
         VStack(spacing: 6) {
             MHPrimaryButton(
-                title: "再生して全ての広告を非表示",
+                title: String(localized: "再生して全ての広告を非表示"),
                 isEnabled: rewarded.phase == .ready && !atLimit,
                 isRunning: rewarded.phase == .loading || rewarded.phase == .presenting
             ) {
@@ -178,6 +178,8 @@ struct AdFreeSheetView: View {
         let totalMinutes = max(1, Int(ceil(remaining / 60)))
         let hours = totalMinutes / 60
         let minutes = totalMinutes % 60
-        return hours > 0 ? "\(hours)時間\(minutes)分" : "\(minutes)分"
+        return hours > 0
+            ? String(localized: "\(hours)時間\(minutes)分")
+            : String(localized: "\(minutes)分")
     }
 }

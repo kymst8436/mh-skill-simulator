@@ -81,9 +81,9 @@ struct CharmScanView: View {
         VStack(spacing: 0) {
             MHEmptyState(
                 systemImage: "camera",
-                title: "カメラを使用できません",
-                message: "設定アプリでカメラへのアクセスを許可してください",
-                actionTitle: "設定を開く"
+                title: String(localized: "カメラを使用できません"),
+                message: String(localized: "設定アプリでカメラへのアクセスを許可してください"),
+                actionTitle: String(localized: "設定を開く")
             ) {
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(url)

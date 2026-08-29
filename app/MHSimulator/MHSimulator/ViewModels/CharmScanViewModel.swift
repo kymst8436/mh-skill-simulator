@@ -30,7 +30,10 @@ final class CharmScanViewModel {
     init(dependencies: AppDependencies, onScanned: @escaping ([CharmRules.GroupEntry], Int?) -> Void) {
         self.parser = CharmScanParser(
             skillNames: dependencies.master.skills.mapValues(\.name),
-            rules: dependencies.master.charmRules)
+            rules: dependencies.master.charmRules,
+            profile: .profile(
+                for: dependencies.master.language,
+                randomCharmNames: dependencies.master.randomCharmNames))
         self.onScanned = onScanned
         syncPermission()
     }

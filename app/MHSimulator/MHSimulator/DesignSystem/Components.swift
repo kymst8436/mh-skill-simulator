@@ -356,10 +356,10 @@ struct MHTabBar: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            item(.search, icon: .system("magnifyingglass"), label: "検索")
-            item(.mySets, icon: .asset(MHFormat.pieceIconName(.chest)), label: "マイセット")
-            item(.charms, icon: .asset(MHFormat.charmIconName), label: "護石")
-            item(.info, icon: .system("info.circle"), label: "情報")
+            item(.search, icon: .system("magnifyingglass"), label: String(localized: "検索"))
+            item(.mySets, icon: .asset(MHFormat.pieceIconName(.chest)), label: String(localized: "マイセット"))
+            item(.charms, icon: .asset(MHFormat.charmIconName), label: String(localized: "護石"))
+            item(.info, icon: .system("info.circle"), label: String(localized: "情報"))
         }
         .padding(.top, 7)
         .padding(.bottom, 2)
@@ -409,7 +409,7 @@ struct WeaponKindChips: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                chip(label: "アーティア", kind: Self.artianKind, isSelected: selectedKind == Self.artianKind)
+                chip(label: String(localized: "アーティア"), kind: Self.artianKind, isSelected: selectedKind == Self.artianKind)
                 ForEach(MHFormat.weaponKinds, id: \.self) { kind in
                     chip(label: MHFormat.weaponKindLabel(kind), kind: kind, isSelected: selectedKind == kind)
                 }

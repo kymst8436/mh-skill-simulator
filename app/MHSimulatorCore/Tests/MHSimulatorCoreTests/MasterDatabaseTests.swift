@@ -75,4 +75,33 @@ final class MasterDatabaseTests: XCTestCase {
             for size in piece.slots { XCTAssertTrue((1...3).contains(size), piece.name) }
         }
     }
+
+    // MARK: - 多言語(スキーマv2)
+
+    func testLoadsLocalizedNames() throws {
+        // 龍耐性(id -2125233152)の名前が言語ごとに切り替わること
+        let expected: [DataLanguage: String] = [
+            .ja: "龍耐性", .en: "Dragon Resistance", .fr: "Aura draconique",
+            .de: "Drachenwiderstand", .es: "Antidraco",
+            .ptBR: "Resistência a Dragão", .ko: "용 내성",
+        ]
+        for (language, name) in expected {
+            let db = try MasterDatabase(path: TestSupport.bundledDbPath, language: language)
+            XCTAssertEqual(db.skills[-2125233152]?.name, name, language.rawValue)
+            // 件数は言語に依らず同一
+            XCTAssertEqual(db.skills.count, master.skills.count, language.rawValue)
+            XCTAssertEqual(db.randomCharmNames.count, 4, language.rawValue)
+        }
+    }
+
+    func testDataLanguageResolve() {
+        XCTAssertEqual(DataLanguage.resolve(localeIdentifier: "ja"), .ja)
+        XCTAssertEqual(DataLanguage.resolve(localeIdentifier: "ja-JP"), .ja)
+        XCTAssertEqual(DataLanguage.resolve(localeIdentifier: "en-US"), .en)
+        XCTAssertEqual(DataLanguage.resolve(localeIdentifier: "pt-BR"), .ptBR)
+        XCTAssertEqual(DataLanguage.resolve(localeIdentifier: "pt-PT"), .ptBR)
+        XCTAssertEqual(DataLanguage.resolve(localeIdentifier: "es-419"), .es)
+        XCTAssertEqual(DataLanguage.resolve(localeIdentifier: "ko_KR"), .ko)
+        XCTAssertEqual(DataLanguage.resolve(localeIdentifier: "th"), .en)  // 未対応→英語
+    }
 }

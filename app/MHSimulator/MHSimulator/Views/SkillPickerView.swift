@@ -66,7 +66,7 @@ struct SkillPickerView: View {
     private var selectedSummary: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             Text(conditionViewModel.conditions
-                .map { "\($0.skill.name)Lv\($0.level)" }
+                .map { MHFormat.skillLine($0.skill.name, $0.level) }
                 .joined(separator: ", "))
                 .font(.system(size: 13))
                 .foregroundStyle(Color.mhAccentSoft)
@@ -99,7 +99,7 @@ struct SkillPickerView: View {
                 Button {
                     viewModel.kindFilter = filter
                 } label: {
-                    Text(filter.rawValue)
+                    Text(filter.label)
                         .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
                         .foregroundStyle(isSelected ? Color.mhTextPrimary : Color.mhTextSecondary)
                         .frame(maxWidth: .infinity, minHeight: 28)
@@ -119,7 +119,7 @@ struct SkillPickerView: View {
             if viewModel.visibleSkills.isEmpty {
                 MHEmptyState(
                     systemImage: "magnifyingglass",
-                    title: "「\(viewModel.searchText)」に一致するスキルはありません")
+                    title: String(localized: "「\(viewModel.searchText)」に一致するスキルはありません"))
             } else {
                 ScrollView {
                     LazyVStack(spacing: 0) {

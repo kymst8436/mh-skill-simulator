@@ -7,6 +7,14 @@ struct CharmListView: View {
     enum Tab: String, CaseIterable {
         case owned = "所持護石"
         case wishlist = "ウィッシュリスト"
+
+        /// タブ表示ラベル(rawValueは識別子として保持)
+        var label: String {
+            switch self {
+            case .owned: String(localized: "所持護石")
+            case .wishlist: String(localized: "ウィッシュリスト")
+            }
+        }
     }
 
     let dependencies: AppDependencies
@@ -41,14 +49,14 @@ struct CharmListView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
-            .mhNavigationTitle("護石")
+            .mhNavigationTitle(String(localized: "護石"))
             .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.charmBannerUnitId) }
             .toolbar {
                 // 広告非表示(リワード)。左上に自作アイコン(画面設計§2 2026-08-29追加)
                 AdFreeToolbarButton {
                     showsAdFreeSheet = true
                 }
-                MHToolbarButton(title: "+ 追加") {
+                MHToolbarButton(title: String(localized: "+ 追加")) {
                     switch tab {
                     case .owned: entryTarget = .new
                     case .wishlist: showsWishlistEntry = true
@@ -103,7 +111,7 @@ struct CharmListView: View {
     /// 所持/ウィッシュリストの切替(下線式タブ。2026-08-26改訂)
     private var tabBar: some View {
         MHUnderlineTabs(
-            tabs: Tab.allCases.map { (tab: $0, label: $0.rawValue) },
+            tabs: Tab.allCases.map { (tab: $0, label: $0.label) },
             selection: $tab)
     }
 
@@ -114,9 +122,9 @@ struct CharmListView: View {
         if viewModel.wishlist.isEmpty {
             MHEmptyState(
                 systemImage: "sparkles",
-                title: "ウィッシュリストは空です",
-                message: "[+追加] で欲しい護石を登録できます。検索結果の護石候補からもワンタップで追加できます",
-                actionTitle: "追加する") { showsWishlistEntry = true }
+                title: String(localized: "ウィッシュリストは空です"),
+                message: String(localized: "[+追加] で欲しい護石を登録できます。検索結果の護石候補からもワンタップで追加できます"),
+                actionTitle: String(localized: "追加する")) { showsWishlistEntry = true }
                 .mhEntrance(1)
         } else {
             ScrollView {
@@ -176,13 +184,13 @@ struct CharmListView: View {
             MHEmptyState(
                 systemImage: "exclamationmark.triangle",
                 title: message,
-                actionTitle: "再試行") { viewModel.load() }
+                actionTitle: String(localized: "再試行")) { viewModel.load() }
         } else if viewModel.charms.isEmpty {
             MHEmptyState(
                 systemImage: "seal",
-                title: "護石がまだ登録されていません",
-                message: "[+追加] から所持している鑑定護石を登録してください",
-                actionTitle: "追加する") { entryTarget = .new }
+                title: String(localized: "護石がまだ登録されていません"),
+                message: String(localized: "[+追加] から所持している鑑定護石を登録してください"),
+                actionTitle: String(localized: "追加する")) { entryTarget = .new }
                 .mhEntrance(1)
         } else {
             // 検索欄+フィルター・並び替え+一覧(2026-08-27追加。画面設計4.6)
@@ -197,8 +205,8 @@ struct CharmListView: View {
                 if viewModel.filteredCharms.isEmpty {
                     MHEmptyState(
                         systemImage: "magnifyingglass",
-                        title: "該当する護石がありません",
-                        message: "検索語やフィルターを変えてお試しください")
+                        title: String(localized: "該当する護石がありません"),
+                        message: String(localized: "検索語やフィルターを変えてお試しください"))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     charmList
@@ -276,9 +284,9 @@ struct CharmListView: View {
                         viewModel.selectSortOrder(order)
                     } label: {
                         if viewModel.sortOrder == order {
-                            Label(order.rawValue, systemImage: "checkmark")
+                            Label(order.label, systemImage: "checkmark")
                         } else {
-                            Text(order.rawValue)
+                            Text(order.label)
                         }
                     }
                 }
@@ -302,8 +310,8 @@ struct CharmListView: View {
                     charmRow(charm)
                 }
                 Text(viewModel.isNarrowed
-                     ? "\(viewModel.filteredCharms.count)/\(viewModel.charms.count)個"
-                     : "\(viewModel.charms.count)個")
+                     ? String(localized: "\(viewModel.filteredCharms.count)/\(viewModel.charms.count)個")
+                     : String(localized: "\(viewModel.charms.count)個"))
                     .font(.system(size: 13))
                     .foregroundStyle(Color.mhTextTertiary)
                     .padding(.top, 4)
