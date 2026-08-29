@@ -18,6 +18,34 @@ final class MasterDatabaseTests: XCTestCase {
         let skill = TestSupport.skill(named: "龍耐性")
         XCTAssertEqual(skill.kind, .armor)
         XCTAssertGreaterThanOrEqual(skill.maxLevel, 3)
+        XCTAssertEqual(skill.summary?.hasPrefix("プレイヤーの龍耐性を上げる。"), true)
+        XCTAssertEqual(skill.levelEffects[1], "龍耐性＋６")
+    }
+
+    /// 全スキルがLv1〜maxLevelの効果文を持つ(スキル詳細=画面設計4.14の前提)
+    func testLevelEffectsCoverAllLevels() {
+        for skill in master.skills.values {
+            XCTAssertEqual(Set(skill.levelEffects.keys), Set(1...skill.maxLevel), skill.name)
+        }
+    }
+
+    func testArmorPiecesWithSkill() {
+        let armorSkill = TestSupport.skill(named: "龍耐性")
+        let pieces = master.armorPieces(withSkill: armorSkill.id)
+        XCTAssertFalse(pieces.isEmpty)
+        XCTAssertTrue(pieces.allSatisfy { $0.skills[armorSkill.id] != nil })
+        // シリーズ/グループスキルも付与部位が引ける(ArmorPieceSkillに直接収録)
+        let groupSkill = TestSupport.skill(named: "護竜の守り")
+        XCTAssertFalse(master.armorPieces(withSkill: groupSkill.id).isEmpty)
+    }
+
+    func testBonusRanks() {
+        let setSkill = TestSupport.skill(named: "兇爪竜の力")
+        XCTAssertEqual(master.bonusRanks(forSkill: setSkill.id), [2: 1, 4: 2])
+        let groupSkill = TestSupport.skill(named: "護竜の守り")
+        XCTAssertEqual(master.bonusRanks(forSkill: groupSkill.id), [3: 1])
+        // 防具スキルには発動条件がない
+        XCTAssertTrue(master.bonusRanks(forSkill: TestSupport.skill(named: "龍耐性").id).isEmpty)
     }
 
     func testFixedCharmsHaveNoSlots() {

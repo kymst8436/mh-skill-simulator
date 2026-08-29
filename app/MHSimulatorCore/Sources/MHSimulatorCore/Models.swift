@@ -8,11 +8,15 @@ public enum SkillKind: String, Sendable {
     case armor, weapon, set, group
 }
 
-public struct Skill: Sendable {
+public struct Skill: Sendable, Identifiable {
     public let id: SkillId
     public let name: String
     public let kind: SkillKind
     public let maxLevel: Int
+    /// 説明文(ゲーム内文言。マスタ未収録スキルはnil)
+    public let summary: String?
+    /// レベル→効果文(SkillRank。ゲーム内文言のため改行を含む)
+    public let levelEffects: [Int: String]
 }
 
 public enum ArmorPieceKind: String, CaseIterable, Sendable {

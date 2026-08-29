@@ -24,6 +24,7 @@ struct SearchConditionView: View {
     @State private var path: [SearchRoute] = []
     @State private var showsSkillPicker = false
     @State private var showsSearchSettings = false
+    @State private var detailSkill: Skill?
 
     init(dependencies: AppDependencies) {
         self.dependencies = dependencies
@@ -85,6 +86,9 @@ struct SearchConditionView: View {
             }
             .sheet(isPresented: $showsSearchSettings) {
                 SearchSettingsView(conditionViewModel: viewModel)
+            }
+            .sheet(item: $detailSkill) { skill in
+                SkillDetailView(master: dependencies.master, skill: skill)
             }
             .navigationDestination(for: SearchRoute.self) { route in
                 switch route {
@@ -215,5 +219,7 @@ struct SearchConditionView: View {
         }
         .padding(.horizontal, 16)
         .frame(minHeight: 48)
+        .contentShape(Rectangle())
+        .mhSkillDetailContextMenu { detailSkill = row.skill }
     }
 }

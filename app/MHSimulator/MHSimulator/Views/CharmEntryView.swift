@@ -259,6 +259,7 @@ struct CharmSkillCandidateView: View {
     let title: String
     let allowsNone: Bool
     @State private var searchText = ""
+    @State private var detailSkill: Skill?
 
     var body: some View {
         ZStack {
@@ -283,6 +284,9 @@ struct CharmSkillCandidateView: View {
         .mhNavigationTitle(title)
         .navigationBarBackButtonHidden(true)
         .toolbar { MHBackButton { dismiss() } }
+        .sheet(item: $detailSkill) { skill in
+            SkillDetailView(master: viewModel.dependencies.master, skill: skill)
+        }
     }
 
     private var filteredCandidates: [CharmRules.GroupEntry] {
@@ -311,7 +315,19 @@ struct CharmSkillCandidateView: View {
         Rectangle().fill(Color.mhHairlineFaint).frame(height: 1).padding(.leading, 16)
     }
 
+    @ViewBuilder
     private func candidateRow(_ entry: CharmRules.GroupEntry?) -> some View {
+        if let entry {
+            candidateButton(entry)
+                .mhSkillDetailContextMenu {
+                    detailSkill = viewModel.dependencies.master.skills[entry.skillId]
+                }
+        } else {
+            candidateButton(nil)
+        }
+    }
+
+    private func candidateButton(_ entry: CharmRules.GroupEntry?) -> some View {
         let current: CharmRules.GroupEntry? = switch position {
         case 0: viewModel.skill1
         case 1: viewModel.skill2

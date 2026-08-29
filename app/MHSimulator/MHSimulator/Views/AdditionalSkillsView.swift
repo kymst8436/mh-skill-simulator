@@ -5,6 +5,7 @@ import MHSimulatorCore
 struct AdditionalSkillsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: AdditionalSkillsViewModel
+    @State private var detailSkill: Skill?
 
     init(viewModel: AdditionalSkillsViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -21,6 +22,9 @@ struct AdditionalSkillsView: View {
         .presentationDragIndicator(.visible)
         .onAppear { viewModel.start() }
         .onDisappear { viewModel.cancel() }
+        .sheet(item: $detailSkill) { skill in
+            SkillDetailView(master: viewModel.master, skill: skill)
+        }
     }
 
     private var header: some View {
@@ -121,5 +125,6 @@ struct AdditionalSkillsView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
+        .mhSkillDetailContextMenu { detailSkill = viewModel.master.skills[entry.skillId] }
     }
 }
