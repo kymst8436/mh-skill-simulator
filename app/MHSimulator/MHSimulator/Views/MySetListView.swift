@@ -21,6 +21,7 @@ struct MySetListView: View {
     @State private var viewModel: MySetListViewModel
     @State private var path: [MySetRoute] = []
     @State private var pendingDelete: SavedEquipmentSet?
+    @State private var showsAdFreeSheet = false
 
     init(dependencies: AppDependencies) {
         self.dependencies = dependencies
@@ -35,6 +36,15 @@ struct MySetListView: View {
             }
             .mhNavigationTitle("マイセット")
             .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.mySetBannerUnitId) }
+            .toolbar {
+                // 広告非表示(リワード)。左上に自作アイコン(画面設計§2 2026-08-29追加)
+                AdFreeToolbarButton {
+                    showsAdFreeSheet = true
+                }
+            }
+            .sheet(isPresented: $showsAdFreeSheet) {
+                AdFreeSheetView()
+            }
             .task { viewModel.load() }
             .navigationDestination(for: MySetRoute.self) { route in
                 switch route {
