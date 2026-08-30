@@ -6,6 +6,14 @@ struct MainTabView: View {
     @State private var selection: MHTab = .search
 
     var body: some View {
+        ZStack {
+            tabs
+            // 初回起動時コーチマーク(ナビバー・タブバーごと覆う。CoachMarkCenter参照)
+            CoachMarkOverlay()
+        }
+    }
+
+    private var tabs: some View {
         // TabViewの下に自作タブバーを並べる(タブ画面のコンテンツ領域をタブバー上端までに制限)
         VStack(spacing: 0) {
             TabView(selection: $selection) {

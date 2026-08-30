@@ -48,6 +48,7 @@ struct AdFreeToolbarButton: ToolbarContent {
                 .foregroundStyle(Color.mhAccent)
         }
         .accessibilityLabel("広告を非表示にする")
+        .coachMarkTarget(.adFreeButton)
     }
 }
 

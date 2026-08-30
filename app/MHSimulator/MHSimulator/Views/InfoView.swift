@@ -133,6 +133,8 @@ struct InfoView: View {
                     debugModeRow("無料版として動作", mode: .forceFree)
                     separator
                     infoRow("StoreKit購入状態", proStore.entitledPro ? "Pro版" : "未購入")
+                    separator
+                    coachMarkResetRow
                 }
             }
             .padding(.horizontal, 16)
@@ -142,6 +144,23 @@ struct InfoView: View {
                 .foregroundStyle(Color.mhTextTertiary)
                 .padding(.horizontal, 32)
                 .padding(.top, 6)
+        }
+    }
+
+    /// コーチマーク表示済みフラグを消す(該当タブを開き直すと再表示される)
+    private var coachMarkResetRow: some View {
+        Button {
+            CoachMarkCenter.shared.resetAll()
+        } label: {
+            HStack {
+                Text("コーチマークをリセット")
+                    .font(.system(size: 15))
+                    .foregroundStyle(Color.mhTextPrimary)
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
         }
     }
 

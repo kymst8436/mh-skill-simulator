@@ -138,6 +138,7 @@ struct MHToolbarIconButton: ToolbarContent {
     let systemImage: String
     var showsBadge: Bool = false
     var placement: ToolbarItemPlacement = .topBarTrailing
+    var coachMarkID: CoachMarkID?
     let action: () -> Void
 
     var body: some ToolbarContent {
@@ -164,6 +165,7 @@ struct MHToolbarIconButton: ToolbarContent {
                     }
                 }
         }
+        .coachMarkTarget(coachMarkID)
     }
 }
 
@@ -236,6 +238,18 @@ struct MHToolbarMenu<Label: View, Content: View>: ToolbarContent {
     }
 }
 
+extension View {
+    /// 与えた形を「くり抜く」マスク(暗転オーバーレイの切り抜き用。護石スキャン・コーチマークで共用)
+    func reverseMask<Mask: View>(@ViewBuilder _ mask: () -> Mask) -> some View {
+        self.mask {
+            Rectangle()
+                .ignoresSafeArea()
+                .overlay(mask().blendMode(.destinationOut))
+                .compositingGroup()
+        }
+    }
+}
+
 /// チップ等を折り返して並べる簡易フローレイアウト(SE幅での横はみ出し防止)
 struct MHFlowLayout: Layout {
     var spacing: CGFloat = 6
@@ -282,6 +296,7 @@ struct MHToolbarButton: ToolbarContent {
     var placement: ToolbarItemPlacement = .topBarTrailing
     var isEnabled: Bool = true
     var isProminent: Bool = false
+    var coachMarkID: CoachMarkID?
     let action: () -> Void
 
     var body: some ToolbarContent {
@@ -301,6 +316,7 @@ struct MHToolbarButton: ToolbarContent {
         }
         .disabled(!isEnabled)
         .opacity(isEnabled ? 1 : 0.35)
+        .coachMarkTarget(coachMarkID)
     }
 }
 

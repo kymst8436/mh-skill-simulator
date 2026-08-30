@@ -40,7 +40,8 @@ struct SearchConditionView: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
                             // 入場モーション: 武器(0)→スキル条件(1)→検索ボタン(2)。DESIGN.md §7.5
-                            Group {
+                            // (VStackなのはコーチマークがセクション全体を1つの枠として指すため)
+                            VStack(alignment: .leading, spacing: 0) {
                                 MHSectionHeader(title: String(localized: "武器"),
                                                 actionTitle: String(localized: "リセット")) {
                                     viewModel.reset()
@@ -56,8 +57,9 @@ struct SearchConditionView: View {
                                     .padding(.top, 8)
                             }
                             .mhEntrance(0)
+                            .coachMarkTarget(.weaponSection)
 
-                            Group {
+                            VStack(alignment: .leading, spacing: 0) {
                                 MHSectionHeader(title: String(localized: "スキル条件"))
                                     .padding(.top, 20)
                                 conditionList
@@ -65,6 +67,7 @@ struct SearchConditionView: View {
                                     .padding(.top, 7)
                             }
                             .mhEntrance(1)
+                            .coachMarkTarget(.skillSection)
                         }
                         .padding(.bottom, 24)
                     }
@@ -82,10 +85,17 @@ struct SearchConditionView: View {
                 // 検索設定(固定・除外)。設定ありのときは赤バッジ(画面設計4.1 2026-08-24改訂)
                 MHToolbarIconButton(
                     systemImage: "gearshape",
-                    showsBadge: viewModel.hasEquipmentFilters
+                    showsBadge: viewModel.hasEquipmentFilters,
+                    coachMarkID: .searchSettingsButton
                 ) {
                     showsSearchSettings = true
                 }
+            }
+            // 初回起動コーチマーク(入場モーション完了後に開始。タブ離脱・画面遷移でtaskごとキャンセル)
+            .task {
+                try? await Task.sleep(for: .seconds(0.9))
+                guard !Task.isCancelled else { return }
+                CoachMarkCenter.shared.startTourIfNeeded(.search)
             }
             .sheet(isPresented: $showsAdFreeSheet) {
                 AdFreeSheetView()
@@ -131,6 +141,7 @@ struct SearchConditionView: View {
             InterstitialAdCoordinator.shared.recordSearch()
             path.append(.results)
         }
+        .coachMarkTarget(.searchButton)
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .background(Color.mhBackground)
