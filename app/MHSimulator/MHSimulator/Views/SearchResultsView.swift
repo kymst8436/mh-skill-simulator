@@ -23,7 +23,7 @@ struct SearchResultsView: View {
             Color.mhBackground.ignoresSafeArea()
             content
         }
-        .mhNavigationTitle("検索結果")
+        .mhNavigationTitle(String(localized: "検索結果"))
         .navigationBarBackButtonHidden(true)
         .toolbar {
             MHBackButton {
@@ -78,9 +78,9 @@ struct SearchResultsView: View {
         case .failed:
             MHEmptyState(
                 systemImage: "exclamationmark.triangle",
-                title: "検索できませんでした",
-                message: "条件を減らしてお試しください",
-                actionTitle: "再試行") { viewModel.retry() }
+                title: String(localized: "検索できませんでした"),
+                message: String(localized: "条件を減らしてお試しください"),
+                actionTitle: String(localized: "再試行")) { viewModel.retry() }
         }
     }
 
@@ -93,8 +93,8 @@ struct SearchResultsView: View {
                 HStack(alignment: .firstTextBaseline) {
                     // truncatedは件数上限・時間予算どちらの打ち切りでもtrue(2026-08-26)
                     Text(result.truncated
-                         ? "\(result.sets.count)件(打ち切りあり。条件を絞ると精度が上がります)"
-                         : "\(result.sets.count)件")
+                         ? String(localized: "\(result.sets.count)件(打ち切りあり。条件を絞ると精度が上がります)")
+                         : String(localized: "\(result.sets.count)件"))
                         .font(.system(size: 13))
                         .foregroundStyle(Color.mhTextSecondary)
                     Spacer()
@@ -150,11 +150,13 @@ struct SearchResultsView: View {
                                 .foregroundStyle(Color.mhTextPrimary)
                         }
                         Spacer()
-                        Text("空きスロ " + MHFormat.slotCountSummary(
+                        Text(String(localized: "空きスロ ") + MHFormat.slotCountSummary(
                             weapon: set.emptyWeaponSlots, armor: set.emptyArmorSlots))
                             .font(.system(size: 13))
                             .foregroundStyle(Color.mhTextSecondary)
-                            .lineLimit(1)
+                            // 独・西等は日本語より大幅に長くなるため2行まで許容(見切れ防止)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.trailing)
                             .minimumScaleFactor(0.8)
                     }
                     pieceRow(for: set)
@@ -170,7 +172,7 @@ struct SearchResultsView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
                 let names = ArmorPieceKind.allCases.compactMap { set.pieces[$0]?.name }
-                Text(names.joined(separator: "・"))
+                Text(names.joined(separator: String(localized: "・")))
                     .font(.system(size: 14))
                     .foregroundStyle(Color.mhTextSecondary)
                     .lineLimit(1)
@@ -206,7 +208,7 @@ struct SearchResultsView: View {
                 Group {
                     switch outcome.kind {
                     case .charms(let suggestions):
-                        MHSectionHeader(title: "この護石があれば組めます")
+                        MHSectionHeader(title: String(localized: "この護石があれば組めます"))
                         VStack(spacing: 10) {
                             ForEach(suggestions, id: \.self) { suggestion in
                                 suggestionCard(suggestion)
@@ -216,7 +218,7 @@ struct SearchResultsView: View {
                         .padding(.top, 7)
                         if !outcome.isExhaustive { truncationNote }
                     case .relaxations(let skillIds):
-                        MHSectionHeader(title: "このスキルを外せば組めます")
+                        MHSectionHeader(title: String(localized: "このスキルを外せば組めます"))
                         VStack(spacing: 10) {
                             ForEach(skillIds, id: \.self) { skillId in
                                 relaxationRow(skillId)
@@ -287,7 +289,9 @@ struct SearchResultsView: View {
                 .frame(width: 40, height: 40)
         }
         .disabled(isAdded)
-        .accessibilityLabel(isAdded ? "ウィッシュリスト登録済み" : "ウィッシュリストに追加")
+        .accessibilityLabel(isAdded
+                            ? String(localized: "ウィッシュリスト登録済み")
+                            : String(localized: "ウィッシュリストに追加"))
     }
 
     private func suggestionCardBody(_ suggestion: CharmOracle.CharmSuggestion) -> some View {

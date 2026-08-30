@@ -16,7 +16,7 @@ nonisolated struct CustomWeaponConfig: Codable, Equatable {
         if let setSkillId { skills[setSkillId] = 1 }
         if let groupSkillId { skills[groupSkillId] = 1 }
         return Weapon(
-            id: Self.weaponId, kind: "custom", name: "カスタム武器",
+            id: Self.weaponId, kind: "custom", name: String(localized: "カスタム武器"),
             rarity: 8, slots: slots.filter { $0 > 0 }, skills: skills)
     }
 

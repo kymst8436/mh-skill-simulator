@@ -14,6 +14,17 @@ final class SkillPickerViewModel {
 
         var id: String { rawValue }
 
+        /// 表示ラベル(rawValueは識別子として保持し、表示はローカライズする)
+        var label: String {
+            switch self {
+            case .all: String(localized: "すべて")
+            case .weapon: String(localized: "武器")
+            case .armor: String(localized: "防具")
+            case .set: String(localized: "シリーズ")
+            case .group: String(localized: "グループ")
+            }
+        }
+
         var skillKind: SkillKind? {
             switch self {
             case .all: nil
@@ -40,6 +51,6 @@ final class SkillPickerViewModel {
                 (kindFilter.skillKind == nil || skill.kind == kindFilter.skillKind)
                     && skill.name.mhContains(searchText)
             }
-            .sorted { $0.name.compare($1.name, locale: Locale(identifier: "ja_JP")) == .orderedAscending }
+            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
     }
 }

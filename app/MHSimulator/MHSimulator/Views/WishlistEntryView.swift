@@ -42,26 +42,26 @@ struct WishlistEntryView: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
                             Group {
-                                MHSectionHeader(title: "欲しいスキル")
+                                MHSectionHeader(title: String(localized: "欲しいスキル"))
                                     .padding(.top, 16)
                                 MHCard {
                                     VStack(spacing: 0) {
-                                        skillRow(position: 0, label: "スキル1", entry: viewModel.skill1, enabled: true, allowsNone: false)
+                                        skillRow(position: 0, label: String(localized: "スキル1"), entry: viewModel.skill1, enabled: true, allowsNone: false)
                                         separator
-                                        skillRow(position: 1, label: "スキル2", entry: viewModel.skill2, enabled: viewModel.skill1 != nil, allowsNone: true)
+                                        skillRow(position: 1, label: String(localized: "スキル2"), entry: viewModel.skill2, enabled: viewModel.skill1 != nil, allowsNone: true)
                                         separator
-                                        skillRow(position: 2, label: "スキル3", entry: viewModel.skill3, enabled: viewModel.skill2 != nil, allowsNone: true)
+                                        skillRow(position: 2, label: String(localized: "スキル3"), entry: viewModel.skill3, enabled: viewModel.skill2 != nil, allowsNone: true)
                                     }
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.top, 6)
-                                note("抽選規則上あり得る組み合わせだけが選べます")
+                                note(String(localized: "抽選規則上あり得る組み合わせだけが選べます"))
                             }
                             .mhEntrance(0)
 
                             if let rarity = minimumRarity {
                                 Group {
-                                    MHSectionHeader(title: "出現レア度")
+                                    MHSectionHeader(title: String(localized: "出現レア度"))
                                         .padding(.top, 20)
                                     MHCard {
                                         HStack(spacing: 8) {
@@ -94,23 +94,23 @@ struct WishlistEntryView: View {
                         .mhEntrance(2)
                 }
             }
-            .mhNavigationTitle("ウィッシュリストに追加")
+            .mhNavigationTitle(String(localized: "ウィッシュリストに追加"))
             .toolbar {
-                MHToolbarButton(title: "キャンセル", placement: .topBarLeading) { dismiss() }
+                MHToolbarButton(title: String(localized: "キャンセル"), placement: .topBarLeading) { dismiss() }
             }
         }
         .presentationDragIndicator(.visible)
     }
 
     private var addButtonBar: some View {
-        MHPrimaryButton(title: "追加する", isEnabled: canAdd) {
+        MHPrimaryButton(title: String(localized: "追加する"), isEnabled: canAdd) {
             let item = WishlistItem(skills: selectedSkills)
             do {
                 try dependencies.userStore.insertWishlistItem(item)
                 onSaved()
                 dismiss()
             } catch {
-                saveErrorMessage = "保存できませんでした。端末の空き容量をご確認ください"
+                saveErrorMessage = String(localized: "保存できませんでした。端末の空き容量をご確認ください")
             }
         }
         .padding(.horizontal, 16)
@@ -131,7 +131,8 @@ struct WishlistEntryView: View {
                 Text(label)
                     .font(.system(size: 13))
                     .foregroundStyle(Color.mhTextTertiary)
-                    .frame(width: 52, alignment: .leading)
+                    .fixedSize()
+                    .frame(minWidth: 52, alignment: .leading)
                 Text(viewModel.entryLabel(entry))
                     .font(.system(size: 16))
                     .foregroundStyle(entry == nil ? Color.mhTextTertiary : Color.mhTextPrimary)

@@ -5,12 +5,15 @@ import SQLite3
 /// アプリ起動時に全件をメモリに展開する(合計6千行程度・数百KB)。
 /// SQLiteアクセスは素のC APIを使用(ライブラリ選定Q-5はユーザーデータ層で判断)。
 public final class MasterDatabase {
+    public let language: DataLanguage
     public let skills: [SkillId: Skill]
     public let armorSeries: [Int32: ArmorSeries]
     public let armorPieces: [ArmorPiece]
     public let decorations: [Decoration]
     public let fixedCharms: [Charm]      // 最終ランクのみ(全所持前提。Q-6)
     public let weapons: [Weapon]
+    /// 鑑定護石の名前(選択言語)。護石カメラ読み取りのアンカー照合に使う
+    public let randomCharmNames: [String]
     public let charmRules: CharmRules
     public let schemaVersion: Int
     public let charmRulesVersion: String
@@ -22,7 +25,9 @@ public final class MasterDatabase {
         case unexpectedSchema(String)
     }
 
-    public init(path: String) throws {
+    public init(path: String, language: DataLanguage = .ja) throws {
+        self.language = language
+        let sfx = language.columnSuffix
         let db = try SQLiteConnection(path: path)
 
         guard try db.scalarString("PRAGMA integrity_check") == "ok" else {
@@ -33,7 +38,7 @@ public final class MasterDatabase {
         try db.query("SELECT schemaVersion, charmRulesVersion, sourceCommit FROM Meta") { row in
             meta = (Int(row.int(0)), row.string(1), row.string(2))
         }
-        guard meta.0 == 1 else {
+        guard meta.0 == 2 else {
             throw LoadError.unexpectedSchema("schemaVersion=\(meta.0)")
         }
         schemaVersion = meta.0
@@ -41,11 +46,11 @@ public final class MasterDatabase {
         sourceCommit = meta.2
 
         var levelEffects: [SkillId: [Int: String]] = [:]
-        try db.query("SELECT skillId, level, effectJa FROM SkillRank") { row in
+        try db.query("SELECT skillId, level, effect\(sfx) FROM SkillRank") { row in
             levelEffects[SkillId(row.int(0)), default: [:]][Int(row.int(1))] = row.string(2)
         }
         var skills: [SkillId: Skill] = [:]
-        try db.query("SELECT id, nameJa, kind, maxLevel, descriptionJa FROM Skill") { row in
+        try db.query("SELECT id, name\(sfx), kind, maxLevel, description\(sfx) FROM Skill") { row in
             let kind = SkillKind(rawValue: row.string(2))!
             let id = SkillId(row.int(0))
             let summary = row.string(4)  // NULLは空文字で返るためisEmptyで畳む
@@ -61,7 +66,7 @@ public final class MasterDatabase {
             bonusRanks[Int32(row.int(0)), default: []].append((row.string(1), Int(row.int(2)), Int(row.int(3))))
         }
         var series: [Int32: ArmorSeries] = [:]
-        try db.query("SELECT id, nameJa, rarity, setBonusSkillId, groupBonusSkillId FROM ArmorSeries") { row in
+        try db.query("SELECT id, name\(sfx), rarity, setBonusSkillId, groupBonusSkillId FROM ArmorSeries") { row in
             let id = Int32(row.int(0))
             func bonus(_ kind: String, _ skillId: SkillId?) -> ArmorSeriesBonus? {
                 guard let skillId else { return nil }
@@ -83,7 +88,7 @@ public final class MasterDatabase {
         }
         var pieces: [ArmorPiece] = []
         try db.query("""
-            SELECT id, seriesId, kind, nameJa, defenseMax,
+            SELECT id, seriesId, kind, name\(sfx), defenseMax,
                    resFire, resWater, resThunder, resIce, resDragon, slots
             FROM ArmorPiece
             """) { row in
@@ -104,7 +109,7 @@ public final class MasterDatabase {
             decoSkills[Int32(row.int(0)), default: [:]][SkillId(row.int(1))] = Int(row.int(2))
         }
         var decorations: [Decoration] = []
-        try db.query("SELECT id, nameJa, slotSize, allowedOn FROM Decoration") { row in
+        try db.query("SELECT id, name\(sfx), slotSize, allowedOn FROM Decoration") { row in
             decorations.append(Decoration(
                 id: Int32(row.int(0)), name: row.string(1),
                 slotSize: Int(row.int(2)),
@@ -119,7 +124,7 @@ public final class MasterDatabase {
             charmSkills["\(row.int(0))/\(row.int(1))", default: [:]][SkillId(row.int(2))] = Int(row.int(3))
         }
         var latestRank: [Int32: (rank: Int, name: String)] = [:]
-        try db.query("SELECT id, rankIndex, nameJa FROM FixedCharm") { row in
+        try db.query("SELECT id, rankIndex, name\(sfx) FROM FixedCharm") { row in
             let id = Int32(row.int(0))
             let rank = Int(row.int(1))
             if latestRank[id] == nil || latestRank[id]!.rank < rank {
@@ -132,12 +137,18 @@ public final class MasterDatabase {
                   weaponSlots: [], armorSlots: [])  // 固定護石はスロットなし(仕様4.1)
         }
 
+        var randomCharmNames: [String] = []
+        try db.query("SELECT name\(sfx) FROM RandomCharm") { row in
+            randomCharmNames.append(row.string(0))
+        }
+        self.randomCharmNames = randomCharmNames
+
         var weaponSkills: [Int64: [SkillId: Int]] = [:]
         try db.query("SELECT weaponId, skillId, level FROM WeaponSkill") { row in
             weaponSkills[row.int(0), default: [:]][SkillId(row.int(1))] = Int(row.int(2))
         }
         var weapons: [Weapon] = []
-        try db.query("SELECT id, kind, nameJa, rarity, slots FROM Weapon") { row in
+        try db.query("SELECT id, kind, name\(sfx), rarity, slots FROM Weapon") { row in
             weapons.append(Weapon(
                 id: row.int(0), kind: row.string(1), name: row.string(2),
                 rarity: Int(row.int(3)),

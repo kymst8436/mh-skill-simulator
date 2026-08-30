@@ -48,7 +48,7 @@ struct WeaponSelectView: View {
                 }
             }
         }
-        .mhNavigationTitle("武器を選択")
+        .mhNavigationTitle(String(localized: "武器を選択"))
         .navigationBarBackButtonHidden(true)
         .toolbar {
             MHBackButton { dismiss() }
@@ -89,7 +89,7 @@ struct WeaponSelectView: View {
             }
             .sorted {
                 if $0.rarity != $1.rarity { return $0.rarity > $1.rarity }
-                return $0.name.compare($1.name, locale: Locale(identifier: "ja_JP")) == .orderedAscending
+                return $0.name.localizedStandardCompare($1.name) == .orderedAscending
             }
     }
 
@@ -118,7 +118,7 @@ struct WeaponSelectView: View {
         if visibleWeapons.isEmpty {
             MHEmptyState(
                 systemImage: "magnifyingglass",
-                title: "「\(searchText)」に一致する武器はありません")
+                title: String(localized: "「\(searchText)」に一致する武器はありません"))
             Spacer()
         } else {
             ScrollView {
@@ -160,7 +160,7 @@ struct WeaponSelectView: View {
         let skillSummary = weapon.skills
             .compactMap { id, level in master.skills[id].map { MHFormat.skillLine($0.name, level) } }
             .sorted()
-            .joined(separator: "・")
+            .joined(separator: String(localized: "・"))
         return Button {
             conditionViewModel.selectWeapon(weapon)
             dismiss()

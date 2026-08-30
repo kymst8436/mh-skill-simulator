@@ -25,15 +25,15 @@ struct InfoView: View {
                             .mhEntrance(0)
 
                         Group {
-                            MHSectionHeader(title: "このアプリについて")
+                            MHSectionHeader(title: String(localized: "このアプリについて"))
                                 .padding(.top, 20)
                             MHCard {
                                 VStack(spacing: 0) {
-                                    infoRow("バージョン", appVersion)
+                                    infoRow(String(localized: "バージョン"), appVersion)
                                     separator
-                                    infoRow("ゲームデータ", String(dependencies.master.sourceCommit.prefix(7)))
+                                    infoRow(String(localized: "ゲームデータ"), String(dependencies.master.sourceCommit.prefix(7)))
                                     separator
-                                    infoRow("護石規則データ", dependencies.master.charmRulesVersion)
+                                    infoRow(String(localized: "護石規則データ"), dependencies.master.charmRulesVersion)
                                 }
                             }
                             .padding(.horizontal, 16)
@@ -77,7 +77,7 @@ struct InfoView: View {
                     .padding(.bottom, 24)
                 }
             }
-            .mhNavigationTitle("情報")
+            .mhNavigationTitle(String(localized: "情報"))
         }
     }
 
@@ -91,12 +91,14 @@ struct InfoView: View {
                     .font(.system(size: 22))
                     .foregroundStyle(Color.mhAccent)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(proStore.isPro ? "Pro版をご利用中" : "Pro版にアップグレード")
+                    Text(proStore.isPro
+                        ? String(localized: "Pro版をご利用中")
+                        : String(localized: "Pro版にアップグレード"))
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(Color.mhTitleGold)
                     Text(proStore.isPro
-                        ? "マイセット上限なし・全ての広告が非表示"
-                        : "マイセット上限なし・全ての広告が非表示に")
+                        ? String(localized: "マイセット上限なし・全ての広告が非表示")
+                        : String(localized: "マイセット上限なし・全ての広告が非表示に"))
                         .font(.system(size: 13))
                         .foregroundStyle(Color.mhTextSecondary)
                 }
@@ -191,35 +193,35 @@ struct CreditsView: View {
             Color.mhBackground.ignoresSafeArea()
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
-                    section("著作権について", """
+                    section(String(localized: "著作権について"), String(localized: """
                     本アプリは非公式のファンメイドアプリです。株式会社カプコンおよび関連会社とは一切関係ありません。
                     ゲームデータ・アイコン等のゲーム由来コンテンツの著作権は株式会社カプコンに帰属します。
                     権利者からの申し立てがあった場合、本アプリは速やかに公開を停止します。
-                    """)
+                    """))
                     .mhEntrance(0)
-                    section("データ出典", """
+                    section(String(localized: "データ出典"), String(localized: """
                     データ: mhdb-wilds-data (LartTyler) を加工して使用
                     https://github.com/LartTyler/mhdb-wilds-data
-                    """)
+                    """))
                     .mhEntrance(1)
-                    section("鑑定護石の抽選規則データについて", """
+                    section(String(localized: "鑑定護石の抽選規則データについて"), String(localized: """
                     出現パターンはコミュニティの解析情報をもとに構成しています。実際のゲーム内容と異なる場合があります。
-                    """)
+                    """))
                     .mhEntrance(2)
-                    section("アイコン素材", """
+                    section(String(localized: "アイコン素材"), String(localized: """
                     武器種・防具部位・護石アイコン: MHW_Icons_SVG (OthelloRhin, MIT License) を配色変更のうえ使用
                     https://github.com/OthelloRhin/MHW_Icons_SVG
-                    """)
+                    """))
                     .mhEntrance(3)
-                    section("免責", """
+                    section(String(localized: "免責"), String(localized: """
                     本アプリの利用により生じたいかなる損害についても、開発者は責任を負いません。
-                    """)
+                    """))
                     .mhEntrance(4)
                 }
                 .padding(16)
             }
         }
-        .mhNavigationTitle("権利表記")
+        .mhNavigationTitle(String(localized: "権利表記"))
     }
 
     private func section(_ title: String, _ body: String) -> some View {

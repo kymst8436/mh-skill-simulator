@@ -92,7 +92,7 @@ private struct NativeAdRepresentable: UIViewRepresentable {
         adView.backgroundColor = .clear
 
         let badge = UILabel()
-        badge.text = "広告"
+        badge.text = String(localized: "広告")
         badge.font = .systemFont(ofSize: 10, weight: .bold)
         badge.textColor = UIColor(Color.mhBackground)
         badge.backgroundColor = UIColor(Color.mhTextTertiary)

@@ -32,13 +32,15 @@ struct EquipmentDetailView: View {
                 scrollContent
             }
         }
-        .mhNavigationTitle("装備詳細")
+        .mhNavigationTitle(String(localized: "装備詳細"))
         .navigationBarBackButtonHidden(true)
         .toolbar {
             MHBackButton { dismiss() }
             if allowsSave {
                 // 二重保存防止のため保存後は無効化(同じセットを複数回保存する用途は想定しない)
-                MHToolbarButton(title: didSaveToMySets ? "保存済み" : "保存", isEnabled: !didSaveToMySets) {
+                MHToolbarButton(
+                    title: didSaveToMySets ? String(localized: "保存済み") : String(localized: "保存"),
+                    isEnabled: !didSaveToMySets) {
                     // 無料版はマイセット5個まで(2026-08-29追加)。上限到達時はPro版への導線を出す
                     guard canSaveMoreSets else {
                         showsSetLimitAlert = true
@@ -83,8 +85,9 @@ struct EquipmentDetailView: View {
     /// 既定のセット名(条件スキル最大2件。条件がなければ「装備セット」)
     private var defaultSaveName: String {
         let names = sortedSkills.filter(\.isCondition).map(\.name)
-        guard !names.isEmpty else { return "装備セット" }
-        return names.prefix(2).joined(separator: "・") + (names.count > 2 ? " ほか" : "")
+        guard !names.isEmpty else { return String(localized: "装備セット") }
+        return names.prefix(2).joined(separator: String(localized: "・"))
+            + (names.count > 2 ? String(localized: " ほか") : "")
     }
 
     /// 無料版の上限判定(Pro版は無制限)。件数取得に失敗した場合は保存を妨げない
@@ -108,7 +111,7 @@ struct EquipmentDetailView: View {
             try dependencies.userStore.insertSavedSet(saved)
             didSaveToMySets = true
         } catch {
-            saveErrorMessage = "保存できませんでした。端末の空き容量をご確認ください"
+            saveErrorMessage = String(localized: "保存できませんでした。端末の空き容量をご確認ください")
         }
     }
 
@@ -120,17 +123,17 @@ struct EquipmentDetailView: View {
                         .padding(.horizontal, 16)
                         .padding(.top, 14)
                         .mhEntrance(0)
-                    section("装備") { equipmentRows }
+                    section(String(localized: "装備")) { equipmentRows }
                         .mhEntrance(1)
-                    section("装飾品") { decorationRows }
+                    section(String(localized: "装飾品")) { decorationRows }
                         .mhEntrance(2)
-                    section("発動スキル") { skillRows }
+                    section(String(localized: "発動スキル")) { skillRows }
                         .mhEntrance(3)
                     if !inactiveBonusRows.isEmpty {
-                        section("未発動のシリーズ・グループスキル") { inactiveRows }
+                        section(String(localized: "未発動のシリーズ・グループスキル")) { inactiveRows }
                             .mhEntrance(4)
                     }
-                    section("空きスロット") {
+                    section(String(localized: "空きスロット")) {
                         row {
                             Text("武器 \(MHFormat.slotSymbols(equipment.emptyWeaponSlots)) / 防具 \(MHFormat.slotSymbols(equipment.emptyArmorSlots))")
                                 .font(.system(size: 15))
@@ -172,7 +175,10 @@ struct EquipmentDetailView: View {
 
     private var summaryCard: some View {
         let resistances = zip(
-            ["火", "水", "雷", "氷", "龍"],
+            [
+                String(localized: "火"), String(localized: "水"), String(localized: "雷"),
+                String(localized: "氷"), String(localized: "龍"),
+            ],
             equipment.totalResistances)
         let colors: [Color] = [
             Color(mhHex: 0xC25B4A), Color(mhHex: 0x5B8FC2), Color(mhHex: 0xC9A227),
@@ -208,9 +214,9 @@ struct EquipmentDetailView: View {
         if let weapon {
             row {
                 if let iconName = MHFormat.weaponIconName(weapon.kind) {
-                    icon(iconName, accessibility: "武器")
+                    icon(iconName, accessibility: String(localized: "武器"))
                 } else {
-                    label("武器")
+                    label(String(localized: "武器"))
                 }
                 name(weapon.name)
                 Spacer()
@@ -230,7 +236,7 @@ struct EquipmentDetailView: View {
             }
         }
         row {
-            icon(MHFormat.charmIconName, accessibility: "護石")
+            icon(MHFormat.charmIconName, accessibility: String(localized: "護石"))
             name(charmText)
             Spacer()
             if equipment.charm.source != .none {
@@ -243,7 +249,7 @@ struct EquipmentDetailView: View {
     private var charmText: String {
         switch equipment.charm.source {
         case .none:
-            return "なし"
+            return String(localized: "なし")
         case .fixed, .owned:
             if equipment.charm.skills.isEmpty { return equipment.charm.name }
             return equipment.charm.name
@@ -295,7 +301,8 @@ struct EquipmentDetailView: View {
                 row {
                     name(decorationLabel(assignment))
                     Spacer()
-                    slot("→ \(ownerLabel(assignment.owner)) スロ\(MHFormat.slotSymbols([assignment.slotSize]))")
+                    slot(String(
+                        localized: "→ \(ownerLabel(assignment.owner)) スロ\(MHFormat.slotSymbols([assignment.slotSize]))"))
                 }
                 if index < equipment.decorations.count - 1 { separator }
             }
@@ -318,16 +325,17 @@ struct EquipmentDetailView: View {
             satisfying: assignment.required, target: target, maxSize: assignment.slotSize,
             excluding: condition.excludedDecorationIds)
         guard alternatives.count >= 2 else { return assignment.decoration.name }
-        let levelText = level >= 2 ? "Lv\(level)" : ""
-        return "\(skillName)\(levelText)の珠【\(assignment.slotSize)】いずれか"
+        // Lv表記も表示言語に合わせる(スキル名+レベルの共通書式を再利用)
+        let skillText = level >= 2 ? MHFormat.skillLine(skillName, level) : skillName
+        return String(localized: "\(skillText)の珠【\(assignment.slotSize)】いずれか")
     }
 
     private func ownerLabel(_ owner: DecorationAssignment.SlotOwner) -> String {
         switch owner {
-        case .weapon: "武器"
+        case .weapon: String(localized: "武器")
         case .armor(let kind): MHFormat.pieceLabel(kind)
-        case .charmWeapon: "護石(武)"
-        case .charmArmor: "護石"
+        case .charmWeapon: String(localized: "護石(武)")
+        case .charmArmor: String(localized: "護石")
         }
     }
 
@@ -398,7 +406,7 @@ struct EquipmentDetailView: View {
                 switch contributor {
                 case .weapon:
                     if let weapon, let iconName = MHFormat.weaponIconName(weapon.kind) {
-                        contributorIcon(iconName, accessibility: "武器")
+                        contributorIcon(iconName, accessibility: String(localized: "武器"))
                     } else {
                         Text("武")
                             .font(.system(size: 11))
@@ -407,7 +415,7 @@ struct EquipmentDetailView: View {
                 case .piece(let kind):
                     contributorIcon(MHFormat.pieceIconName(kind), accessibility: MHFormat.pieceLabel(kind))
                 case .charm:
-                    contributorIcon(MHFormat.charmIconName, accessibility: "護石")
+                    contributorIcon(MHFormat.charmIconName, accessibility: String(localized: "護石"))
                 }
             }
         }

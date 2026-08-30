@@ -12,7 +12,7 @@ struct ProPurchaseView: View {
             VStack(spacing: 0) {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
-                        MHSectionHeader(title: "Pro版でできること")
+                        MHSectionHeader(title: String(localized: "Pro版でできること"))
                             .padding(.top, 20)
                         benefitsCard
                             .padding(.horizontal, 16)
@@ -40,7 +40,7 @@ struct ProPurchaseView: View {
                 }
             }
         }
-        .mhNavigationTitle("Pro版")
+        .mhNavigationTitle(String(localized: "Pro版"))
         .task { await store.loadProductIfNeeded() }
         .alert(
             store.purchaseErrorMessage ?? "",
@@ -59,13 +59,13 @@ struct ProPurchaseView: View {
             VStack(spacing: 0) {
                 benefitRow(
                     systemImage: "bookmark.fill",
-                    title: "マイセットの上限なし",
-                    detail: "無料版の上限\(ProStore.freeMySetLimit)個の制限なく保存できます")
+                    title: String(localized: "マイセットの上限なし"),
+                    detail: String(localized: "無料版の上限\(ProStore.freeMySetLimit)個の制限なく保存できます"))
                 separator
                 benefitRow(
                     systemImage: "checkmark.seal.fill",
-                    title: "全ての広告が非表示",
-                    detail: "バナー・検索時・装備詳細の広告が表示されなくなり、左上の広告非表示ボタンも不要になります")
+                    title: String(localized: "全ての広告が非表示"),
+                    detail: String(localized: "バナー・検索時・装備詳細の広告が表示されなくなり、左上の広告非表示ボタンも不要になります"))
             }
         }
     }
@@ -110,13 +110,13 @@ struct ProPurchaseView: View {
 
     private var legalSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            MHSectionHeader(title: "規約")
+            MHSectionHeader(title: String(localized: "規約"))
                 .padding(.top, 20)
             MHCard {
                 VStack(spacing: 0) {
-                    legalRow("プライバシーポリシー", url: LegalLinks.privacyPolicyURL)
+                    legalRow(String(localized: "プライバシーポリシー"), url: LegalLinks.privacyPolicyURL)
                     separator
-                    legalRow("利用規約", url: LegalLinks.termsOfUseURL)
+                    legalRow(String(localized: "利用規約"), url: LegalLinks.termsOfUseURL)
                 }
             }
             .padding(.horizontal, 16)
@@ -199,9 +199,9 @@ struct ProPurchaseView: View {
 
     private var purchaseButtonTitle: String {
         if let price = store.product?.displayPrice {
-            return "Pro版を購入 \(price)"
+            return String(localized: "Pro版を購入 \(price)")
         }
-        return "Pro版を購入"
+        return String(localized: "Pro版を購入")
     }
 
     private var separator: some View {

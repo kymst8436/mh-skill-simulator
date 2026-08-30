@@ -12,14 +12,19 @@ nonisolated enum MHFormat {
 
     /// 「攻撃Lv3」形式
     static func skillLine(_ name: String, _ level: Int) -> String {
-        "\(name)Lv\(level)"
+        String(localized: "\(name)Lv\(level)",
+               comment: "スキル名+レベルの併記(例: 攻撃Lv3)")
     }
 
     /// 武器/防具プレフィックス付きの空きスロット要約(例「武③ 防①①」)
     static func emptySlotSummary(weapon: [Int], armor: [Int]) -> String {
         var parts: [String] = []
-        if !weapon.isEmpty { parts.append("武" + slotSymbols(weapon)) }
-        if !armor.isEmpty { parts.append("防" + slotSymbols(armor)) }
+        if !weapon.isEmpty {
+            parts.append(String(localized: "武", comment: "武器スロットの略記プレフィックス") + slotSymbols(weapon))
+        }
+        if !armor.isEmpty {
+            parts.append(String(localized: "防", comment: "防具スロットの略記プレフィックス") + slotSymbols(armor))
+        }
         return parts.isEmpty ? "─" : parts.joined(separator: " ")
     }
 
@@ -35,38 +40,41 @@ nonisolated enum MHFormat {
             }
             return label + " " + parts.joined(separator: " ")
         }
-        let parts = [group(weapon, label: "武"), group(armor, label: "防")].compactMap { $0 }
+        let parts = [
+            group(weapon, label: String(localized: "武", comment: "武器スロットの略記プレフィックス")),
+            group(armor, label: String(localized: "防", comment: "防具スロットの略記プレフィックス")),
+        ].compactMap { $0 }
         return parts.isEmpty ? "─" : parts.joined(separator: " / ")
     }
 
     /// 部位ラベル
     static func pieceLabel(_ kind: ArmorPieceKind) -> String {
         switch kind {
-        case .head: "頭"
-        case .chest: "胴"
-        case .arms: "腕"
-        case .waist: "腰"
-        case .legs: "脚"
+        case .head: String(localized: "頭", comment: "防具部位")
+        case .chest: String(localized: "胴", comment: "防具部位")
+        case .arms: String(localized: "腕", comment: "防具部位")
+        case .waist: String(localized: "腰", comment: "防具部位")
+        case .legs: String(localized: "脚", comment: "防具部位")
         }
     }
 
-    /// 武器種ラベル(bundled.dbのkind文字列→日本語)
+    /// 武器種ラベル(bundled.dbのkind文字列→表示言語の武器種名)
     static func weaponKindLabel(_ kind: String) -> String {
         switch kind {
-        case "great-sword": "大剣"
-        case "long-sword": "太刀"
-        case "sword-shield": "片手剣"
-        case "dual-blades": "双剣"
-        case "hammer": "ハンマー"
-        case "hunting-horn": "狩猟笛"
-        case "lance": "ランス"
-        case "gunlance": "ガンランス"
-        case "switch-axe": "スラッシュアックス"
-        case "charge-blade": "チャージアックス"
-        case "insect-glaive": "操虫棍"
-        case "bow": "弓"
-        case "heavy-bowgun": "ヘビィボウガン"
-        case "light-bowgun": "ライトボウガン"
+        case "great-sword": String(localized: "大剣", comment: "武器種")
+        case "long-sword": String(localized: "太刀", comment: "武器種")
+        case "sword-shield": String(localized: "片手剣", comment: "武器種")
+        case "dual-blades": String(localized: "双剣", comment: "武器種")
+        case "hammer": String(localized: "ハンマー", comment: "武器種")
+        case "hunting-horn": String(localized: "狩猟笛", comment: "武器種")
+        case "lance": String(localized: "ランス", comment: "武器種")
+        case "gunlance": String(localized: "ガンランス", comment: "武器種")
+        case "switch-axe": String(localized: "スラッシュアックス", comment: "武器種")
+        case "charge-blade": String(localized: "チャージアックス", comment: "武器種")
+        case "insect-glaive": String(localized: "操虫棍", comment: "武器種")
+        case "bow": String(localized: "弓", comment: "武器種")
+        case "heavy-bowgun": String(localized: "ヘビィボウガン", comment: "武器種")
+        case "light-bowgun": String(localized: "ライトボウガン", comment: "武器種")
         default: kind
         }
     }
@@ -104,18 +112,22 @@ nonisolated enum MHFormat {
             .map { (master.skills[$0.key]?.name ?? "?", $0.value) }
             .sorted { $0.0 < $1.0 }
             .map { skillLine($0.0, $0.1) }
-        parts += requirement.armorSlots.sorted(by: >).map { "防具スロ" + slotSymbols([$0]) }
-        parts += requirement.weaponSlots.sorted(by: >).map { "武器スロ" + slotSymbols([$0]) }
+        parts += requirement.armorSlots.sorted(by: >).map {
+            String(localized: "防具スロ", comment: "護石要求の防具スロット略記") + slotSymbols([$0])
+        }
+        parts += requirement.weaponSlots.sorted(by: >).map {
+            String(localized: "武器スロ", comment: "護石要求の武器スロット略記") + slotSymbols([$0])
+        }
         return parts.joined(separator: " + ")
     }
 
     /// スキル分類ラベル
     static func kindLabel(_ kind: SkillKind) -> String {
         switch kind {
-        case .armor: "防具"
-        case .weapon: "武器"
-        case .set: "シリーズ"
-        case .group: "グループ"
+        case .armor: String(localized: "防具", comment: "スキル分類")
+        case .weapon: String(localized: "武器", comment: "スキル分類")
+        case .set: String(localized: "シリーズ", comment: "スキル分類")
+        case .group: String(localized: "グループ", comment: "スキル分類")
         }
     }
 }

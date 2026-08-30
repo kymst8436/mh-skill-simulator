@@ -19,7 +19,18 @@ import sys
 import unicodedata
 from pathlib import Path
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+
+# 対応言語とSQLite列サフィックス(ja以外は欠損時jaへフォールバック)
+LANGUAGES = [
+    ("ja", "Ja"),
+    ("en", "En"),
+    ("fr", "Fr"),
+    ("de", "De"),
+    ("es", "Es"),
+    ("pt-BR", "PtBr"),
+    ("ko", "Ko"),
+]
 
 PIECE_KINDS = ["head", "chest", "arms", "waist", "legs"]
 
@@ -29,25 +40,34 @@ WEAPON_FILES = [
     "LongSword", "SwitchAxe", "SwordShield",
 ]
 
-SCHEMA_SQL = """
+def _lang_cols(prefix, nullable=False):
+    constraint = "" if nullable else " NOT NULL"
+    return ",\n  ".join(f"{prefix}{suffix} TEXT{constraint}" for _, suffix in LANGUAGES)
+
+
+def _ph(count):
+    return ",".join(["?"] * count)
+
+
+SCHEMA_SQL = f"""
 CREATE TABLE Skill (
   id INTEGER PRIMARY KEY,
-  nameJa TEXT NOT NULL,
+  {_lang_cols('name')},
   kind TEXT NOT NULL CHECK (kind IN ('armor','weapon','set','group')),
   maxLevel INTEGER NOT NULL,
   iconKind TEXT NOT NULL,
   iconId INTEGER NOT NULL,
-  descriptionJa TEXT
+  {_lang_cols('description', nullable=True)}
 );
 CREATE TABLE SkillRank (
   skillId INTEGER NOT NULL REFERENCES Skill(id),
   level INTEGER NOT NULL,
-  effectJa TEXT NOT NULL,
+  {_lang_cols('effect')},
   PRIMARY KEY (skillId, level)
 );
 CREATE TABLE ArmorSeries (
   id INTEGER PRIMARY KEY,
-  nameJa TEXT NOT NULL,
+  {_lang_cols('name')},
   rarity INTEGER NOT NULL,
   setBonusSkillId INTEGER REFERENCES Skill(id),
   groupBonusSkillId INTEGER REFERENCES Skill(id)
@@ -63,7 +83,7 @@ CREATE TABLE ArmorPiece (
   id INTEGER PRIMARY KEY,
   seriesId INTEGER NOT NULL REFERENCES ArmorSeries(id),
   kind TEXT NOT NULL CHECK (kind IN ('head','chest','arms','waist','legs')),
-  nameJa TEXT NOT NULL,
+  {_lang_cols('name')},
   defenseBase INTEGER NOT NULL,
   defenseMax INTEGER NOT NULL,
   resFire INTEGER NOT NULL,
@@ -81,7 +101,7 @@ CREATE TABLE ArmorPieceSkill (
 );
 CREATE TABLE Decoration (
   id INTEGER PRIMARY KEY,
-  nameJa TEXT NOT NULL,
+  {_lang_cols('name')},
   slotSize INTEGER NOT NULL CHECK (slotSize BETWEEN 1 AND 3),
   allowedOn TEXT NOT NULL CHECK (allowedOn IN ('weapon','armor')),
   rarity INTEGER NOT NULL,
@@ -97,7 +117,14 @@ CREATE TABLE DecorationSkill (
 CREATE TABLE FixedCharm (
   id INTEGER NOT NULL,
   rankIndex INTEGER NOT NULL,
-  nameJa TEXT NOT NULL,
+  {_lang_cols('name')},
+  rarity INTEGER NOT NULL,
+  PRIMARY KEY (id, rankIndex)
+);
+CREATE TABLE RandomCharm (
+  id INTEGER NOT NULL,
+  rankIndex INTEGER NOT NULL,
+  {_lang_cols('name')},
   rarity INTEGER NOT NULL,
   PRIMARY KEY (id, rankIndex)
 );
@@ -111,7 +138,7 @@ CREATE TABLE FixedCharmSkill (
 CREATE TABLE Weapon (
   id INTEGER PRIMARY KEY,
   kind TEXT NOT NULL,
-  nameJa TEXT NOT NULL,
+  {_lang_cols('name')},
   rarity INTEGER NOT NULL,
   attackRaw INTEGER NOT NULL,
   affinity INTEGER NOT NULL,
@@ -165,6 +192,25 @@ def ja(names, context):
     return text
 
 
+def texts(names, context, required=True):
+    """LANGUAGES順のテキストタプル。ja以外の欠損はjaで埋める(仕様: jaが正)。
+
+    required=Falseはjaも欠けてよい(説明文など)。その場合の欠損はNone。
+    """
+    names = names or {}
+    ja_text = names.get("ja")
+    if required and not ja_text:
+        raise ValidationError(f"日本語名がありません: {context}")
+    return tuple(names.get(code) or ja_text for code, _ in LANGUAGES)
+
+
+def effect_texts(descriptions):
+    """SkillRank用: NOT NULL列のため欠損は空文字で埋める"""
+    descriptions = descriptions or {}
+    ja_text = descriptions.get("ja") or ""
+    return tuple(descriptions.get(code) or ja_text for code, _ in LANGUAGES)
+
+
 def read_source_commit(source_dir):
     source_md = source_dir / "SOURCE.md"
     if source_md.exists():
@@ -207,19 +253,20 @@ def convert(source_dir, out_path):
     # --- Skill / SkillRank ---
     for s in skills:
         name = ja(s["names"], f"Skill {s['game_id']}")
-        desc = (s.get("descriptions") or {}).get("ja")
+        names = texts(s["names"], f"Skill {s['game_id']}")
+        descs = texts(s.get("descriptions"), None, required=False)
         ranks = s["ranks"]
         if not ranks:
             raise ValidationError(f"ranksが空です: Skill {name}")
         db.execute(
-            "INSERT INTO Skill VALUES (?,?,?,?,?,?,?)",
-            (s["game_id"], name, s["kind"], len(ranks), s["icon"], s["icon_id"], desc),
+            f"INSERT INTO Skill VALUES ({_ph(5 + 2 * len(LANGUAGES))})",
+            (s["game_id"], *names, s["kind"], len(ranks), s["icon"], s["icon_id"], *descs),
         )
         for r in ranks:
-            effect = (r.get("descriptions") or {}).get("ja") or ""
+            effects = effect_texts(r.get("descriptions"))
             db.execute(
-                "INSERT INTO SkillRank VALUES (?,?,?)",
-                (s["game_id"], r["level"], effect),
+                f"INSERT INTO SkillRank VALUES ({_ph(2 + len(LANGUAGES))})",
+                (s["game_id"], r["level"], *effects),
             )
 
     # --- ArmorSeries / ArmorPiece ---
@@ -231,8 +278,9 @@ def convert(source_dir, out_path):
         set_skill = require_skill(set_bonus["skill_id"], f"{name} set_bonus") if set_bonus else None
         group_skill = require_skill(group_bonus["skill_id"], f"{name} group_bonus") if group_bonus else None
         db.execute(
-            "INSERT INTO ArmorSeries VALUES (?,?,?,?,?)",
-            (sid, name, series["rarity"], set_skill, group_skill),
+            f"INSERT INTO ArmorSeries VALUES ({_ph(4 + len(LANGUAGES))})",
+            (sid, *texts(series["names"], f"ArmorSeries {sid}"),
+             series["rarity"], set_skill, group_skill),
         )
         for bonus_kind, bonus in (("set", set_bonus), ("group", group_bonus)):
             if not bonus:
@@ -259,9 +307,9 @@ def convert(source_dir, out_path):
             pname = ja(piece["names"], f"ArmorPiece {name}/{kind}")
             res = piece["resistances"]
             db.execute(
-                "INSERT INTO ArmorPiece VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                f"INSERT INTO ArmorPiece VALUES ({_ph(11 + len(LANGUAGES))})",
                 (
-                    pid, sid, kind, pname,
+                    pid, sid, kind, *texts(piece["names"], f"ArmorPiece {name}/{kind}"),
                     piece["defense"]["base"], piece["defense"]["max"],
                     res["fire"], res["water"], res["thunder"], res["ice"], res["dragon"],
                     json.dumps(piece["slots"]),
@@ -277,9 +325,10 @@ def convert(source_dir, out_path):
     for acc in accessories:
         name = ja(acc["names"], f"Accessory {acc['game_id']}")
         db.execute(
-            "INSERT INTO Decoration VALUES (?,?,?,?,?,?,?)",
+            f"INSERT INTO Decoration VALUES ({_ph(6 + len(LANGUAGES))})",
             (
-                acc["game_id"], name, acc["level"], acc["allowed_on"],
+                acc["game_id"], *texts(acc["names"], f"Accessory {acc['game_id']}"),
+                acc["level"], acc["allowed_on"],
                 acc["rarity"], acc["icon_color"], acc["icon_color_id"],
             ),
         )
@@ -290,16 +339,26 @@ def convert(source_dir, out_path):
             )
 
     # --- FixedCharm(is_random=falseのみ。鑑定護石4系統はcharm-rules側で扱う)---
+    # 鑑定護石の名前はOCRアンカー用にRandomCharmへ格納する
     for amulet in amulets:
-        if amulet.get("is_random"):
-            continue
         aid = amulet["game_id"]
+        if amulet.get("is_random"):
+            for rank in amulet["ranks"]:
+                db.execute(
+                    f"INSERT INTO RandomCharm VALUES ({_ph(3 + len(LANGUAGES))})",
+                    (aid, rank["level"],
+                     *texts(rank["names"], f"RandomCharm {aid} rank{rank['level']}"),
+                     rank["rarity"]),
+                )
+            continue
         for rank in amulet["ranks"]:
             rank_index = rank["level"]
             rname = ja(rank["names"], f"FixedCharm {aid} rank{rank_index}")
             db.execute(
-                "INSERT INTO FixedCharm VALUES (?,?,?,?)",
-                (aid, rank_index, rname, rank["rarity"]),
+                f"INSERT INTO FixedCharm VALUES ({_ph(3 + len(LANGUAGES))})",
+                (aid, rank_index,
+                 *texts(rank["names"], f"FixedCharm {aid} rank{rank_index}"),
+                 rank["rarity"]),
             )
             skills_map = rank.get("skills") or {}
             if not (1 <= len(skills_map) <= 2):
@@ -316,9 +375,10 @@ def convert(source_dir, out_path):
             wid = weapon_id(kind_index, w["game_id"])
             wname = ja(w["names"], f"Weapon {fname} {w['game_id']}")
             db.execute(
-                "INSERT INTO Weapon VALUES (?,?,?,?,?,?,?,?)",
+                f"INSERT INTO Weapon VALUES ({_ph(7 + len(LANGUAGES))})",
                 (
-                    wid, w["kind"], wname, w["rarity"], w["attack_raw"],
+                    wid, w["kind"], *texts(w["names"], f"Weapon {fname} {w['game_id']}"),
+                    w["rarity"], w["attack_raw"],
                     w["affinity"], json.dumps(w["slots"]), w.get("series_id"),
                 ),
             )
@@ -382,7 +442,7 @@ def convert(source_dir, out_path):
         for table in (
             "Skill", "SkillRank", "ArmorSeries", "ArmorSeriesBonusRank",
             "ArmorPiece", "ArmorPieceSkill", "Decoration", "DecorationSkill",
-            "FixedCharm", "FixedCharmSkill", "Weapon", "WeaponSkill",
+            "FixedCharm", "FixedCharmSkill", "RandomCharm", "Weapon", "WeaponSkill",
             "CharmSkillGroup", "CharmPattern", "CharmPatternSlotCombo",
         )
     }

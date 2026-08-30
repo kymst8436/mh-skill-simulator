@@ -15,8 +15,8 @@ struct RootView: View {
                 // 画面設計 ダイアログ4: 全機能を読み取り不能状態にする(操作不可・終端)
                 MHEmptyState(
                     systemImage: "exclamationmark.triangle",
-                    title: "データの読み込みに失敗しました",
-                    message: "アプリの再インストールをお試しください")
+                    title: String(localized: "データの読み込みに失敗しました"),
+                    message: String(localized: "アプリの再インストールをお試しください"))
             case .ready(let dependencies):
                 MainTabView(dependencies: dependencies)
             }

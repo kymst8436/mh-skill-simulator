@@ -16,7 +16,7 @@ struct AppDependencies {
     func charmDisplayName(_ charm: OwnedCharm) -> String {
         charm.skills
             .map { MHFormat.skillLine(master.skills[$0.skillId]?.name ?? "?", $0.level) }
-            .joined(separator: "・")
+            .joined(separator: String(localized: "・"))
     }
 
     /// 検索エンジンに渡す所持護石一覧
@@ -47,7 +47,10 @@ final class AppBootstrap {
             return
         }
         do {
-            let master = try MasterDatabase(path: url.path)
+            // マスタデータの言語はUIの表示言語(端末設定とアプリ対応言語の照合結果)に合わせる
+            let language = DataLanguage.resolve(
+                localeIdentifier: Bundle.main.preferredLocalizations.first ?? "ja")
+            let master = try MasterDatabase(path: url.path, language: language)
             let engine = SearchEngine(master: master)
             let userStore = try UserStore(path: Self.userDbPath())
             shouldNotifyUserDataRecovery = userStore.didRecoverFromCorruption

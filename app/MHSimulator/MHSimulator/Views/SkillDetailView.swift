@@ -19,15 +19,15 @@ struct SkillDetailView: View {
                         .mhEntrance(1)
                     Group {
                         if !bonusRanks.isEmpty {
-                            section("発動条件") { bonusRankRows }
+                            section(String(localized: "発動条件")) { bonusRankRows }
                         }
                         if !levelEffects.isEmpty {
-                            section("レベルごとの効果") { levelEffectRows }
+                            section(String(localized: "レベルごとの効果")) { levelEffectRows }
                         }
                     }
                     .mhEntrance(2)
                     if !armorRows.isEmpty {
-                        section("このスキルを持つ防具") { armorPieceRows }
+                        section(String(localized: "このスキルを持つ防具")) { armorPieceRows }
                             .mhEntrance(3)
                     }
                 }
@@ -131,7 +131,8 @@ struct SkillDetailView: View {
                 Text("\(rank.pieces)部位")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(Color.mhAccent)
-                    .frame(width: 52, alignment: .leading)
+                    .fixedSize()
+                    .frame(minWidth: 52, alignment: .leading)
                 Text("Lv\(rank.level)発動")
                     .font(.system(size: 15))
                     .foregroundStyle(Color.mhTextPrimary)

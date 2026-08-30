@@ -100,15 +100,32 @@ class TestBundledDb(unittest.TestCase):
         self.assertLessEqual(self.count("SELECT MAX(maxLevel) FROM Skill"), 7)
 
     def test_spot_check_names(self):
-        # 既知のスキル名が日本語で引けること
+        # 既知のスキル名が対応7言語すべてで引けること
         row = self.db.execute(
-            "SELECT nameJa FROM Skill WHERE id = -2125233152").fetchone()
-        self.assertEqual(row[0], "龍耐性")
+            "SELECT nameJa, nameEn, nameFr, nameDe, nameEs, namePtBr, nameKo"
+            " FROM Skill WHERE id = -2125233152").fetchone()
+        self.assertEqual(list(row), [
+            "龍耐性", "Dragon Resistance", "Aura draconique",
+            "Drachenwiderstand", "Antidraco", "Resistência a Dragão", "용 내성"])
+
+    def test_no_missing_localized_names(self):
+        # 全言語列がNOT NULLかつ非空(欠損はja埋めされるため空はデータ異常)
+        for table in ("Skill", "ArmorSeries", "ArmorPiece", "Decoration",
+                      "FixedCharm", "RandomCharm", "Weapon"):
+            for col in ("nameJa", "nameEn", "nameFr", "nameDe",
+                        "nameEs", "namePtBr", "nameKo"):
+                empty = self.count(
+                    f"SELECT COUNT(*) FROM {table} WHERE {col} IS NULL OR {col} = ''")
+                self.assertEqual(empty, 0, f"{table}.{col} に空の名前")
+
+    def test_random_charm_names(self):
+        # 鑑定護石4系統(OCRアンカー用)
+        self.assertEqual(self.count("SELECT COUNT(DISTINCT id) FROM RandomCharm"), 4)
 
     def test_meta(self):
         row = self.db.execute(
             "SELECT schemaVersion, sourceCommit FROM Meta").fetchone()
-        self.assertEqual(row[0], 1)
+        self.assertEqual(row[0], 2)
         self.assertNotEqual(row[1], "unknown")
 
     # --- 抽選規則テーブル(2026-08-22改訂: アプリは規則から実行時計算する) ---

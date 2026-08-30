@@ -34,7 +34,7 @@ struct MySetListView: View {
                 Color.mhBackground.ignoresSafeArea()
                 content
             }
-            .mhNavigationTitle("マイセット")
+            .mhNavigationTitle(String(localized: "マイセット"))
             .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.mySetBannerUnitId) }
             .toolbar {
                 // 広告非表示(リワード)。左上に自作アイコン(画面設計§2 2026-08-29追加)
@@ -89,12 +89,12 @@ struct MySetListView: View {
             MHEmptyState(
                 systemImage: "exclamationmark.triangle",
                 title: message,
-                actionTitle: "再試行") { viewModel.load() }
+                actionTitle: String(localized: "再試行")) { viewModel.load() }
         } else if viewModel.savedSets.isEmpty {
             MHEmptyState(
                 systemImage: "bookmark",
-                title: "マイセットはまだありません",
-                message: "検索結果からマイセットを追加できます")
+                title: String(localized: "マイセットはまだありません"),
+                message: String(localized: "検索結果からマイセットを追加できます"))
                 .mhEntrance(0)
         } else {
             ScrollView {

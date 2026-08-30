@@ -78,7 +78,7 @@ final class CharmEntryViewModel {
                 let name0 = skillName($0.skillId)
                 let name1 = skillName($1.skillId)
                 if name0 != name1 {
-                    return name0.compare(name1, locale: Locale(identifier: "ja_JP")) == .orderedAscending
+                    return name0.localizedStandardCompare(name1) == .orderedAscending
                 }
                 return $0.level < $1.level
             }
@@ -219,7 +219,7 @@ final class CharmEntryViewModel {
             }
             return true
         } catch {
-            saveErrorMessage = "保存できませんでした。端末の空き容量をご確認ください"
+            saveErrorMessage = String(localized: "保存できませんでした。端末の空き容量をご確認ください")
             return false
         }
     }
@@ -229,7 +229,7 @@ final class CharmEntryViewModel {
     }
 
     func entryLabel(_ entry: CharmRules.GroupEntry?) -> String {
-        guard let entry else { return "(なし)" }
+        guard let entry else { return String(localized: "(なし)") }
         return MHFormat.skillLine(skillName(entry.skillId), entry.level)
     }
 
@@ -240,8 +240,8 @@ final class CharmEntryViewModel {
     /// スロットセクションの注記(読み取りレア度で絞り込み中はその旨を示す)
     var slotNote: String {
         if let scannedRarity {
-            return "読み取ったレア度(RARE \(scannedRarity))で候補を絞り込んでいます"
+            return String(localized: "読み取ったレア度(RARE \(scannedRarity))で候補を絞り込んでいます")
         }
-        return "スキル構成から自動で候補を絞り込みます"
+        return String(localized: "スキル構成から自動で候補を絞り込みます")
     }
 }

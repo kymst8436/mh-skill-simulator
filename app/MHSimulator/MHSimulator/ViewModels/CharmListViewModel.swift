@@ -12,6 +12,16 @@ final class CharmListViewModel {
         case slotAscending = "スロット数昇順"
         case slotDescending = "スロット数降順"
         var id: String { rawValue }
+
+        /// メニュー表示ラベル(rawValueは識別子として保持)
+        var label: String {
+            switch self {
+            case .rarityAscending: String(localized: "レア度昇順")
+            case .rarityDescending: String(localized: "レア度降順")
+            case .slotAscending: String(localized: "スロット数昇順")
+            case .slotDescending: String(localized: "スロット数降順")
+            }
+        }
     }
 
     /// 護石レア度の取り得る範囲(抽選規則=仕様4.2)
@@ -44,7 +54,7 @@ final class CharmListViewModel {
             charms = try dependencies.userStore.loadCharms()
             wishlist = try dependencies.userStore.loadWishlist()
         } catch {
-            loadErrorMessage = "護石データを読み込めませんでした"
+            loadErrorMessage = String(localized: "護石データを読み込めませんでした")
         }
         isLoading = false
     }
@@ -56,7 +66,7 @@ final class CharmListViewModel {
             try dependencies.userStore.delete(id: charm.id)
             charms.removeAll { $0.id == charm.id }
         } catch {
-            deleteErrorMessage = "削除できませんでした。端末の空き容量をご確認ください"
+            deleteErrorMessage = String(localized: "削除できませんでした。端末の空き容量をご確認ください")
         }
         isDeleting = false
     }
@@ -68,7 +78,7 @@ final class CharmListViewModel {
             try dependencies.userStore.deleteWishlistItem(id: item.id)
             wishlist.removeAll { $0.id == item.id }
         } catch {
-            deleteErrorMessage = "削除できませんでした。端末の空き容量をご確認ください"
+            deleteErrorMessage = String(localized: "削除できませんでした。端末の空き容量をご確認ください")
         }
     }
 
