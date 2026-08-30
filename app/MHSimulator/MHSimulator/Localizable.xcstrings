@@ -132,7 +132,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "(Group)"
+            "value": " (Group)"
           }
         },
         "es": {
@@ -172,7 +172,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "(Set)"
+            "value": " (Set Bonus)"
           }
         },
         "es": {
@@ -505,7 +505,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Any jewel with %1$@ [%2$lld]"
+            "value": "Any %1$@ jewel [%2$lld]"
           }
         },
         "fr": {
@@ -535,7 +535,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ 장식주【%2$lld】중 하나"
+            "value": "%1$@ 장식품【%2$lld】 중 하나"
           }
         }
       }
@@ -575,7 +575,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Removendo %@, a combinação é possível"
+            "value": "Remova %@ para viabilizar a combinação"
           }
         }
       }
@@ -821,7 +821,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld résultats (tronqués — des conditions plus précises améliorent la fiabilité)"
+            "value": "%lld résultats (liste tronquée — des conditions plus précises améliorent la fiabilité)"
           }
         },
         "ko": {
@@ -1101,7 +1101,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "→ %1$@ ranura %2$@"
+            "value": "→ %1$@ hueco %2$@"
           }
         },
         "fr": {
@@ -1181,7 +1181,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "+ up to Lv%lld"
+            "value": "Up to +Lv%lld"
           }
         },
         "es": {
@@ -1193,7 +1193,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "+ jusqu'à Niv. %lld"
+            "value": "jusqu'à +%lld niv."
           }
         },
         "ko": {
@@ -1353,7 +1353,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Active Niv. %lld"
+            "value": "Niv. %lld activé"
           }
         },
         "ko": {
@@ -1775,7 +1775,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Artia"
+            "value": "Artian"
           }
         },
         "en": {
@@ -1787,25 +1787,25 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Artia"
+            "value": "Artiana"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Artia"
+            "value": "Artian"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "아티아"
+            "value": "아티어"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Artia"
+            "value": "Artiano"
           }
         }
       }
@@ -1815,7 +1815,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Icon-Material"
+            "value": "Icon-Grafiken"
           }
         },
         "en": {
@@ -2061,7 +2061,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "One-time payment only (lifetime purchase)"
+            "value": "One-time payment (no subscription)"
           }
         },
         "es": {
@@ -2079,7 +2079,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "결제는 1회뿐입니다(영구 구매)"
+            "value": "결제는 한 번뿐입니다(영구 이용)"
           }
         },
         "pt-BR": {
@@ -2417,7 +2417,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Halten Sie die Ausrüstungsdetails (Talisman) des Spiels in den Rahmen"
+            "value": "Positionieren Sie die Ausrüstungsdetails (Talisman) des Spiels innerhalb des Rahmens"
           }
         },
         "en": {
@@ -2435,7 +2435,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cadrez les détails d'équipement du jeu (talisman) dans le cadre"
+            "value": "Placez les détails d'équipement du jeu (talisman) dans le cadre"
           }
         },
         "ko": {
@@ -2527,7 +2527,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Removendo esta habilidade, a combinação é possível"
+            "value": "Remova esta habilidade para viabilizar a combinação"
           }
         }
       }
@@ -2824,7 +2824,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Set"
+            "value": "Set Bonus"
           }
         },
         "es": {
@@ -2864,7 +2864,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Set skill (counts as one piece)"
+            "value": "Set bonus skill (counts as one piece)"
           }
         },
         "es": {
@@ -3178,7 +3178,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nach Fertigkeitsname suchen"
+            "value": "Nach Fertigkeitsnamen suchen"
           }
         },
         "en": {
@@ -3511,7 +3511,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ranuras"
+            "value": "Huecos"
           }
         },
         "fr": {
@@ -3551,7 +3551,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ranuras y rareza"
+            "value": "Huecos y rareza"
           }
         },
         "fr": {
@@ -3591,7 +3591,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ranura %lld"
+            "value": "Hueco %lld"
           }
         },
         "fr": {
@@ -3631,13 +3631,13 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ranuras (ascendente)"
+            "value": "Huecos (ascendente)"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Emplacements (croissant)"
+            "value": "Emplacements (croissants)"
           }
         },
         "ko": {
@@ -3671,13 +3671,13 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ranuras (descendente)"
+            "value": "Huecos (descendente)"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Emplacements (décroissant)"
+            "value": "Emplacements (décroissants)"
           }
         },
         "ko": {
@@ -4004,7 +4004,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "레어도의 호석에서 출현. 입수하면 탭하여 등록"
+            "value": "호석에서 출현. 입수하면 탭하여 등록"
           }
         },
         "pt-BR": {
@@ -4060,7 +4060,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Entfernt Banner-, Such- und Detailanzeigen; die Werbefrei-Taste oben links wird überflüssig"
+            "value": "Entfernt Banner-, Such- und Detailanzeigen; die Taste zum Ausblenden der Anzeigen oben links wird überflüssig"
           }
         },
         "en": {
@@ -4348,7 +4348,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "My Sets limit"
+            "value": "My Sets Limit Reached"
           }
         },
         "es": {
@@ -4360,7 +4360,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Limite de Mes sets"
+            "value": "Limite de sets atteinte"
           }
         },
         "ko": {
@@ -4474,7 +4474,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudieron cargar tus conjuntos"
+            "value": "No se han podido cargar tus conjuntos"
           }
         },
         "fr": {
@@ -4520,7 +4520,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sets illimités et toutes les pubs masquées"
+            "value": "Sets illimités et plus aucune publicité"
           }
         },
         "ko": {
@@ -4560,7 +4560,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sets illimités et toutes les pubs masquées"
+            "value": "Sets illimités et plus aucune publicité"
           }
         },
         "ko": {
@@ -4686,7 +4686,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그만두기"
+            "value": "계속 입력"
           }
         },
         "pt-BR": {
@@ -4824,7 +4824,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sehen Sie eine Prämienanzeige, um alle Anzeigen 8 Stunden lang auszublenden."
+            "value": "Sehen Sie sich eine Prämienanzeige an, um alle Anzeigen 8 Stunden lang auszublenden."
           }
         },
         "en": {
@@ -4876,7 +4876,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rareza %lld"
+            "value": "Raro %lld"
           }
         },
         "fr": {
@@ -4962,7 +4962,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rareté (croissant)"
+            "value": "Rareté (croissante)"
           }
         },
         "ko": {
@@ -5002,7 +5002,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rareté (décroissant)"
+            "value": "Rareté (décroissante)"
           }
         },
         "ko": {
@@ -5088,7 +5088,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "알 수 없는 장식주"
+            "value": "알 수 없는 장식품"
           }
         },
         "pt-BR": {
@@ -5242,7 +5242,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apparaît sur des talismans de cette rareté ou plus"
+            "value": "Apparaît sur des talismans de cette rareté ou supérieure"
           }
         },
         "ko": {
@@ -5304,7 +5304,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Speichern fehlgeschlagen. Prüfen Sie den freien Speicher"
+            "value": "Speichern fehlgeschlagen. Prüfen Sie den freien Speicherplatz"
           }
         },
         "en": {
@@ -5316,7 +5316,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo guardar. Comprueba el espacio libre del dispositivo"
+            "value": "No se ha podido guardar. Comprueba el espacio libre del dispositivo"
           }
         },
         "fr": {
@@ -5448,7 +5448,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "입력 내용을 파기하시겠습니까?"
+            "value": "입력 내용을 버리시겠습니까?"
           }
         },
         "pt-BR": {
@@ -5494,7 +5494,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Quando obtiver, toque para registrá-lo como amuleto possuído"
+            "value": "Quando obtiver, toque para registrá-lo como amuleto obtido"
           }
         }
       }
@@ -5728,7 +5728,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "출현 패턴은 커뮤니티 해석 정보를 바탕으로 구성되어 실제 게임 내용과 다를 수 있습니다."
+            "value": "출현 패턴은 커뮤니티의 분석 정보를 바탕으로 구성되어 실제 게임 내용과 다를 수 있습니다."
           }
         },
         "pt-BR": {
@@ -5790,13 +5790,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Couldn't determine"
+            "value": "Couldn't complete the check"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo determinar"
+            "value": "No se ha podido determinar"
           }
         },
         "fr": {
@@ -5904,7 +5904,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Löschen fehlgeschlagen. Prüfen Sie den freien Speicher"
+            "value": "Löschen fehlgeschlagen. Prüfen Sie den freien Speicherplatz"
           }
         },
         "en": {
@@ -5916,7 +5916,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo eliminar. Comprueba el espacio libre del dispositivo"
+            "value": "No se ha podido eliminar. Comprueba el espacio libre del dispositivo"
           }
         },
         "fr": {
@@ -6025,7 +6025,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bei mehreren Exemplaren können Sie trotzdem registrieren"
+            "value": "Besitzen Sie denselben Talisman mehrfach, können Sie ihn trotzdem registrieren"
           }
         },
         "en": {
@@ -6077,7 +6077,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo obtener la información del producto. Comprueba tu conexión e inténtalo de nuevo"
+            "value": "No se ha podido obtener la información del producto. Comprueba tu conexión e inténtalo de nuevo"
           }
         },
         "fr": {
@@ -6347,7 +6347,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zum Definieren von Waffen, die nicht in den Daten enthalten sind (z. B. Artia-Waffen)"
+            "value": "Zum Definieren von Waffen, die nicht in den Daten enthalten sind (z. B. Artian-Waffen)"
           }
         },
         "en": {
@@ -6359,25 +6359,25 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sirve para definir armas no incluidas en los datos, como las armas Artia"
+            "value": "Sirve para definir armas no incluidas en los datos, como las armas artianas"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Permet de définir des armes absentes des données, comme les armes Artia"
+            "value": "Permet de définir des armes absentes des données, comme les armes Artian"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "거격 아티아 등 데이터에 없는 무기를 가정하기 위한 기능입니다"
+            "value": "거격 아티어 등 데이터에 없는 무기를 가정하기 위한 기능입니다"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Serve para definir armas ausentes dos dados, como as armas Artia"
+            "value": "Serve para definir armas ausentes dos dados, como as armas Artianas"
           }
         }
       }
@@ -6479,7 +6479,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo cargar el anuncio"
+            "value": "No se ha podido cargar el anuncio"
           }
         },
         "fr": {
@@ -6600,7 +6600,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se encontraron compras para restaurar"
+            "value": "No se han encontrado compras para restaurar"
           }
         },
         "fr": {
@@ -6698,7 +6698,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Amuletos possuídos"
+            "value": "Amuletos obtidos"
           }
         }
       }
@@ -6754,7 +6754,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Not specified"
+            "value": "Any"
           }
         },
         "es": {
@@ -6794,7 +6794,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Not specified (auto-select from all weapons)"
+            "value": "Any (auto-selected from all weapons)"
           }
         },
         "es": {
@@ -6875,13 +6875,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The search was cut short for time, so there may be more candidates"
+            "value": "The search stopped early due to the time limit, so there may be more candidates"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La búsqueda se interrumpió por tiempo; puede haber más candidatos"
+            "value": "La búsqueda se ha interrumpido por límite de tiempo; puede haber más candidatos"
           }
         },
         "fr": {
@@ -6949,7 +6949,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "In der Zeit keine erreichbaren Talismane gefunden"
+            "value": "In der Zeit keine erhältlichen Talismane gefunden"
           }
         },
         "en": {
@@ -6961,13 +6961,13 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se encontraron amuletos posibles dentro del tiempo"
+            "value": "No se han encontrado amuletos posibles dentro del tiempo"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aucun talisman visé trouvé dans le temps imparti"
+            "value": "Aucun talisman possible trouvé dans le temps imparti"
           }
         },
         "ko": {
@@ -6995,7 +6995,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Inactive set/group skills"
+            "value": "Inactive set bonus/group skills"
           }
         },
         "es": {
@@ -7321,7 +7321,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo buscar"
+            "value": "No se ha podido buscar"
           }
         },
         "fr": {
@@ -7613,7 +7613,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "권리 표기"
+            "value": "권리 고지"
           }
         },
         "pt-BR": {
@@ -7653,7 +7653,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "권리 표기·크레딧"
+            "value": "권리 고지·크레딧"
           }
         },
         "pt-BR": {
@@ -7850,7 +7850,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ranura de arma"
+            "value": "Hueco de arma"
           }
         },
         "fr": {
@@ -7890,7 +7890,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Con ranura de arma"
+            "value": "Con hueco de arma"
           }
         },
         "fr": {
@@ -8102,7 +8102,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "수"
+            "value": "물"
           }
         },
         "pt-BR": {
@@ -8142,7 +8142,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "빙"
+            "value": "얼음"
           }
         },
         "pt-BR": {
@@ -8222,7 +8222,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "화"
+            "value": "불"
           }
         },
         "pt-BR": {
@@ -8359,7 +8359,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Suche nach erreichbaren Talismanen…"
+            "value": "Suche nach erhältlichen Talismanen…"
           }
         },
         "en": {
@@ -8389,7 +8389,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Procurando amuletos possíveis…"
+            "value": "Procurando amuletos que você pode obter…"
           }
         }
       }
@@ -8664,7 +8664,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "파기"
+            "value": "버리기"
           }
         },
         "pt-BR": {
@@ -8692,7 +8692,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ranuras libres "
+            "value": "Huecos libres "
           }
         },
         "fr": {
@@ -8732,7 +8732,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ranuras libres"
+            "value": "Huecos libres"
           }
         },
         "fr": {
@@ -8924,7 +8924,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Taille"
+            "value": "Hüfte"
           }
         },
         "en": {
@@ -9148,7 +9148,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "장식주"
+            "value": "장식품"
           }
         },
         "pt-BR": {
@@ -9188,7 +9188,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "장식주: 없음"
+            "value": "장식품: 없음"
           }
         },
         "pt-BR": {
@@ -9228,7 +9228,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "장식주를 제외에 추가"
+            "value": "장식품을 제외에 추가"
           }
         },
         "pt-BR": {
@@ -9268,7 +9268,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "장식주 이름으로 검색"
+            "value": "장식품 이름으로 검색"
           }
         },
         "pt-BR": {
@@ -9444,7 +9444,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kandidaten werden nach der gelesenen Seltenheit (RARE %lld) gefiltert"
+            "value": "Kandidaten werden nach der erkannten Seltenheit (RARE %lld) gefiltert"
           }
         },
         "en": {
@@ -9468,7 +9468,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "읽어들인 레어도(RARE %lld)로 후보를 좁히고 있습니다"
+            "value": "인식한 레어도(RARE %lld)로 후보를 좁히고 있습니다"
           }
         },
         "pt-BR": {
@@ -9610,13 +9610,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Charm data was reset"
+            "value": "Charm data has been reset"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se restablecieron los datos de amuletos"
+            "value": "Se han restablecido los datos de amuletos"
           }
         },
         "fr": {
@@ -9696,7 +9696,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudieron cargar los datos de amuletos"
+            "value": "No se han podido cargar los datos de amuletos"
           }
         },
         "fr": {
@@ -9724,7 +9724,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Bedingungen sind mit einem Talisman nicht erfüllbar. Überprüfen Sie sie"
+            "value": "Diese Bedingungen sind mit einem Talisman nicht erfüllbar. Bitte passen Sie die Bedingungen an"
           }
         },
         "en": {
@@ -10016,7 +10016,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo verificar la compra. Prueba a restaurar las compras"
+            "value": "No se ha podido verificar la compra. Prueba a restaurar las compras"
           }
         },
         "fr": {
@@ -10130,7 +10130,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Addable Skills"
+            "value": "Skills You Can Add"
           }
         },
         "es": {
@@ -10176,7 +10176,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pueden añadir habilidades"
+            "value": "No hay habilidades que añadir"
           }
         },
         "fr": {
@@ -10204,13 +10204,13 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Prüfe hinzufügbare Fertigkeiten…"
+            "value": "Hinzufügbare Fertigkeiten werden geprüft…"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Checking addable skills…"
+            "value": "Checking which skills you can add…"
           }
         },
         "es": {
@@ -10250,7 +10250,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Find Addable Skills"
+            "value": "Find Skills to Add"
           }
         },
         "es": {
@@ -10411,7 +10411,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Armor"
+            "value": "Arm."
           }
         },
         "es": {
@@ -10499,7 +10499,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ranura de armadura"
+            "value": "Hueco de armadura"
           }
         },
         "fr": {
@@ -10751,7 +10751,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "제외할 장식주"
+            "value": "제외할 장식품"
           }
         },
         "pt-BR": {
@@ -10871,7 +10871,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "뢰"
+            "value": "번개"
           }
         },
         "pt-BR": {
@@ -10893,13 +10893,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ad-free time is at its limit (24 hours)"
+            "value": "You've reached the maximum ad-free time (24 hours)"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "El tiempo sin anuncios alcanzó el límite (24 horas)"
+            "value": "El tiempo sin anuncios ha alcanzado el límite (24 horas)"
           }
         },
         "fr": {
@@ -10968,7 +10968,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Drache"
+            "value": "Drachen"
           }
         },
         "en": {
