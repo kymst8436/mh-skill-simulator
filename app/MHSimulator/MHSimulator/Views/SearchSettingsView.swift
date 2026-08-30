@@ -41,8 +41,34 @@ struct SearchSettingsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     Group {
-                        MHSectionHeader(title: String(localized: "固定(必ず使う)"))
+                        MHSectionHeader(title: String(localized: "限界突破"))
                             .padding(.top, 4)
+                        MHCard {
+                            VStack(alignment: .leading, spacing: 0) {
+                                Toggle(isOn: $filters.considerLimitBreak) {
+                                    Text("防具の限界突破を考慮")
+                                        .font(.system(size: 15))
+                                        .foregroundStyle(Color.mhTextPrimary)
+                                }
+                                .tint(Color.mhAccent)
+                                .padding(.horizontal, 16)
+                                .frame(minHeight: 48)
+                                Text("レア5・6防具のスロットが拡張された状態で検索します")
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(Color.mhTextTertiary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .padding(.horizontal, 16)
+                                    .padding(.bottom, 12)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 6)
+                    }
+                    .mhEntrance(1)
+
+                    Group {
+                        MHSectionHeader(title: String(localized: "固定(必ず使う)"))
+                            .padding(.top, 20)
                         MHCard {
                             VStack(spacing: 0) {
                                 ForEach(ArmorPieceKind.allCases, id: \.self) { kind in
@@ -55,7 +81,7 @@ struct SearchSettingsView: View {
                         .padding(.horizontal, 16)
                         .padding(.top, 6)
                     }
-                    .mhEntrance(1)
+                    .mhEntrance(2)
 
                     Group {
                         MHSectionHeader(title: String(localized: "除外(使わない)"))
@@ -84,12 +110,12 @@ struct SearchSettingsView: View {
                         .padding(.horizontal, 16)
                         .padding(.top, 6)
                     }
-                    .mhEntrance(2)
+                    .mhEntrance(3)
                 }
                 .padding(.bottom, 24)
             }
             okButtonBar
-                .mhEntrance(3)
+                .mhEntrance(4)
         }
         .background(Color.mhBackgroundElevated)
         .presentationDragIndicator(.visible)

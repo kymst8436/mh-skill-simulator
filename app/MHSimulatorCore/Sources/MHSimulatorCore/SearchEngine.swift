@@ -178,6 +178,11 @@ public final class SearchEngine {
             } else if !condition.excludedPieceIds.isEmpty {
                 all = all.filter { !condition.excludedPieceIds.contains($0.id) }
             }
+            // 限界突破ON(既定): 候補を限界突破後スロットに差し替えてから優越除去する。
+            // 結果セットにも差し替え後の防具が入るため、以降の処理・表示は分岐不要
+            if condition.considerLimitBreak {
+                all = all.map { $0.applyingLimitBreak() }
+            }
             var groups: [Set<SkillId>: [ArmorPiece]] = [:]
             for piece in all {
                 groups[bonusContrib[piece.seriesId] ?? [], default: []].append(piece)

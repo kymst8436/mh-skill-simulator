@@ -128,7 +128,8 @@ final class UserStoreTests: XCTestCase {
     func makeEquipmentSet() -> EquipmentSet {
         let head = ArmorPiece(
             id: 1, seriesId: 10, kind: .head, name: "テスト頭",
-            defenseMax: 60, resistances: [1, 2, 3, 4, 5], slots: [3, 1], skills: [100: 2])
+            defenseMax: 60, resistances: [1, 2, 3, 4, 5], slots: [3, 1],
+            limitBreakSlots: [3, 2], skills: [100: 2])
         let decoration = Decoration(id: 500, name: "攻撃珠", slotSize: 2, allowedOn: .armor, skills: [100: 1])
         let charm = Charm(
             source: .owned(UUID()), name: "攻撃+2",

@@ -147,7 +147,8 @@ public final class AdditionalSkillFinder {
             excludedPieceIds: condition.excludedPieceIds,
             pinnedFixedCharmId: condition.pinnedFixedCharmId,
             excludedFixedCharmIds: condition.excludedFixedCharmIds,
-            excludedDecorationIds: condition.excludedDecorationIds)
+            excludedDecorationIds: condition.excludedDecorationIds,
+            considerLimitBreak: condition.considerLimitBreak)
 
         // 武器未指定時の高速化: 有望武器1本に固定した制限付き探索を先に試す。
         // 武器固定は探索空間の制限なので、成立すれば全体でも成立(健全)。
@@ -192,6 +193,10 @@ public final class AdditionalSkillFinder {
                 all = all.filter { $0.id == pinnedId }
             } else if !condition.excludedPieceIds.isEmpty {
                 all = all.filter { !condition.excludedPieceIds.contains($0.id) }
+            }
+            // 限界突破ONではスロット枠数が増える防具があるため、上界も差し替え後で数える
+            if condition.considerLimitBreak {
+                all = all.map { $0.applyingLimitBreak() }
             }
             piecesByKind[kind] = all
         }

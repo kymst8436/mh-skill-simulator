@@ -256,3 +256,69 @@ final class SearchEngineTests: XCTestCase {
         assertAllValid(result, condition: condition)
     }
 }
+
+// MARK: - 限界突破(2026-08-30追加。レア5=全3スロ+1 / レア6=左2スロ+1 / 上限3)
+
+extension SearchEngineTests {
+    /// 既定(ON)では検索結果の防具スロットが限界突破後の値になる
+    func testLimitBreakOnUsesUpgradedSlots() throws {
+        // ミツネヘルムβ(レア6): 素[3,2] → 限界突破後[3,3]
+        let piece = master.armorPieces.first { $0.name == "ミツネヘルムβ" }!
+        XCTAssertEqual(piece.slots, [3, 2])
+        XCTAssertEqual(piece.limitBreakSlots, [3, 3])
+
+        let condition = SearchCondition(
+            requiredSkills: [TestSupport.skill(named: "龍耐性").id: 1],
+            pinnedPieceIds: [.head: piece.id])
+        let result = try engine.search(condition: condition)
+        XCTAssertFalse(result.sets.isEmpty)
+        for set in result.sets {
+            XCTAssertEqual(set.pieces[.head]?.slots, [3, 3])
+        }
+        assertAllValid(result, condition: condition)
+    }
+
+    /// OFFでは素のスロットのまま検索される
+    func testLimitBreakOffKeepsBaseSlots() throws {
+        let piece = master.armorPieces.first { $0.name == "ミツネヘルムβ" }!
+        let condition = SearchCondition(
+            requiredSkills: [TestSupport.skill(named: "龍耐性").id: 1],
+            pinnedPieceIds: [.head: piece.id],
+            considerLimitBreak: false)
+        let result = try engine.search(condition: condition)
+        XCTAssertFalse(result.sets.isEmpty)
+        for set in result.sets {
+            XCTAssertEqual(set.pieces[.head]?.slots, [3, 2])
+        }
+        assertAllValid(result, condition: condition)
+    }
+
+    /// ONの方が装飾品の積める余地が増える(スロット総レベルが単調増加)
+    func testLimitBreakExpandsSlotCapacity() throws {
+        // レア5防具は空き枠が①新設されるため、同一部位固定でスロット合計が必ず増える
+        let rare5 = master.armorPieces.first { piece in
+            master.armorSeries[piece.seriesId]?.rarity == 5 && piece.slots.count == 1
+        }!
+        XCTAssertEqual(rare5.limitBreakSlots.count, 3)
+        XCTAssertEqual(
+            rare5.limitBreakSlots.reduce(0, +),
+            rare5.slots.reduce(0, +) + 3)
+    }
+
+    /// 豪鬼α(限界突破対象外)はONでも変化しない
+    func testLimitBreakExcludedSeriesUnchanged(){
+        let piece = master.armorPieces.first { $0.name == "鬼の数珠α" }!
+        XCTAssertEqual(piece.limitBreakSlots, piece.slots)
+    }
+
+    /// マイセット後方互換: limitBreakSlotsが無い旧JSONはslotsで埋めてデコードできる
+    func testArmorPieceDecodesLegacyJSONWithoutLimitBreakSlots() throws {
+        let legacy = """
+        {"id":1,"seriesId":10,"kind":"head","name":"旧データ","defenseMax":60,
+         "resistances":[0,0,0,0,0],"slots":[3,1],"skills":[100,2]}
+        """.data(using: .utf8)!
+        let piece = try JSONDecoder().decode(ArmorPiece.self, from: legacy)
+        XCTAssertEqual(piece.slots, [3, 1])
+        XCTAssertEqual(piece.limitBreakSlots, [3, 1])
+    }
+}
