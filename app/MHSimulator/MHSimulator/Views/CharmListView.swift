@@ -56,12 +56,18 @@ struct CharmListView: View {
                 AdFreeToolbarButton {
                     showsAdFreeSheet = true
                 }
-                MHToolbarButton(title: String(localized: "+ 追加")) {
+                MHToolbarButton(title: String(localized: "+ 追加"), coachMarkID: .charmAddButton) {
                     switch tab {
                     case .owned: entryTarget = .new
                     case .wishlist: showsWishlistEntry = true
                     }
                 }
+            }
+            // 初回表示コーチマーク(入場モーション完了後に開始。タブ離脱でtaskごとキャンセル)
+            .task {
+                try? await Task.sleep(for: .seconds(0.9))
+                guard !Task.isCancelled else { return }
+                CoachMarkCenter.shared.startTourIfNeeded(.charm)
             }
             .sheet(isPresented: $showsAdFreeSheet) {
                 AdFreeSheetView()
@@ -113,6 +119,14 @@ struct CharmListView: View {
         MHUnderlineTabs(
             tabs: Tab.allCases.map { (tab: $0, label: $0.label) },
             selection: $tab)
+            // タブは等幅2分割なので、右半分=ウィッシュリストタブをコーチマーク対象として重ねる
+            .overlay {
+                HStack(spacing: 0) {
+                    Color.clear
+                    Color.clear.coachMarkTarget(.wishlistTab)
+                }
+                .allowsHitTesting(false)
+            }
     }
 
     // MARK: - ウィッシュリスト(2026-08-25追加)

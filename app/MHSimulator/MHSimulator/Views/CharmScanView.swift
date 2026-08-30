@@ -110,18 +110,6 @@ struct CharmScanView: View {
     }
 }
 
-private extension View {
-    /// 与えた形を「くり抜く」マスク(暗転オーバーレイのガイド枠切り抜き用)
-    func reverseMask<Mask: View>(@ViewBuilder _ mask: () -> Mask) -> some View {
-        self.mask {
-            Rectangle()
-                .ignoresSafeArea()
-                .overlay(mask().blendMode(.destinationOut))
-                .compositingGroup()
-        }
-    }
-}
-
 /// カメラプレビュー+フレームOCR(AVFoundation+Vision)。
 /// ガイド枠内のみを認識対象にし、解釈結果(Reading?)をMainActorへ返す
 private struct CharmScanCameraView: UIViewRepresentable {

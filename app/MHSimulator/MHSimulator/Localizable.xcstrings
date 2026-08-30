@@ -11002,6 +11002,406 @@
           }
         }
       }
+    },
+    "使用したい武器を選択します。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select the weapon you want to use."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez l'arme que vous souhaitez utiliser."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wählen Sie die Waffe aus, die Sie verwenden möchten."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selecciona el arma que quieras usar."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selecione a arma que deseja usar."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "사용할 무기를 선택합니다."
+          }
+        }
+      }
+    },
+    "欲しいスキルを選択します。\nスキルを長押しすると対象スキルの詳細が確認できます。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select the skills you want.\nPress and hold a skill to view its details."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez les talents souhaités.\nMaintenez un talent appuyé pour en afficher les détails."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wählen Sie die gewünschten Fertigkeiten aus.\nHalten Sie eine Fertigkeit gedrückt, um Details anzuzeigen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selecciona las habilidades que quieras.\nMantén pulsada una habilidad para ver sus detalles."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selecione as habilidades que deseja.\nToque e segure uma habilidade para ver os detalhes."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원하는 스킬을 선택합니다.\n스킬을 길게 누르면 해당 스킬의 상세 정보를 확인할 수 있습니다."
+          }
+        }
+      }
+    },
+    "固定したい装備や、除外したい装備・装飾品がある場合は、こちらで検索設定を行います。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To pin certain equipment or exclude equipment and decorations, adjust the Search Settings here."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour fixer certains équipements ou exclure des équipements et des joyaux, utilisez les réglages de recherche ici."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn Sie bestimmte Ausrüstung fixieren oder Ausrüstung und Dekorationen ausschließen möchten, nutzen Sie hier die Sucheinstellungen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si quieres fijar ciertas piezas de equipo o excluir equipo y joyas, configúralo aquí en los ajustes de búsqueda."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se quiser fixar certos equipamentos ou excluir equipamentos e joias, ajuste aqui as configurações de busca."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "고정하고 싶은 장비나 제외하고 싶은 장비·장식품이 있다면 여기에서 검색 설정을 할 수 있습니다."
+          }
+        }
+      }
+    },
+    "装備の組み合わせを検索します。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search for equipment combinations."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recherchez des combinaisons d'équipement."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sucht nach Ausrüstungskombinationen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Busca combinaciones de equipo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Busque combinações de equipamentos."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "장비 조합을 검색합니다."
+          }
+        }
+      }
+    },
+    "広告が煩わしい場合は、こちらから一定時間非表示にすることができます。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If the ads bother you, tap here to hide them for a while."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si les publicités vous dérangent, vous pouvez les masquer temporairement ici."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falls die Anzeigen stören, können Sie sie hier vorübergehend ausblenden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si los anuncios te molestan, puedes ocultarlos temporalmente desde aquí."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se os anúncios incomodarem, você pode ocultá-los temporariamente aqui."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "광고가 거슬린다면 여기에서 일정 시간 동안 숨길 수 있습니다."
+          }
+        }
+      }
+    },
+    "所持している護石を登録します。\nゲーム画面をカメラでスキャンすることでも登録できます。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Register the charms you own.\nYou can also register them by scanning the game screen with your camera."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrez les talismans que vous possédez.\nVous pouvez aussi les enregistrer en scannant l'écran de jeu avec l'appareil photo."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registrieren Sie Ihre Talismane.\nSie können sie auch registrieren, indem Sie den Spielbildschirm mit der Kamera scannen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registra los amuletos que tengas.\nTambién puedes registrarlos escaneando la pantalla del juego con la cámara."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registre os amuletos que você possui.\nVocê também pode registrá-los escaneando a tela do jogo com a câmera."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "소지한 호석을 등록합니다.\n게임 화면을 카메라로 스캔하여 등록할 수도 있습니다."
+          }
+        }
+      }
+    },
+    "欲しい護石はウィッシュリストに登録しておきましょう。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add the charms you want to your wishlist."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutez les talismans que vous convoitez à votre liste de souhaits."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fügen Sie gewünschte Talismane zu Ihrer Wunschliste hinzu."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añade los amuletos que quieras a tu lista de deseos."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicione os amuletos que quiser à sua lista de desejos."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원하는 호석은 위시리스트에 등록해 두세요."
+          }
+        }
+      }
+    },
+    "次へ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suivant"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siguiente"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avançar"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음"
+          }
+        }
+      }
+    },
+    "完了": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminé"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fertig"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listo"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concluído"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "완료"
+          }
+        }
+      }
+    },
+    "スキップ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Überspringen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Omitir"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pular"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "건너뛰기"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
