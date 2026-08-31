@@ -107,7 +107,9 @@ struct SearchConditionView: View {
                 SearchSettingsView(conditionViewModel: viewModel)
             }
             .sheet(item: $detailSkill) { skill in
-                SkillDetailView(master: dependencies.master, skill: skill)
+                SkillDetailView(
+                    master: dependencies.master, skill: skill,
+                    considerLimitBreak: viewModel.equipmentFilters.considerLimitBreak)
             }
             .navigationDestination(for: SearchRoute.self) { route in
                 switch route {

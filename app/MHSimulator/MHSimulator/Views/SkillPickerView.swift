@@ -38,7 +38,9 @@ struct SkillPickerView: View {
         .background(Color.mhBackgroundElevated)
         .presentationDragIndicator(.visible)
         .sheet(item: $detailSkill) { skill in
-            SkillDetailView(master: conditionViewModel.dependencies.master, skill: skill)
+            SkillDetailView(
+                master: conditionViewModel.dependencies.master, skill: skill,
+                considerLimitBreak: conditionViewModel.equipmentFilters.considerLimitBreak)
         }
     }
 

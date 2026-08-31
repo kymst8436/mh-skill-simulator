@@ -337,7 +337,8 @@ struct SearchSettingsView: View {
                 master: master,
                 mode: .pin(kind),
                 selectedId: filters.pinnedPieceId(for: kind),
-                excludedIds: []
+                excludedIds: [],
+                considerLimitBreak: filters.considerLimitBreak
             ) { pieceId in
                 filters.setPinnedPiece(pieceId, for: kind)
             }
@@ -346,7 +347,8 @@ struct SearchSettingsView: View {
                 master: master,
                 mode: .exclude,
                 selectedId: nil,
-                excludedIds: Set(filters.excludedPieces)
+                excludedIds: Set(filters.excludedPieces),
+                considerLimitBreak: filters.considerLimitBreak
             ) { pieceId in
                 if let pieceId {
                     if filters.excludedPieces.contains(pieceId) {
@@ -558,6 +560,8 @@ private struct ArmorPiecePickerView: View {
     let mode: Mode
     let selectedId: Int64?
     let excludedIds: Set<Int64>
+    /// スロット表示を限界突破後にするか(同sheetのトグル状態に連動。2026-08-31追加)
+    let considerLimitBreak: Bool
     let onSelect: (Int64?) -> Void
 
     @State private var searchText = ""
@@ -568,11 +572,13 @@ private struct ArmorPiecePickerView: View {
         case exclude
     }
 
-    init(master: MasterDatabase, mode: Mode, selectedId: Int64?, excludedIds: Set<Int64>, onSelect: @escaping (Int64?) -> Void) {
+    init(master: MasterDatabase, mode: Mode, selectedId: Int64?, excludedIds: Set<Int64>,
+         considerLimitBreak: Bool, onSelect: @escaping (Int64?) -> Void) {
         self.master = master
         self.mode = mode
         self.selectedId = selectedId
         self.excludedIds = excludedIds
+        self.considerLimitBreak = considerLimitBreak
         self.onSelect = onSelect
         if case .pin(let kind) = mode {
             _kindFilter = State(initialValue: kind)
@@ -720,7 +726,7 @@ private struct ArmorPiecePickerView: View {
                     }
                 }
                 Spacer()
-                Text(MHFormat.slotSymbols(piece.slots))
+                Text(MHFormat.slotSymbols(considerLimitBreak ? piece.limitBreakSlots : piece.slots))
                     .font(.system(size: 14))
                     .foregroundStyle(Color.mhTextSecondary)
                 if isMarked {

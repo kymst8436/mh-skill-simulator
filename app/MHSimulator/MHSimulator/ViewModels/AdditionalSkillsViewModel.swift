@@ -14,7 +14,7 @@ final class AdditionalSkillsViewModel {
         case failed
     }
 
-    private let dependencies: AppDependencies
+    let dependencies: AppDependencies
     /// スキル詳細sheet(4.14)がマスタ参照に使う
     var master: MasterDatabase { dependencies.master }
     private let condition: SearchCondition

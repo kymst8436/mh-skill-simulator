@@ -12,6 +12,13 @@ struct AppDependencies {
     /// 追加スキル検索(F-9)。状態を持たないため都度生成でよい
     var additionalSkillFinder: AdditionalSkillFinder { AdditionalSkillFinder(engine: engine) }
 
+    /// 現在の検索設定(AppState永続値。未保存なら既定値)。
+    /// 限界突破トグル等、検索フロー外の画面が表示を揃えるために参照する
+    var searchFilters: EquipmentFilters {
+        ((try? userStore.loadSearchFiltersJSON()) ?? nil)
+            .flatMap(EquipmentFilters.decode) ?? EquipmentFilters()
+    }
+
     /// 所持護石の表示名(「攻撃Lv2・見切りLv1」)
     func charmDisplayName(_ charm: OwnedCharm) -> String {
         charm.skills

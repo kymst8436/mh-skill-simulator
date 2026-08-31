@@ -288,7 +288,9 @@ struct CharmSkillCandidateView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar { MHBackButton { dismiss() } }
         .sheet(item: $detailSkill) { skill in
-            SkillDetailView(master: viewModel.dependencies.master, skill: skill)
+            SkillDetailView(
+                master: viewModel.dependencies.master, skill: skill,
+                considerLimitBreak: viewModel.dependencies.searchFilters.considerLimitBreak)
         }
     }
 
