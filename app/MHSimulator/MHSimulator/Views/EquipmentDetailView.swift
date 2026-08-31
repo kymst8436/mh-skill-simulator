@@ -10,6 +10,8 @@ struct EquipmentDetailView: View {
     var allowsSave = true
     @Environment(\.dismiss) private var dismiss
     @State private var detailSkill: Skill?
+    /// タップで開く防具詳細(2026-08-31追加)
+    @State private var detailPiece: ArmorPiece?
     @State private var showsSaveAlert = false
     @State private var saveName = ""
     @State private var didSaveToMySets = false
@@ -54,6 +56,11 @@ struct EquipmentDetailView: View {
         .sheet(item: $detailSkill) { skill in
             SkillDetailView(
                 master: master, skill: skill,
+                considerLimitBreak: dependencies.searchFilters.considerLimitBreak)
+        }
+        .sheet(item: $detailPiece) { piece in
+            ArmorPieceDetailView(
+                master: master, piece: piece,
                 considerLimitBreak: dependencies.searchFilters.considerLimitBreak)
         }
         .alert("マイセットに保存", isPresented: $showsSaveAlert) {
@@ -228,12 +235,20 @@ struct EquipmentDetailView: View {
         }
         ForEach(ArmorPieceKind.allCases, id: \.self) { kind in
             if let piece = equipment.pieces[kind] {
-                row {
-                    icon(MHFormat.pieceIconName(kind), accessibility: MHFormat.pieceLabel(kind))
-                    name(piece.name)
-                    Spacer()
-                    slot(MHFormat.slotSymbols(piece.slots))
+                // タップで防具詳細を開く(2026-08-31追加)。スナップショットはスロットが検索時設定で
+                // 差し替え済みのため、マスタの同一防具を引き直して基準値から表示する
+                Button {
+                    detailPiece = master.armorPieces.first { $0.id == piece.id } ?? piece
+                } label: {
+                    row {
+                        icon(MHFormat.pieceIconName(kind), accessibility: MHFormat.pieceLabel(kind))
+                        name(piece.name)
+                        Spacer()
+                        slot(MHFormat.slotSymbols(piece.slots))
+                    }
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
                 separator
             }
         }

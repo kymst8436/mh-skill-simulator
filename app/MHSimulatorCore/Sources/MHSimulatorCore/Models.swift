@@ -23,7 +23,7 @@ public enum ArmorPieceKind: String, CaseIterable, Sendable {
     case head, chest, arms, waist, legs
 }
 
-public struct ArmorPiece: Sendable {
+public struct ArmorPiece: Sendable, Identifiable {
     public let id: Int64
     public let seriesId: Int32
     public let kind: ArmorPieceKind
