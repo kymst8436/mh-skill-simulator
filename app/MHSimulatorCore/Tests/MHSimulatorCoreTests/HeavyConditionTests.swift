@@ -46,4 +46,40 @@ final class HeavyConditionTests: XCTestCase {
                           "違反: \(violations.map(\.description).joined(separator: " / "))")
         }
     }
+
+    /// 武器専用スキル(防具・防具用装飾品から供給されないスキル)の要求合計が
+    /// 武器スロット容量を超える条件は、探索せずに0件を確定できる(2026-08-31)。
+    /// 実報告ケース: カスタム武器+14スキルで「白熾龍の脈動を外した再検索」が
+    /// この上界なしでは0件証明に2分以上かかっていた
+    func testWeaponOnlySkillJointBoundProvesInfeasibilityFast() throws {
+        let master = TestSupport.master
+        let engine = SearchEngine(master: master)
+        let names: [(String, Int)] = [
+            ("ガード性能", 3), ("砲術", 3), ("砲弾装填", 2), ("耳栓", 2),
+            ("連撃", 5), ("挑戦者", 5), ("攻めの守勢", 3), ("逆襲", 3),
+            ("ヌシの魂", 1),
+            ("回避距離ＵＰ", 2), ("回復速度", 2), ("体力回復量ＵＰ", 2),
+            ("アイテム使用強化", 3), ("攻撃", 2),
+        ]
+        var required: [SkillId: Int] = [:]
+        for (name, level) in names { required[TestSupport.skill(named: name).id] = level }
+        // アプリのカスタム武器相当(スロット3-3-3+シリーズ/グループ各Lv1)
+        let weapon = Weapon(
+            id: -1, kind: "custom", name: "カスタム武器", rarity: 8,
+            slots: [3, 3, 3],
+            skills: [
+                TestSupport.skill(named: "白熾龍の脈動").id: 1,
+                TestSupport.skill(named: "ヌシの魂").id: 1,
+            ])
+        // 武器スキル要求 3+3+2+3+2=13 > 武器スロット3個×最大Lv3=9 → 護石なしでは不能
+        let start = Date()
+        let result = try engine.search(
+            condition: SearchCondition(requiredSkills: required),
+            weapon: weapon, ownedCharms: [],
+            options: SearchEngine.Options(maxResults: 1))
+        let elapsed = Date().timeIntervalSince(start)
+        XCTAssertTrue(result.sets.isEmpty)
+        XCTAssertFalse(result.truncated)
+        XCTAssertLessThan(elapsed, 5.0, "武器スロット限定の結合上界が効いていない疑い")
+    }
 }

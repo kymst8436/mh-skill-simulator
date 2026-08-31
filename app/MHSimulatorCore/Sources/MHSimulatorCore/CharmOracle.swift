@@ -138,6 +138,7 @@ public final class CharmOracle {
         var suffixSlotMax = [Int](repeating: 0, count: depthCount + 1)
         var suffixBonusAvail = [[Int]](
             repeating: [Int](repeating: 0, count: bonusRequired.count), count: depthCount + 1)
+        var suffixBonusContrib = [Int](repeating: 0, count: depthCount + 1)
         for depth in stride(from: depthCount - 1, through: 0, by: -1) {
             let kind = prepared.kindOrder[depth]
             for (i, skillId) in skillOrder.enumerated() {
@@ -148,15 +149,20 @@ public final class CharmOracle {
                 suffixBonusAvail[depth][b] = suffixBonusAvail[depth + 1][b]
                     + (prepared.bonusAvail[kind]!.contains(bonus.skillId) ? 1 : 0)
             }
+            suffixBonusContrib[depth] = suffixBonusContrib[depth + 1] + prepared.maxBonusContrib[kind]!
         }
+        var suffixPieceJoint = [Int](repeating: 0, count: depthCount + 1)
+        for depth in stride(from: depthCount - 1, through: 0, by: -1) {
+            suffixPieceJoint[depth] = suffixPieceJoint[depth + 1]
+                + prepared.maxPieceJoint[prepared.kindOrder[depth]]!
+        }
+        let weaponOnlyIndices = prepared.weaponOnlySkillIds.compactMap { skillOrder.firstIndex(of: $0) }
 
         var requirements: Set<CharmRules.Requirement> = []
         var leafCount = 0
         var nodeCount = 0
         var aborted = false
         var planCache: [PlanKey: Plan?] = [:]
-        /// スロット構成([防具c1,c2,c3, 武器c1,c2,c3])→ 必要量スタートの到達可能残不足集合
-        var reachCache: [[Int]: [SIMD16<UInt8>]] = [:]
         // 抽選規則上あり得ない要求を変種生成の段階で弾くための上限
         let slotCombos = master.charmRules.patterns.flatMap(\.slotCombos)
         let maxCharmWeaponSlots = slotCombos.map { $0.weaponSlots.count }.max() ?? 0
@@ -176,15 +182,39 @@ public final class CharmOracle {
         ) -> Bool {
             let slotPotential = weaponSlotCount + armorSlotCount
                 + suffixSlotMax[depth] + prepared.charmMaxSlotCount
+            var jointSkillDeficit = 0
             for i in skillOrder.indices {
                 var possible = have[i] + (prepared.charmMaxSkill[skillOrder[i]] ?? 0)
                     + suffixMaxAdd[depth][i]
                 possible += slotPotential * (prepared.bestDecoLevel[skillOrder[i]] ?? 0)
                 if possible < needs[i] { return false }
+                jointSkillDeficit += max(0, needs[i] - have[i])
             }
+            // 結合上界(スキル): 総不足量 vs 残り部位+全スロット装飾品+護石の総寄与量
+            if jointSkillDeficit > suffixPieceJoint[depth]
+                + slotPotential * prepared.maxDecoJoint + prepared.charmJointMax {
+                return false
+            }
+            // 武器スロット限定の結合上界(SearchEngine.upperBoundFailsと同じ考え方)
+            if !weaponOnlyIndices.isEmpty {
+                var weaponOnlyDeficit = 0
+                for i in weaponOnlyIndices {
+                    weaponOnlyDeficit += max(
+                        0, needs[i] - have[i] - (prepared.charmMaxSkill[skillOrder[i]] ?? 0))
+                }
+                if weaponOnlyDeficit > (weaponSlotCount + prepared.charmMaxWeaponSlotCount)
+                    * prepared.maxWeaponDecoJointWeaponOnly {
+                    return false
+                }
+            }
+            var jointBonusDeficit = 0
             for b in bonusRequired.indices {
                 if bonus[b] + suffixBonusAvail[depth][b] < bonusRequired[b] { return false }
+                jointBonusDeficit += max(0, bonusRequired[b] - bonus[b])
             }
+            // 結合上界: ボーナス不足部位数の合計が残り部位の同時寄与の最大合計を超えたら不能
+            // (シリーズ+グループ併用時に防具が拘束されるケースを強力に刈る。2026-08-31)
+            if jointBonusDeficit > suffixBonusContrib[depth] { return false }
             return true
         }
 
@@ -200,32 +230,40 @@ public final class CharmOracle {
             kept.append(candidate)
         }
 
-        /// 1状態(=同一寄与の組合せ全体の代表)から護石要求を生成する
-        func evaluateLeaf(_ deficits: [SkillId: Int], _ weapon: Weapon?, _ slotCounts: [Int]) {
-            // 防具+武器のスロットで埋められる分を先に消し込み、残りを護石への要求とする。
-            // 到達可能な残不足集合は「条件の必要量スタート」でスロット構成ごとに1回だけ計算し、
-            // 各葉へは充足済み分(needs-deficits)のオフセット付き飽和減算で最小残不足を引く
-            let weaponSlots = (weapon?.slots ?? []).sorted()
-            var weaponClassCounts = [0, 0, 0]
-            for size in weaponSlots { weaponClassCounts[size - 1] += 1 }
-            let profileKey = slotCounts + weaponClassCounts
-            let reach: [SIMD16<UInt8>]
-            if let cached = reachCache[profileKey] {
-                reach = cached
-            } else {
-                var slots = weaponSlots.map { DecorationAssigner.Slot(owner: .weapon, size: $0) }
-                for size in 1...3 {
-                    // 部位はどれでも等価(割り当ては武器/防具の別しか見ない)ため代表としてheadを使う
-                    slots += Array(
-                        repeating: DecorationAssigner.Slot(owner: .armor(.head), size: size),
-                        count: slotCounts[size - 1])
+        /// 結合容量の事前判定: スロット総容量+護石の最大寄与(直接スキル3枠+スロット)でも
+        /// 総不足に届かない葉は、どんな護石要求も生めないため到達集合を引かずに棄却できる
+        func leafCanBeCovered(
+            _ deficits: [SkillId: Int], _ slotCounts: [Int], _ weaponClassCounts: [Int]
+        ) -> Bool {
+            let totalDeficit = deficits.values.reduce(0, +)
+            var slotCapacity = 0
+            for size in 1...3 {
+                func best(_ slot: DecorationAssigner.Slot) -> Int {
+                    prepared.catalog.options(for: slot).reduce(0) { bestSoFar, deco in
+                        max(bestSoFar, deco.skills.reduce(0) { $0 + min($1.value, deficits[$1.key] ?? 0) })
+                    }
                 }
-                reach = DecorationAssigner.reachableResiduals(
-                    start: needs, skillOrder: skillOrder, slots: slots,
-                    catalog: prepared.catalog, shouldAbort: { Task.isCancelled })
-                reachCache[profileKey] = reach
+                if slotCounts[size - 1] > 0 {
+                    slotCapacity += slotCounts[size - 1]
+                        * best(DecorationAssigner.Slot(owner: .armor(.head), size: size))
+                }
+                if weaponClassCounts[size - 1] > 0 {
+                    slotCapacity += weaponClassCounts[size - 1]
+                        * best(DecorationAssigner.Slot(owner: .weapon, size: size))
+                }
             }
+            let charmDirect = deficits
+                .map { min($0.value, prepared.charmMaxSkill[$0.key] ?? 0) }
+                .sorted(by: >).prefix(3).reduce(0, +)
+            let charmSlotCap = (maxCharmWeaponSlots + maxCharmArmorSlots)
+                * (deficits.keys.map { prepared.bestDecoLevel[$0] ?? 0 }.max() ?? 0)
+            return totalDeficit <= slotCapacity + charmDirect + charmSlotCap
+        }
 
+        /// 1状態(=同一寄与の組合せ全体の代表)から護石要求を生成する。
+        /// reach: この状態のスロット構成に対する「必要量スタートの到達可能残不足集合」。
+        /// 各葉へは充足済み分(needs-deficits)のオフセット付き飽和減算で最小残不足を引く
+        func evaluateLeaf(_ deficits: [SkillId: Int], _ reach: [SIMD16<UInt8>]) {
             let residual: [SkillId: Int]
             if reach.isEmpty {
                 // 17スキル以上のフォールバック: 縮約せずそのまま要求へ(後段の規則判定で必ず棄却される)
@@ -330,14 +368,21 @@ public final class CharmOracle {
             var current: [SkillKey: [[Int]]] = [
                 SkillKey(have: initialHave, bonus: initialBonus): [[0, 0, 0]]
             ]
+            // 高次元条件(加算スキル10個超等)で状態集約が効かない場合の発散防止。
+            // 超過時は以降の状態追加を打ち切り、非網羅(aborted)として途中結果を返す
+            let layerStateCap = 100_000
             for depth in 0..<depthCount {
                 let pieces = prepared.pieceCandidates[prepared.kindOrder[depth]]!
                 var next: [SkillKey: [[Int]]] = [:]
-                for (key, slotVariants) in current {
+                transitions: for (key, slotVariants) in current {
                     for piece in pieces {
                         if cancelled() {
                             aborted = true
                             return false
+                        }
+                        if next.count > layerStateCap {
+                            aborted = true
+                            break transitions
                         }
                         var have = key.have
                         for (i, skillId) in skillOrder.enumerated() {
@@ -408,20 +453,56 @@ public final class CharmOracle {
                 }
                 return $1.suffix.lexicographicallyPrecedes($0.suffix)
             }
+            // スロット構成ごとにまとめ、到達可能残不足集合を1構成1回だけ計算して使い回す。
+            // 集合は最大〜10^6状態になり得るため、キャッシュ保持はせず構成単位で解放する
+            let weaponSlots = (weapon?.slots ?? []).sorted()
+            var weaponClassCounts = [0, 0, 0]
+            for size in weaponSlots { weaponClassCounts[size - 1] += 1 }
+            var groupOrder: [[Int]] = []
+            var groups: [[Int]: [FinalEntry]] = [:]
             for entry in orderedEntries {
-                if Task.isCancelled {
-                    aborted = true
-                    return false
-                }
-                var deficits: [SkillId: Int] = [:]
-                for (i, skillId) in skillOrder.enumerated() where entry.have[i] < needs[i] {
-                    deficits[skillId] = needs[i] - entry.have[i]
-                }
-                evaluateLeaf(deficits, weapon, entry.slots)
-                leafCount += 1
-                if leafCount >= options.leafBudget {
-                    aborted = true
-                    return false
+                if groups[entry.slots] == nil { groupOrder.append(entry.slots) }
+                groups[entry.slots, default: []].append(entry)
+            }
+            for slotCounts in groupOrder {
+                var reach: [SIMD16<UInt8>]?
+                for entry in groups[slotCounts]! {
+                    if Task.isCancelled {
+                        aborted = true
+                        return false
+                    }
+                    var deficits: [SkillId: Int] = [:]
+                    for (i, skillId) in skillOrder.enumerated() where entry.have[i] < needs[i] {
+                        deficits[skillId] = needs[i] - entry.have[i]
+                    }
+                    leafCount += 1
+                    if leafCount > options.leafBudget {
+                        aborted = true
+                        return false
+                    }
+                    guard leafCanBeCovered(deficits, slotCounts, weaponClassCounts) else { continue }
+                    if reach == nil {
+                        var slots = weaponSlots.map { DecorationAssigner.Slot(owner: .weapon, size: $0) }
+                        for size in 1...3 {
+                            // 部位はどれでも等価(割り当ては武器/防具の別しか見ない)ため代表としてheadを使う
+                            slots += Array(
+                                repeating: DecorationAssigner.Slot(owner: .armor(.head), size: size),
+                                count: slotCounts[size - 1])
+                        }
+                        let result = DecorationAssigner.reachableResiduals(
+                            start: needs, skillOrder: skillOrder, slots: slots,
+                            catalog: prepared.catalog,
+                            shouldAbort: { Task.isCancelled })
+                        if result.truncated {
+                            aborted = true  // 集合が不完全=残不足を過大評価し得るため網羅と主張しない
+                        }
+                        reach = result.residuals
+                    }
+                    evaluateLeaf(deficits, reach!)
+                    if leafCount >= options.leafBudget {
+                        aborted = true
+                        return false
+                    }
                 }
             }
             return true
@@ -477,7 +558,12 @@ public final class CharmOracle {
         guard condition.requiredSkills.count > 1 else {
             return Outcome(kind: .none, isExhaustive: true)
         }
-        for skillId in condition.requiredSkills.keys {
+        // 必要レベルの大きい順に検証する(決定的な順序+外せば組める可能性が高く検索が
+        // 速く終わりやすい候補を先に。時間切れでも有望な結果から残る。2026-08-31)
+        let ordered = condition.requiredSkills.sorted {
+            $0.value != $1.value ? $0.value > $1.value : $0.key < $1.key
+        }.map(\.key)
+        for skillId in ordered {
             if Task.isCancelled {
                 aborted = true  // 残りスキルは未試行(時間内に検証しきれなかった)
                 break

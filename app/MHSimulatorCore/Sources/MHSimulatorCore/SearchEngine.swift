@@ -35,6 +35,7 @@ public final class SearchEngine {
         var sets: [EquipmentSet] = []
         var truncated = false
         var nodeCount = 0
+        var infeasibleLeaves = Set<InfeasibleLeafKey>()
 
         // 打ち切りは協調キャンセルに1本化(時間予算は呼び出し側がタスクキャンセルで課す。2026-08-26)
         func cancelled() -> Bool {
@@ -59,7 +60,9 @@ public final class SearchEngine {
                         return false
                     }
                     guard !upperBoundFails(prepared, state, remainingKinds: [], charm: charm) else { continue }
-                    if let set = finishLeaf(prepared, state, charm: charm, shouldAbort: shouldAbort) {
+                    if let set = finishLeaf(
+                        prepared, state, charm: charm,
+                        infeasibleLeaves: &infeasibleLeaves, shouldAbort: shouldAbort) {
                         sets.append(set)
                         if sets.count >= options.maxResults {
                             truncated = true
@@ -119,6 +122,24 @@ public final class SearchEngine {
         let maxAdd: [ArmorPieceKind: [SkillId: Int]]
         let maxSlotCount: [ArmorPieceKind: Int]
         let bonusAvail: [ArmorPieceKind: Set<SkillId>]
+        /// 1部位が条件ボーナススキル群へ同時に寄与できる最大数(結合上界用)。
+        /// ボーナス複数指定時「合計で残り部位が足りない」枝を刈る(2026-08-31)
+        let maxBonusContrib: [ArmorPieceKind: Int]
+        // 結合上界(スキル): スキル別上界は「全スロットを各スキルが独占できる」前提で
+        // 条件スキルが多いと甘すぎるため、総不足量を総寄与量で締める(2026-08-31)
+        /// 1部位が条件スキル群へ寄与できる合計レベルの最大(必要量クリップ)
+        let maxPieceJoint: [ArmorPieceKind: Int]
+        /// 装飾品1個が条件スキル群へ寄与できる合計レベルの最大(必要量クリップ)
+        let maxDecoJoint: Int
+        /// 護石1個が条件スキル群へ直接寄与できる合計レベルの最大(必要量クリップ)
+        let charmJointMax: Int
+        /// 防具からも防具用装飾品からも供給されない条件スキル(=武器スロット+護石でしか
+        /// 埋められない)。武器スロット総量による結合上界で早期に不能を確定する(2026-08-31)
+        let weaponOnlySkillIds: [SkillId]
+        /// 武器用装飾品1個がweaponOnlySkillIdsへ寄与できる合計レベルの最大
+        let maxWeaponDecoJointWeaponOnly: Int
+        /// 護石が持ち得る武器スロットの最大個数
+        let charmMaxWeaponSlotCount: Int
         let charmMaxSkill: [SkillId: Int]
         let charmMaxSlotCount: Int
         let bestDecoLevel: [SkillId: Int]  // 1スロットあたり最大寄与(ターゲット不問の上界)
@@ -256,9 +277,15 @@ public final class SearchEngine {
         let catalog = DecorationAssigner.Catalog(
             decorations: usableDecorations, targetSkills: Set(condSkills))
 
+        func jointContribution(_ skills: [SkillId: Int]) -> Int {
+            skills.reduce(0) { $0 + min($1.value, additiveNeeds[$1.key] ?? 0) }
+        }
+
         var maxAdd: [ArmorPieceKind: [SkillId: Int]] = [:]
         var maxSlotCount: [ArmorPieceKind: Int] = [:]
         var bonusAvail: [ArmorPieceKind: Set<SkillId>] = [:]
+        var maxBonusContrib: [ArmorPieceKind: Int] = [:]
+        var maxPieceJoint: [ArmorPieceKind: Int] = [:]
         for kind in ArmorPieceKind.allCases {
             let candidates = pieceCandidates[kind]!
             var add: [SkillId: Int] = [:]
@@ -270,10 +297,14 @@ public final class SearchEngine {
             bonusAvail[kind] = candidates.reduce(into: Set()) { acc, piece in
                 acc.formUnion(bonusContrib[piece.seriesId] ?? [])
             }
+            maxBonusContrib[kind] = candidates.map { (bonusContrib[$0.seriesId] ?? []).count }.max() ?? 0
+            maxPieceJoint[kind] = candidates.map { jointContribution($0.skills) }.max() ?? 0
         }
+        let maxDecoJoint = usableDecorations.map { jointContribution($0.skills) }.max() ?? 0
 
         var charmMaxSkill: [SkillId: Int] = [:]
         var charmMaxSlotCount = 0
+        let charmJointMax: Int
         if charmWildcard {
             // 逆引きの緩和探索: 護石を「規則上あり得る最良」とみなす上界
             for skillId in condSkills {
@@ -285,21 +316,42 @@ public final class SearchEngine {
             charmMaxSlotCount = master.charmRules.patterns
                 .flatMap(\.slotCombos)
                 .map { $0.weaponSlots.count + $0.armorSlots.count }.max() ?? 0
+            // 護石はスキル最大3つ: 各スキルのグループ上限(必要量クリップ)の上位3件の和
+            charmJointMax = condSkills
+                .map { min(charmMaxSkill[$0] ?? 0, additiveNeeds[$0]!) }
+                .sorted(by: >).prefix(3).reduce(0, +)
         } else {
             for skillId in condSkills {
                 charmMaxSkill[skillId] = charmCandidates.map { $0.skills[skillId] ?? 0 }.max() ?? 0
             }
             charmMaxSlotCount = charmCandidates
                 .map { $0.weaponSlots.count + $0.armorSlots.count }.max() ?? 0
+            charmJointMax = charmCandidates.map { jointContribution($0.skills) }.max() ?? 0
         }
 
         var bestDecoLevel: [SkillId: Int] = [:]
+        var weaponOnlySkillIds: [SkillId] = []
         for skillId in condSkills {
             let slot3a = DecorationAssigner.Slot(owner: .armor(.head), size: 3)
             let slot3w = DecorationAssigner.Slot(owner: .weapon, size: 3)
-            bestDecoLevel[skillId] = max(
-                catalog.bestLevel(of: skillId, in: slot3a),
-                catalog.bestLevel(of: skillId, in: slot3w))
+            let armorDecoBest = catalog.bestLevel(of: skillId, in: slot3a)
+            bestDecoLevel[skillId] = max(armorDecoBest, catalog.bestLevel(of: skillId, in: slot3w))
+            let armorPieceBest = ArmorPieceKind.allCases.reduce(0) { $0 + (maxAdd[$1]![skillId] ?? 0) }
+            if armorDecoBest == 0 && armorPieceBest == 0 {
+                weaponOnlySkillIds.append(skillId)
+            }
+        }
+        let maxWeaponDecoJointWeaponOnly = usableDecorations
+            .filter { $0.allowedOn == .weapon }
+            .map { deco in
+                weaponOnlySkillIds.reduce(0) { $0 + min(deco.skills[$1] ?? 0, additiveNeeds[$1]!) }
+            }.max() ?? 0
+        let charmMaxWeaponSlotCount: Int
+        if charmWildcard {
+            charmMaxWeaponSlotCount = master.charmRules.patterns
+                .flatMap(\.slotCombos).map { $0.weaponSlots.count }.max() ?? 0
+        } else {
+            charmMaxWeaponSlotCount = charmCandidates.map { $0.weaponSlots.count }.max() ?? 0
         }
 
         // 候補の少ない部位から探索(枝刈り効率)
@@ -312,6 +364,11 @@ public final class SearchEngine {
             kindOrder: kindOrder, pieceCandidates: pieceCandidates,
             charmCandidates: charmCandidates, weaponCandidates: weaponCandidates, catalog: catalog,
             maxAdd: maxAdd, maxSlotCount: maxSlotCount, bonusAvail: bonusAvail,
+            maxBonusContrib: maxBonusContrib,
+            maxPieceJoint: maxPieceJoint, maxDecoJoint: maxDecoJoint, charmJointMax: charmJointMax,
+            weaponOnlySkillIds: weaponOnlySkillIds,
+            maxWeaponDecoJointWeaponOnly: maxWeaponDecoJointWeaponOnly,
+            charmMaxWeaponSlotCount: charmMaxWeaponSlotCount,
             charmMaxSkill: charmMaxSkill, charmMaxSlotCount: charmMaxSlotCount,
             bestDecoLevel: bestDecoLevel, bonusContrib: bonusContrib,
             excludedDecorationIds: condition.excludedDecorationIds)
@@ -386,6 +443,7 @@ public final class SearchEngine {
             + remainingKinds.reduce(0) { $0 + prepared.maxSlotCount[$1]! }
             + charmSlots
 
+        var jointSkillDeficit = 0
         for (skillId, need) in prepared.additiveNeeds {
             var possible = (state.have[skillId] ?? 0) + charmSkill(skillId)
             for kind in remainingKinds {
@@ -393,21 +451,72 @@ public final class SearchEngine {
             }
             possible += slotPotential * (prepared.bestDecoLevel[skillId] ?? 0)
             if possible < need { return true }
+            jointSkillDeficit += max(0, need - (state.have[skillId] ?? 0))
         }
+        // 武器スロット限定の結合上界: 防具からも防具用装飾品からも供給されないスキル群は
+        // 武器スロットの装飾品+護石でしか埋められない。武器スロットは増えないため
+        // 根本で不能を確定できることが多い(2026-08-31)
+        if !prepared.weaponOnlySkillIds.isEmpty {
+            var weaponOnlyDeficit = 0
+            for skillId in prepared.weaponOnlySkillIds {
+                weaponOnlyDeficit += max(
+                    0,
+                    prepared.additiveNeeds[skillId]! - (state.have[skillId] ?? 0) - charmSkill(skillId))
+            }
+            if weaponOnlyDeficit > 0 {
+                let weaponSlotCount = (state.weapon?.slots.count ?? 0)
+                    + (charm?.weaponSlots.count ?? prepared.charmMaxWeaponSlotCount)
+                if weaponOnlyDeficit > weaponSlotCount * prepared.maxWeaponDecoJointWeaponOnly {
+                    return true
+                }
+            }
+        }
+
+        // 結合上界(スキル): スキル別上界はスロットを重複計上するため、総不足量でも締める。
+        // 条件スキルが多いほど効く(2026-08-31)
+        if jointSkillDeficit > 0 {
+            let charmJoint: Int
+            if let charm {
+                charmJoint = charm.skills.reduce(0) {
+                    $0 + min($1.value, prepared.additiveNeeds[$1.key] ?? 0)
+                }
+            } else {
+                charmJoint = prepared.charmJointMax
+            }
+            var capacity = charmJoint + slotPotential * prepared.maxDecoJoint
+            for kind in remainingKinds { capacity += prepared.maxPieceJoint[kind]! }
+            if jointSkillDeficit > capacity { return true }
+        }
+        var jointBonusDeficit = 0
         for bonus in prepared.bonusNeeds {
             var possible = state.bonusCount[bonus.skillId] ?? 0
             for kind in remainingKinds where prepared.bonusAvail[kind]!.contains(bonus.skillId) {
                 possible += 1
             }
             if possible < bonus.requiredPieces { return true }
+            jointBonusDeficit += max(0, bonus.requiredPieces - (state.bonusCount[bonus.skillId] ?? 0))
+        }
+        // 結合上界: ボーナス不足部位数の合計が、残り部位の同時寄与の最大合計を超えたら不能
+        // (個別には満たせても「合計で部位が足りない」ケースを刈る。2026-08-31)
+        if jointBonusDeficit > 0 {
+            let capacity = remainingKinds.reduce(0) { $0 + prepared.maxBonusContrib[$1]! }
+            if jointBonusDeficit > capacity { return true }
         }
         return false
     }
 
     // MARK: - 葉の確定(仕様3.1 手順5〜6)
 
+    /// 充足不能と判明した葉のキー。「不足内容×スロット構成」が同じ葉は割り当ても
+    /// 必ず失敗するため、2回目以降のバックトラックを丸ごと省く(2026-08-31)
+    struct InfeasibleLeafKey: Hashable {
+        let deficits: [SkillId: Int]
+        let profile: [Int]  // [防具①②③, 武器①②③] のスロット数
+    }
+
     func finishLeaf(
         _ prepared: Prepared, _ state: State, charm: Charm,
+        infeasibleLeaves: inout Set<InfeasibleLeafKey>,
         shouldAbort: () -> Bool = { false }
     ) -> EquipmentSet? {
         for bonus in prepared.bonusNeeds {
@@ -421,12 +530,23 @@ public final class SearchEngine {
         }
 
         let slots = collectSlots(prepared, state, charm: charm)
-        // aborted(キャンセル)はnil扱い: 次のcancelled()で探索全体が打ち切られる
-        guard case .assigned(let assignment) = DecorationAssigner.assign(
-            deficits: deficits, slots: slots, catalog: prepared.catalog,
-            shouldAbort: shouldAbort) else { return nil }
+        var profile = [Int](repeating: 0, count: 6)
+        for slot in slots { profile[(slot.isWeapon ? 3 : 0) + slot.size - 1] += 1 }
+        let key = InfeasibleLeafKey(deficits: deficits, profile: profile)
+        if infeasibleLeaves.contains(key) { return nil }
 
-        return buildSet(prepared, state, charm: charm, slots: slots, assignment: assignment)
+        // aborted(キャンセル)はnil扱い: 次のcancelled()で探索全体が打ち切られる
+        switch DecorationAssigner.assign(
+            deficits: deficits, slots: slots, catalog: prepared.catalog,
+            shouldAbort: shouldAbort) {
+        case .assigned(let assignment):
+            return buildSet(prepared, state, charm: charm, slots: slots, assignment: assignment)
+        case .infeasible:
+            if infeasibleLeaves.count < 500_000 { infeasibleLeaves.insert(key) }
+            return nil
+        case .aborted:
+            return nil
+        }
     }
 
     func collectSlots(_ prepared: Prepared, _ state: State, charm: Charm) -> [DecorationAssigner.Slot] {
