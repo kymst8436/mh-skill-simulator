@@ -75,6 +75,9 @@ final class CharmOracleTests: XCTestCase {
             condition: condition, weapon: TestSupport.slotlessWeapon,
             options: CharmOracle.Options(leafBudget: 1))
         XCTAssertFalse(outcome.isExhaustive)
+        // 葉予算=容量上限による打ち切り(時間切れではない)。UIは再試行を促さない(2026-08-31)
+        XCTAssertTrue(outcome.capacityTruncated)
+        XCTAssertFalse(outcome.timeTruncated)
     }
 
     func testCancelledLookupStopsAndReportsNonExhaustive() async throws {
@@ -90,6 +93,8 @@ final class CharmOracleTests: XCTestCase {
         }
         let outcome = try await work.value
         XCTAssertFalse(outcome.isExhaustive)
+        // キャンセル=時間予算による打ち切り。UIは予算を延長した再試行を促す(2026-08-31)
+        XCTAssertTrue(outcome.timeTruncated)
     }
 
     func testSlotRequirementSuggestion() throws {

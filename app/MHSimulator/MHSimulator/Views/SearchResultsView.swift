@@ -216,7 +216,7 @@ struct SearchResultsView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, 7)
-                        if !outcome.isExhaustive { truncationNote }
+                        if !outcome.isExhaustive { truncationNote(outcome) }
                     case .relaxations(let skillIds):
                         MHSectionHeader(title: String(localized: "このスキルを外せば組めます"))
                         VStack(spacing: 10) {
@@ -226,7 +226,7 @@ struct SearchResultsView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, 7)
-                        if !outcome.isExhaustive { truncationNote }
+                        if !outcome.isExhaustive { truncationNote(outcome) }
                     case .none:
                         if outcome.isExhaustive {
                             Text("護石では埋まらない条件です。条件を見直してください")
@@ -234,8 +234,9 @@ struct SearchResultsView: View {
                                 .foregroundStyle(Color.mhTextSecondary)
                                 .frame(maxWidth: .infinity)
                                 .padding(.horizontal, 32)
-                        } else {
-                            // 時間予算内に探索しきれなかった(真のゼロ件とは区別する。2026-08-26)
+                        } else if outcome.timeTruncated {
+                            // 時間予算内に探索しきれなかった(真のゼロ件とは区別する。2026-08-26)。
+                            // 探索は決定的なので、予算を倍増した再試行で結果が変わり得る
                             VStack(spacing: 10) {
                                 Text("時間内に狙える護石を見つけられませんでした")
                                     .font(.system(size: 14))
@@ -247,6 +248,15 @@ struct SearchResultsView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.horizontal, 32)
+                        } else {
+                            // 容量上限による打ち切りのみ: 時間を延長しても完全判定には到達しない
+                            // ため、再試行ボタンは出さず確定的に案内する(2026-08-31ユーザー決定)
+                            Text("条件が複雑すぎるため、狙える護石を判定できませんでした。条件のスキルを減らすと判定できる場合があります")
+                                .font(.system(size: 14))
+                                .foregroundStyle(Color.mhTextSecondary)
+                                .multilineTextAlignment(.center)
+                                .frame(maxWidth: .infinity)
+                                .padding(.horizontal, 32)
                         }
                     }
                 }
@@ -256,13 +266,19 @@ struct SearchResultsView: View {
         }
     }
 
-    /// 打ち切り注記(逆引きが時間予算・葉予算で途中終了した場合)
-    private var truncationNote: some View {
-        Text("時間の都合で探索を打ち切ったため、他にも候補がある可能性があります")
-            .font(.system(size: 12))
-            .foregroundStyle(Color.mhTextTertiary)
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
+    /// 打ち切り注記(逆引きが途中終了した場合)。時間切れと容量上限で文言を分ける(2026-08-31)
+    private func truncationNote(_ outcome: CharmOracle.Outcome) -> some View {
+        Group {
+            if outcome.timeTruncated {
+                Text("時間の都合で探索を打ち切ったため、他にも候補がある可能性があります")
+            } else {
+                Text("条件が複雑なため探索の一部を打ち切りました。他にも候補がある可能性があります")
+            }
+        }
+        .font(.system(size: 12))
+        .foregroundStyle(Color.mhTextTertiary)
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
     }
 
     private func suggestionCard(_ suggestion: CharmOracle.CharmSuggestion) -> some View {
