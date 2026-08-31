@@ -34,7 +34,8 @@ public final class CharmOracle {
 
     public struct Options: Sendable {
         public var maxSuggestions: Int
-        /// 緩和探索で訪問する葉の上限(発散防止)
+        /// 緩和探索で評価する状態(=寄与が異なる組合せの代表)の上限(発散防止)。
+        /// 状態DP化(2026-08-31)により通常は数百〜数千で収まり、上限到達は異常系のみ
         public var leafBudget: Int
 
         public init(maxSuggestions: Int = 10, leafBudget: Int = 50_000) {
@@ -92,7 +93,27 @@ public final class CharmOracle {
 
     // MARK: - 緩和探索(仕様3.2 手順1〜2)
 
-    /// 護石ワイルドカードの深さ優先探索で、到達可能な最良状態から護石要求を逆算する。
+    /// 状態DP用の集約キー。部位の組合せそのものではなく「条件への寄与」だけを持つ。
+    /// 同じ寄与の組合せは護石要求も同じになるため、1回だけ評価すれば足りる
+    /// (葉の全列挙は組合せ数〜10^6で時間予算内に終わらないため廃止。2026-08-31)
+    private struct SkillKey: Hashable {
+        let have: [Int]   // 条件スキルの充足量(必要量でクリップ)
+        let bonus: [Int]  // ボーナススキルの発動部位数(必要部位数でクリップ)
+    }
+
+    private struct Plan {
+        let isWeapon: Bool
+        let sizes: [Int]
+    }
+
+    private struct PlanKey: Hashable {
+        let skillId: SkillId
+        let deficit: Int
+    }
+
+    /// 護石ワイルドカードの緩和探索で、到達可能な最良状態から護石要求を逆算する。
+    /// 部位ごとに(充足量・ボーナス部位数・スロット構成)へ集約するDPで、
+    /// 同一寄与の組合せを1状態に潰し、スロット構成は優越除去する。
     /// 戻り値のexhaustive: キャンセル・葉予算による打ち切りなしに全探索できたか
     private func collectRequirements(
         condition: SearchCondition,
@@ -104,10 +125,42 @@ public final class CharmOracle {
             return ([], true)  // ボーナススキル到達不能: 護石では埋まらない(探索不要の確定)
         }
 
+        let skillOrder = Array(prepared.additiveNeeds.keys).sorted()
+        let needs = skillOrder.map { prepared.additiveNeeds[$0]! }
+        let bonusRequired = prepared.bonusNeeds.map(\.requiredPieces)
+        var bonusIndex: [SkillId: Int] = [:]
+        for (index, bonus) in prepared.bonusNeeds.enumerated() { bonusIndex[bonus.skillId] = index }
+
+        // 深さd以降(未確定部位)の上界の事前集計(upperBoundFailsのDP版)
+        let depthCount = prepared.kindOrder.count
+        var suffixMaxAdd = [[Int]](
+            repeating: [Int](repeating: 0, count: skillOrder.count), count: depthCount + 1)
+        var suffixSlotMax = [Int](repeating: 0, count: depthCount + 1)
+        var suffixBonusAvail = [[Int]](
+            repeating: [Int](repeating: 0, count: bonusRequired.count), count: depthCount + 1)
+        for depth in stride(from: depthCount - 1, through: 0, by: -1) {
+            let kind = prepared.kindOrder[depth]
+            for (i, skillId) in skillOrder.enumerated() {
+                suffixMaxAdd[depth][i] = suffixMaxAdd[depth + 1][i] + (prepared.maxAdd[kind]![skillId] ?? 0)
+            }
+            suffixSlotMax[depth] = suffixSlotMax[depth + 1] + prepared.maxSlotCount[kind]!
+            for (b, bonus) in prepared.bonusNeeds.enumerated() {
+                suffixBonusAvail[depth][b] = suffixBonusAvail[depth + 1][b]
+                    + (prepared.bonusAvail[kind]!.contains(bonus.skillId) ? 1 : 0)
+            }
+        }
+
         var requirements: Set<CharmRules.Requirement> = []
         var leafCount = 0
         var nodeCount = 0
         var aborted = false
+        var planCache: [PlanKey: Plan?] = [:]
+        /// スロット構成([防具c1,c2,c3, 武器c1,c2,c3])→ 必要量スタートの到達可能残不足集合
+        var reachCache: [[Int]: [SIMD16<UInt8>]] = [:]
+        // 抽選規則上あり得ない要求を変種生成の段階で弾くための上限
+        let slotCombos = master.charmRules.patterns.flatMap(\.slotCombos)
+        let maxCharmWeaponSlots = slotCombos.map { $0.weaponSlots.count }.max() ?? 0
+        let maxCharmArmorSlots = slotCombos.map { $0.armorSlots.count }.max() ?? 0
 
         // 打ち切りは協調キャンセルに1本化(時間予算は呼び出し側がタスクキャンセルで課す。2026-08-26)
         func cancelled() -> Bool {
@@ -116,106 +169,277 @@ public final class CharmOracle {
             return false
         }
 
-        func dfs(_ depth: Int, _ state: inout SearchEngine.State) -> Bool {
-            if cancelled() {
-                aborted = true
-                return false
+        /// 残り部位の最大寄与+最良護石+全スロット装飾品でも届かないなら棄却
+        func upperBoundHolds(
+            _ have: [Int], _ bonus: [Int], _ armorSlotCount: Int,
+            _ depth: Int, _ weaponSlotCount: Int
+        ) -> Bool {
+            let slotPotential = weaponSlotCount + armorSlotCount
+                + suffixSlotMax[depth] + prepared.charmMaxSlotCount
+            for i in skillOrder.indices {
+                var possible = have[i] + (prepared.charmMaxSkill[skillOrder[i]] ?? 0)
+                    + suffixMaxAdd[depth][i]
+                possible += slotPotential * (prepared.bestDecoLevel[skillOrder[i]] ?? 0)
+                if possible < needs[i] { return false }
             }
-            if depth == prepared.kindOrder.count {
+            for b in bonusRequired.indices {
+                if bonus[b] + suffixBonusAvail[depth][b] < bonusRequired[b] { return false }
+            }
+            return true
+        }
+
+        /// スロット構成(c1,c2,c3)の優越: aで足りる要求はbでも足りる(サイズ上位互換込み)
+        func slotsDominate(_ b: [Int], _ a: [Int]) -> Bool {
+            b[2] >= a[2] && b[2] + b[1] >= a[2] + a[1]
+                && b[2] + b[1] + b[0] >= a[2] + a[1] + a[0]
+        }
+
+        func insertSlots(_ kept: inout [[Int]], _ candidate: [Int]) {
+            for existing in kept where slotsDominate(existing, candidate) { return }
+            kept.removeAll { slotsDominate(candidate, $0) }
+            kept.append(candidate)
+        }
+
+        /// 1状態(=同一寄与の組合せ全体の代表)から護石要求を生成する
+        func evaluateLeaf(_ deficits: [SkillId: Int], _ weapon: Weapon?, _ slotCounts: [Int]) {
+            // 防具+武器のスロットで埋められる分を先に消し込み、残りを護石への要求とする。
+            // 到達可能な残不足集合は「条件の必要量スタート」でスロット構成ごとに1回だけ計算し、
+            // 各葉へは充足済み分(needs-deficits)のオフセット付き飽和減算で最小残不足を引く
+            let weaponSlots = (weapon?.slots ?? []).sorted()
+            var weaponClassCounts = [0, 0, 0]
+            for size in weaponSlots { weaponClassCounts[size - 1] += 1 }
+            let profileKey = slotCounts + weaponClassCounts
+            let reach: [SIMD16<UInt8>]
+            if let cached = reachCache[profileKey] {
+                reach = cached
+            } else {
+                var slots = weaponSlots.map { DecorationAssigner.Slot(owner: .weapon, size: $0) }
+                for size in 1...3 {
+                    // 部位はどれでも等価(割り当ては武器/防具の別しか見ない)ため代表としてheadを使う
+                    slots += Array(
+                        repeating: DecorationAssigner.Slot(owner: .armor(.head), size: size),
+                        count: slotCounts[size - 1])
+                }
+                reach = DecorationAssigner.reachableResiduals(
+                    start: needs, skillOrder: skillOrder, slots: slots,
+                    catalog: prepared.catalog, shouldAbort: { Task.isCancelled })
+                reachCache[profileKey] = reach
+            }
+
+            let residual: [SkillId: Int]
+            if reach.isEmpty {
+                // 17スキル以上のフォールバック: 縮約せずそのまま要求へ(後段の規則判定で必ず棄却される)
+                residual = deficits
+            } else {
+                // オフセット = 充足済み量(needs - deficits)。到達残不足からこの分を差し引ける
+                var offset = SIMD16<UInt8>()
+                for (i, skillId) in skillOrder.enumerated() {
+                    offset[i] = UInt8(min(63, needs[i] - (deficits[skillId] ?? 0)))
+                }
+                var best = SIMD16<UInt8>(repeating: 63)
+                var bestSum = Int.max
+                for reached in reach {
+                    let candidate = reached &- pointwiseMin(reached, offset)
+                    var sum = 0
+                    for i in skillOrder.indices { sum += Int(candidate[i]) }
+                    if sum > bestSum { continue }
+                    if sum == bestSum {
+                        // 同点は辞書順(集合の列挙順に依らず決定的にする)
+                        var precedes = false
+                        for i in skillOrder.indices where candidate[i] != best[i] {
+                            precedes = candidate[i] < best[i]
+                            break
+                        }
+                        guard precedes else { continue }
+                    }
+                    best = candidate
+                    bestSum = sum
+                }
+                guard bestSum > 0 else { return }  // 装飾品だけで埋まる(F-1が検出済みのはず)
+                var converted: [SkillId: Int] = [:]
+                for (i, skillId) in skillOrder.enumerated() where best[i] > 0 {
+                    converted[skillId] = Int(best[i])
+                }
+                residual = converted
+            }
+            guard !residual.isEmpty else { return }
+
+            // 要求バリエーション: 各不足スキルを「護石スキルで直接」か「護石スロット+装飾品」で賄う
+            let skillIds = residual.keys.sorted()
+            let variantCount = 1 << skillIds.count
+            for mask in 0..<variantCount {
+                var directSkills: [SkillId: Int] = [:]
+                var weaponSlotReq: [Int] = []
+                var armorSlotReq: [Int] = []
+                var feasible = true
+                for (index, skillId) in skillIds.enumerated() {
+                    let deficit = residual[skillId]!
+                    if mask & (1 << index) == 0 {
+                        // 抽選規則のグループ上限を超えるレベルは直接要求できない
+                        guard deficit <= prepared.charmMaxSkill[skillId] ?? 0 else {
+                            feasible = false
+                            break
+                        }
+                        directSkills[skillId] = deficit
+                    } else {
+                        let planKey = PlanKey(skillId: skillId, deficit: deficit)
+                        let plan: Plan?
+                        if let cached = planCache[planKey] {
+                            plan = cached
+                        } else {
+                            plan = slotPlan(
+                                for: skillId, deficit: deficit,
+                                excluding: prepared.excludedDecorationIds)
+                            planCache[planKey] = plan
+                        }
+                        guard let plan else {
+                            feasible = false
+                            break
+                        }
+                        if plan.isWeapon {
+                            weaponSlotReq.append(contentsOf: plan.sizes)
+                        } else {
+                            armorSlotReq.append(contentsOf: plan.sizes)
+                        }
+                    }
+                }
+                guard feasible, directSkills.count <= 3,
+                      weaponSlotReq.count <= maxCharmWeaponSlots,
+                      armorSlotReq.count <= maxCharmArmorSlots else { continue }
+                requirements.insert(CharmRules.Requirement(
+                    skills: directSkills, weaponSlots: weaponSlotReq, armorSlots: armorSlotReq))
+            }
+        }
+
+        /// 武器1候補ぶんのDP。戻り値: 探索継続するか(falseで全体打ち切り)
+        func runDP(weapon: Weapon?) -> Bool {
+            var initialHave = [Int](repeating: 0, count: skillOrder.count)
+            var initialBonus = [Int](repeating: 0, count: bonusRequired.count)
+            let weaponSlotCount = weapon?.slots.count ?? 0
+            if let weapon {
+                for (i, skillId) in skillOrder.enumerated() {
+                    initialHave[i] = min(needs[i], weapon.skills[skillId] ?? 0)
+                }
+                // 武器付与のシリーズ/グループスキル(SearchEngine.State.initと同じ扱い)
+                for (b, bonus) in prepared.bonusNeeds.enumerated() {
+                    if let level = weapon.skills[bonus.skillId] {
+                        initialBonus[b] = min(bonusRequired[b], level)
+                    }
+                }
+            }
+            var current: [SkillKey: [[Int]]] = [
+                SkillKey(have: initialHave, bonus: initialBonus): [[0, 0, 0]]
+            ]
+            for depth in 0..<depthCount {
+                let pieces = prepared.pieceCandidates[prepared.kindOrder[depth]]!
+                var next: [SkillKey: [[Int]]] = [:]
+                for (key, slotVariants) in current {
+                    for piece in pieces {
+                        if cancelled() {
+                            aborted = true
+                            return false
+                        }
+                        var have = key.have
+                        for (i, skillId) in skillOrder.enumerated() {
+                            if let level = piece.skills[skillId] {
+                                have[i] = min(needs[i], have[i] + level)
+                            }
+                        }
+                        var bonus = key.bonus
+                        for skillId in prepared.bonusContrib[piece.seriesId] ?? [] {
+                            if let b = bonusIndex[skillId] {
+                                bonus[b] = min(bonusRequired[b], bonus[b] + 1)
+                            }
+                        }
+                        let nextKey = SkillKey(have: have, bonus: bonus)
+                        for slots in slotVariants {
+                            var newSlots = slots
+                            for size in piece.slots { newSlots[size - 1] += 1 }
+                            guard upperBoundHolds(
+                                have, bonus, newSlots.reduce(0, +), depth + 1, weaponSlotCount)
+                            else { continue }
+                            insertSlots(&next[nextKey, default: []], newSlots)
+                        }
+                    }
+                }
+                current = next
+                if Task.isCancelled {
+                    aborted = true
+                    return false
+                }
+            }
+            // 最終状態を集めて大域優越除去: 充足もスロットも上回る状態があるなら、
+            // 劣る側はより強い(または同等の)護石要求しか生まないため評価しない
+            struct FinalEntry {
+                let have: [Int]
+                let slots: [Int]
+                let suffix: [Int]  // サイズ上位互換込みのスロット比較用(③, ③+②, 全部)
+                let deficitSum: Int
+            }
+            var entries: [FinalEntry] = []
+            for (key, slotVariants) in current {
+                guard zip(key.bonus, bonusRequired).allSatisfy({ $0 >= $1 }) else { continue }
+                let deficitSum = skillOrder.indices.reduce(0) { $0 + (needs[$1] - key.have[$1]) }
+                guard deficitSum > 0 else { continue }  // 護石なしで組める(F-1が検出済みのはず)
+                for slots in slotVariants {
+                    entries.append(FinalEntry(
+                        have: key.have, slots: slots,
+                        suffix: [slots[2], slots[2] + slots[1], slots[2] + slots[1] + slots[0]],
+                        deficitSum: deficitSum))
+                }
+            }
+            let kept = entries.indices.filter { i in
+                !entries.indices.contains { j in
+                    guard i != j else { return false }
+                    let a = entries[j], b = entries[i]
+                    let dominates = zip(a.have, b.have).allSatisfy { $0 >= $1 }
+                        && zip(a.suffix, b.suffix).allSatisfy { $0 >= $1 }
+                    guard dominates else { return false }
+                    let reverse = zip(b.have, a.have).allSatisfy { $0 >= $1 }
+                        && zip(b.suffix, a.suffix).allSatisfy { $0 >= $1 }
+                    return !reverse || j < i  // 完全同値は先勝ち
+                }
+            }
+            // 不足の小さい順に評価(予算打ち切り時に有望な候補から残るように+決定的な順序)
+            let orderedEntries = kept.map { entries[$0] }.sorted {
+                if $0.deficitSum != $1.deficitSum { return $0.deficitSum < $1.deficitSum }
+                if $0.have != $1.have {
+                    return $0.have.lexicographicallyPrecedes($1.have) == false
+                }
+                return $1.suffix.lexicographicallyPrecedes($0.suffix)
+            }
+            for entry in orderedEntries {
+                if Task.isCancelled {
+                    aborted = true
+                    return false
+                }
+                var deficits: [SkillId: Int] = [:]
+                for (i, skillId) in skillOrder.enumerated() where entry.have[i] < needs[i] {
+                    deficits[skillId] = needs[i] - entry.have[i]
+                }
+                evaluateLeaf(deficits, weapon, entry.slots)
                 leafCount += 1
-                visitLeaf(prepared, state, into: &requirements)
                 if leafCount >= options.leafBudget {
                     aborted = true
                     return false
                 }
-                return true
-            }
-            let kind = prepared.kindOrder[depth]
-            let remaining = Array(prepared.kindOrder[(depth + 1)...])
-            for piece in prepared.pieceCandidates[kind]! {
-                state.push(piece, prepared)
-                if !engine.upperBoundFails(prepared, state, remainingKinds: remaining, charm: nil) {
-                    if !dfs(depth + 1, &state) {
-                        state.pop(piece, prepared)
-                        return false
-                    }
-                }
-                state.pop(piece, prepared)
             }
             return true
         }
 
         for weapon in prepared.weaponCandidates {
-            var state = SearchEngine.State(prepared: prepared, weapon: weapon)
-            if !dfs(0, &state) { break }
+            if !runDP(weapon: weapon) { break }
         }
         if prepared.weaponCandidates.isEmpty {
-            var state = SearchEngine.State(prepared: prepared, weapon: nil)
-            _ = dfs(0, &state)
+            _ = runDP(weapon: nil)
         }
         return (requirements, !aborted)
-    }
-
-    private func visitLeaf(
-        _ prepared: SearchEngine.Prepared,
-        _ state: SearchEngine.State,
-        into requirements: inout Set<CharmRules.Requirement>
-    ) {
-        // ボーナススキルは護石で補えない
-        for bonus in prepared.bonusNeeds {
-            guard (state.bonusCount[bonus.skillId] ?? 0) >= bonus.requiredPieces else { return }
-        }
-
-        var deficits: [SkillId: Int] = [:]
-        for (skillId, need) in prepared.additiveNeeds {
-            let have = state.have[skillId] ?? 0
-            if have < need { deficits[skillId] = need - have }
-        }
-        guard !deficits.isEmpty else { return }  // 護石なしで組める(F-1が検出済みのはず)
-
-        // 防具+武器のスロットで埋められる分を先に消し込み、残りを護石への要求とする
-        let slots = engine.collectSlots(prepared, state, charm: .none)
-        let residual = DecorationAssigner.minimizeResidual(
-            deficits: deficits, slots: slots, catalog: prepared.catalog,
-            shouldAbort: { Task.isCancelled })
-        guard !residual.isEmpty else { return }
-
-        // 要求バリエーション: 各不足スキルを「護石スキルで直接」か「護石スロット+装飾品」で賄う
-        let skillIds = Array(residual.keys)
-        let variantCount = 1 << skillIds.count
-        for mask in 0..<variantCount {
-            var directSkills: [SkillId: Int] = [:]
-            var weaponSlots: [Int] = []
-            var armorSlots: [Int] = []
-            var feasible = true
-            for (index, skillId) in skillIds.enumerated() {
-                let deficit = residual[skillId]!
-                if mask & (1 << index) == 0 {
-                    directSkills[skillId] = deficit
-                } else {
-                    guard let plan = slotPlan(
-                        for: skillId, deficit: deficit,
-                        excluding: prepared.excludedDecorationIds) else {
-                        feasible = false
-                        break
-                    }
-                    if plan.isWeapon {
-                        weaponSlots.append(contentsOf: plan.sizes)
-                    } else {
-                        armorSlots.append(contentsOf: plan.sizes)
-                    }
-                }
-            }
-            guard feasible, directSkills.count <= 3 else { continue }
-            requirements.insert(CharmRules.Requirement(
-                skills: directSkills, weaponSlots: weaponSlots, armorSlots: armorSlots))
-        }
     }
 
     /// 不足スキルを装飾品で賄う場合の必要スロット(最小サイズ×個数)
     private func slotPlan(
         for skillId: SkillId, deficit: Int, excluding excludedIds: Set<Int32>
-    ) -> (isWeapon: Bool, sizes: [Int])? {
+    ) -> Plan? {
         // 最大レベル→最小サイズの装飾品を選ぶ。防具スロットを優先(護石は防具スロ中心のため)
         func best(_ target: DecorationTarget) -> Decoration? {
             master.decorations
@@ -230,11 +454,11 @@ public final class CharmOracle {
         }
         if let deco = best(.armor) {
             let count = (deficit + deco.skills[skillId]! - 1) / deco.skills[skillId]!
-            return (false, Array(repeating: deco.slotSize, count: count))
+            return Plan(isWeapon: false, sizes: Array(repeating: deco.slotSize, count: count))
         }
         if let deco = best(.weapon) {
             let count = (deficit + deco.skills[skillId]! - 1) / deco.skills[skillId]!
-            return (true, Array(repeating: deco.slotSize, count: count))
+            return Plan(isWeapon: true, sizes: Array(repeating: deco.slotSize, count: count))
         }
         return nil
     }

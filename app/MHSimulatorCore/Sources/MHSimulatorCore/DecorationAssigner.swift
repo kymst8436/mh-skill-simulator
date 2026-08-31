@@ -144,85 +144,55 @@ struct DecorationAssigner {
         return aborted ? .aborted : .infeasible
     }
 
-    /// 不足分を最小化する割り当て(逆引きの緩和探索用)。残不足の合計が最小の割り当てを返す。
-    static func minimizeResidual(
-        deficits: [SkillId: Int],
+    /// 指定の不足ベクトルから、スロット+装飾品で到達できる「残不足ベクトル」の全集合(0クリップ済み)。
+    /// バックトラックではなく到達集合を1スロットずつ畳み込むDPで、どのスロットに何を
+    /// 入れたかは残不足に影響しないため、集合サイズは∏(不足+1)で抑えられる。
+    /// 状態はSIMD16<UInt8>にパックし、同型スロット(武器/防具の別×サイズ)クラスは
+    /// 不動点(新しい状態が増えない)に達した時点で残りを打ち切る(2026-08-31)。
+    /// 逆引きは条件全体の必要量からこれをスロット構成ごとに1回計算し、
+    /// 各葉(充足状態)へはオフセット付き飽和減算で最小残不足を引く。
+    /// スキル17個以上は空を返す(護石で埋まる規模を大きく超え、呼び出し側が安全側にフォールバック)
+    static func reachableResiduals(
+        start: [Int],
+        skillOrder: [SkillId],
         slots: [Slot],
         catalog: Catalog,
         shouldAbort: () -> Bool = { false }
-    ) -> [SkillId: Int] {
-        var remaining = deficits.filter { $0.value > 0 }
-        if remaining.isEmpty { return [:] }
-        let ordered = slots.sorted { $0.size > $1.size }
-        var best = remaining
-        var bestSum = remaining.values.reduce(0, +)
-        var nodes = 0
-        var aborted = false
+    ) -> [SIMD16<UInt8>] {
+        guard skillOrder.count <= 16, skillOrder.count == start.count else { return [] }
+        var startVector = SIMD16<UInt8>()
+        for (i, value) in start.enumerated() { startVector[i] = UInt8(min(63, max(0, value))) }
+        let zero = SIMD16<UInt8>()
 
-        func residualSum() -> Int {
-            remaining.values.reduce(0) { $0 + max(0, $1) }
-        }
+        // スロットは(武器/防具の別×サイズ)クラス内で交換可能なため、クラス単位で畳み込む
+        var classCounts: [Int: Int] = [:]
+        for slot in slots { classCounts[slot.size + (slot.isWeapon ? 8 : 0), default: 0] += 1 }
 
-        func contribution(_ deco: Decoration) -> Int {
-            deco.skills.reduce(0) { $0 + min($1.value, max(0, remaining[$1.key] ?? 0)) }
-        }
-
-        func jointCapacity(from index: Int) -> Int {
-            var bestBySize = [[Int]](repeating: [Int](repeating: -1, count: 4), count: 2)
-            var capacity = 0
-            for slot in ordered[index...] {
-                let target = slot.isWeapon ? 1 : 0
-                if bestBySize[target][slot.size] < 0 {
-                    bestBySize[target][slot.size] = catalog.options(for: slot)
-                        .reduce(0) { max($0, contribution($1)) }
+        var states: Set<SIMD16<UInt8>> = [startVector]
+        outer: for (classKey, slotCount) in classCounts.sorted(by: { $0.key > $1.key }) {
+            let slot = Slot(owner: classKey > 8 ? .weapon : .armor(.head), size: classKey & 7)
+            var seen = Set<SIMD16<UInt8>>()
+            var vectors: [SIMD16<UInt8>] = []
+            for deco in catalog.options(for: slot) {
+                var vector = SIMD16<UInt8>()
+                for (i, skillId) in skillOrder.enumerated() {
+                    vector[i] = UInt8(min(63, deco.skills[skillId] ?? 0))
                 }
-                capacity += bestBySize[target][slot.size]
+                if vector != zero, seen.insert(vector).inserted { vectors.append(vector) }
             }
-            return capacity
+            guard !vectors.isEmpty else { continue }
+            for _ in 0..<slotCount {
+                if shouldAbort() { break outer }
+                var next = states  // スロットを空のままにする選択を含む
+                for state in states where state != zero {
+                    for vector in vectors {
+                        next.insert(state &- pointwiseMin(state, vector))
+                    }
+                }
+                if next.count == states.count { break }  // 不動点: 同クラスを増やしても変化なし
+                states = next
+            }
         }
-
-        func solve(_ index: Int) {
-            if aborted { return }
-            nodes += 1
-            if nodes % 512 == 0, shouldAbort() {
-                aborted = true
-                return
-            }
-            let current = residualSum()
-            if current == 0 || index == ordered.count {
-                if current < bestSum {
-                    bestSum = current
-                    best = remaining.mapValues { max(0, $0) }.filter { $0.value > 0 }
-                }
-                return
-            }
-            // 上界: 残りスロットで削れる最大量(スキル単体と全体容量の小さい方)を
-            // 引いても現ベスト以上なら枝刈り
-            var optimistic = 0
-            for (skill, deficit) in remaining where deficit > 0 {
-                let potential = ordered[index...].reduce(0) { $0 + catalog.bestLevel(of: skill, in: $1) }
-                optimistic += min(deficit, potential)
-            }
-            optimistic = min(optimistic, jointCapacity(from: index))
-            if current - optimistic >= bestSum { return }
-
-            let slot = ordered[index]
-            let useful = catalog.options(for: slot)
-                .filter { deco in deco.skills.contains { remaining[$0.key, default: 0] > 0 } }
-            for deco in useful {
-                for (skill, level) in deco.skills {
-                    remaining[skill, default: 0] -= level
-                }
-                solve(index + 1)
-                for (skill, level) in deco.skills {
-                    remaining[skill, default: 0] += level
-                }
-                if aborted { return }
-            }
-            solve(index + 1)  // 空のまま
-        }
-
-        solve(0)
-        return best
+        return Array(states)
     }
 }
