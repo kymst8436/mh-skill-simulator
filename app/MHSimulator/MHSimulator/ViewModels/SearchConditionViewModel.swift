@@ -18,9 +18,37 @@ final class SearchConditionViewModel {
     /// 装備の固定・除外設定(検索設定画面。画面設計4.10)
     private(set) var equipmentFilters = EquipmentFilters()
 
+    // MARK: 実現可能性の即時警告(確定不可能のときだけ表示する赤トースト)
+
+    private let screener: FeasibilityScreener
+    /// 表示中の違反(空=トースト非表示)。「違反あり=100%組めない」のみ入る
+    private(set) var feasibilityViolations: [FeasibilityScreener.Violation] = []
+    /// タップで消した違反内容。同じ内容のままなら再表示しない(条件が変われば再判定)
+    private var dismissedViolations: [FeasibilityScreener.Violation]?
+
     init(dependencies: AppDependencies) {
         self.dependencies = dependencies
+        self.screener = FeasibilityScreener(master: dependencies.master)
         restore()
+        refreshFeasibility()
+    }
+
+    private func refreshFeasibility() {
+        let violations = screener.diagnose(condition: makeCondition(), weapon: selectedWeapon)
+        if violations.isEmpty {
+            feasibilityViolations = []
+            dismissedViolations = nil
+        } else if violations == dismissedViolations {
+            feasibilityViolations = []  // 同じ内容を消した直後は出し直さない
+        } else {
+            feasibilityViolations = violations
+            dismissedViolations = nil
+        }
+    }
+
+    func dismissFeasibilityWarning() {
+        dismissedViolations = feasibilityViolations
+        feasibilityViolations = []
     }
 
     /// AppStateから前回条件・前回武器を復元(仕様4.3 / 画面設計4.1 初期状態)
@@ -50,6 +78,7 @@ final class SearchConditionViewModel {
     private func persist() {
         try? dependencies.userStore.saveLastSearchConditions(
             conditions.map { (skillId: $0.id, level: $0.level) })
+        refreshFeasibility()
     }
 
     func selectWeapon(_ weapon: Weapon?) {
@@ -57,6 +86,7 @@ final class SearchConditionViewModel {
         customWeaponConfig = nil
         try? dependencies.userStore.saveSelectedWeaponId(weapon?.id)
         try? dependencies.userStore.saveCustomWeaponJSON(nil)
+        refreshFeasibility()
     }
 
     func selectCustomWeapon(_ config: CustomWeaponConfig) {
@@ -64,6 +94,7 @@ final class SearchConditionViewModel {
         selectedWeapon = config.makeWeapon()
         try? dependencies.userStore.saveSelectedWeaponId(nil)
         try? dependencies.userStore.saveCustomWeaponJSON(config.encoded())
+        refreshFeasibility()
     }
 
     /// 検索設定画面のOKで反映(永続化込み)

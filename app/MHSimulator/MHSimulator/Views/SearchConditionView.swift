@@ -34,7 +34,7 @@ struct SearchConditionView: View {
 
     var body: some View {
         NavigationStack(path: $path) {
-            ZStack {
+            ZStack(alignment: .bottom) {
                 Color.mhBackground.ignoresSafeArea()
                 VStack(spacing: 0) {
                     ScrollView {
@@ -74,7 +74,13 @@ struct SearchConditionView: View {
                     searchButtonBar
                         .mhEntrance(2)
                 }
+                // 確定不可能警告(タップするまで消えない赤トースト。検索ボタンの直上)
+                if !viewModel.feasibilityViolations.isEmpty {
+                    feasibilityToast
+                        .padding(.bottom, 78)
+                }
             }
+            .animation(.easeInOut(duration: 0.2), value: viewModel.feasibilityViolations)
             .mhNavigationTitle(String(localized: "検索条件"))
             .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.searchBannerUnitId) }
             .toolbar {
@@ -127,6 +133,53 @@ struct SearchConditionView: View {
                     WeaponSelectView(conditionViewModel: viewModel, path: $path, initialKind: kind)
                 }
             }
+        }
+    }
+
+    /// 確定不可能警告トースト。スクリーナーは「どう組んでも100%不可能」な場合のみ
+    /// 違反を返すため、表示=断定でよい(組める可能性の示唆はしない。2026-08-31)
+    private var feasibilityToast: some View {
+        Button {
+            viewModel.dismissFeasibilityWarning()
+        } label: {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 6) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 14))
+                    Text("この条件では装備を組めません")
+                        .font(.system(size: 14, weight: .semibold))
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 8)
+                    Image(systemName: "xmark")
+                        .font(.system(size: 12, weight: .semibold))
+                        .opacity(0.85)
+                }
+                ForEach(Array(viewModel.feasibilityViolations.enumerated()), id: \.offset) { _, violation in
+                    violationText(violation)
+                        .font(.system(size: 13))
+                        .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.leading)
+                }
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color.mhDestructive))
+            .shadow(color: .black.opacity(0.25), radius: 10, y: 4)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 16)
+        .transition(.move(edge: .bottom).combined(with: .opacity))
+    }
+
+    private func violationText(_ violation: FeasibilityScreener.Violation) -> Text {
+        switch violation {
+        case .bonusPieces(let required, let capacity):
+            return Text("シリーズ・グループスキルの発動に必要な部位数が防具の上限を超えています(必要\(required)・最大\(capacity))")
+        case .weaponSkills(let demand, let capacity):
+            return Text("武器スキルの合計Lv\(demand)が、武器スロットと護石で賄える上限Lv\(capacity)を超えています")
+        case .charmSplit(let weaponNeed, let armorNeed):
+            return Text("不足分(武器スキルLv\(weaponNeed)・防具スキルLv\(armorNeed))は護石1個では補えません")
         }
     }
 
