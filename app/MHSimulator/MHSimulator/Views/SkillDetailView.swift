@@ -9,6 +9,12 @@ struct SkillDetailView: View {
     let skill: Skill
     /// 防具一覧のスロット表示を限界突破後にするか(検索設定トグルと連動。2026-08-31追加)
     var considerLimitBreak: Bool = true
+    /// 防具一覧のレア度フィルター(nil=すべて。2026-08-31追加)
+    @State private var rarityFilter: Int?
+    /// 防具一覧のスキルレベルフィルター(nil=すべて。装備/武器スキルのみ)
+    @State private var levelFilter: Int?
+    /// タップで開く防具詳細(2026-08-31追加)
+    @State private var detailPiece: ArmorPiece?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -28,8 +34,8 @@ struct SkillDetailView: View {
                         }
                     }
                     .mhEntrance(2)
-                    if !armorRows.isEmpty {
-                        section(String(localized: "このスキルを持つ防具")) { armorPieceRows }
+                    if !allArmorRows.isEmpty {
+                        armorSection
                             .mhEntrance(3)
                     }
                 }
@@ -39,6 +45,9 @@ struct SkillDetailView: View {
         }
         .background(Color.mhBackgroundElevated)
         .presentationDragIndicator(.visible)
+        .sheet(item: $detailPiece) { piece in
+            ArmorPieceDetailView(master: master, piece: piece, considerLimitBreak: considerLimitBreak)
+        }
     }
 
     private var header: some View {
@@ -187,10 +196,12 @@ struct SkillDetailView: View {
         let slots: [Int]
         /// スキルレベル(シリーズ/グループスキルは部位数で発動するため出さない)
         let level: Int?
+        /// タップで防具詳細を開くための元データ(2026-08-31追加)
+        let piece: ArmorPiece
     }
 
-    /// レア度降順→シリーズ→部位順(頭→胴→腕→腰→脚)
-    private var armorRows: [ArmorRow] {
+    /// レア度降順→シリーズ→部位順(頭→胴→腕→腰→脚)。フィルター適用前の全件
+    private var allArmorRows: [ArmorRow] {
         let pieceOrder = Dictionary(
             uniqueKeysWithValues: ArmorPieceKind.allCases.enumerated().map { ($0.element, $0.offset) })
         return master.armorPieces(withSkill: skill.id)
@@ -204,7 +215,8 @@ struct SkillDetailView: View {
                     name: piece.name,
                     slots: considerLimitBreak ? piece.limitBreakSlots : piece.slots,
                     level: skill.kind == .armor || skill.kind == .weapon
-                        ? piece.skills[skill.id] : nil)
+                        ? piece.skills[skill.id] : nil,
+                    piece: piece)
             }
             .sorted {
                 if $0.rarity != $1.rarity { return $0.rarity > $1.rarity }
@@ -213,32 +225,140 @@ struct SkillDetailView: View {
             }
     }
 
+    private var armorRows: [ArmorRow] {
+        allArmorRows.filter {
+            (rarityFilter == nil || $0.rarity == rarityFilter)
+                && (levelFilter == nil || $0.level == levelFilter)
+        }
+    }
+
+    /// フィルター候補(全件から算出。選択肢が1つしかないメニューは出さない)
+    private var availableRarities: [Int] {
+        Set(allArmorRows.map(\.rarity)).sorted(by: >)
+    }
+
+    private var availableLevels: [Int] {
+        Set(allArmorRows.compactMap(\.level)).sorted()
+    }
+
+    /// レア度・スキルレベルのフィルター付きセクション(2026-08-31追加)
+    private var armorSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text("このスキルを持つ防具")
+                    .font(.system(size: 12))
+                    .tracking(1)
+                    .foregroundStyle(Color.mhTextTertiary)
+                Spacer()
+                if availableRarities.count > 1 {
+                    filterMenu(
+                        selection: $rarityFilter,
+                        options: availableRarities,
+                        unsetLabel: String(localized: "レア度"),
+                        optionLabel: { String(localized: "レア\($0)") },
+                        selectedLabel: { "R\($0)" })
+                }
+                if availableLevels.count > 1 {
+                    filterMenu(
+                        selection: $levelFilter,
+                        options: availableLevels,
+                        unsetLabel: String(localized: "スキルLv"),
+                        optionLabel: { String(localized: "Lv\($0)") },
+                        selectedLabel: { String(localized: "Lv\($0)") })
+                }
+            }
+            .padding(.horizontal, 32)
+            .padding(.top, 16)
+            MHCard {
+                VStack(spacing: 0) {
+                    if armorRows.isEmpty {
+                        Text("条件に一致する防具はありません")
+                            .font(.system(size: 14))
+                            .foregroundStyle(Color.mhTextTertiary)
+                            .frame(maxWidth: .infinity, minHeight: 56)
+                    } else {
+                        armorPieceRows
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 6)
+        }
+    }
+
+    /// 単一選択フィルターメニュー(nil=すべて。選択中はチェックマーク+アクセント色)
+    private func filterMenu(
+        selection: Binding<Int?>,
+        options: [Int],
+        unsetLabel: String,
+        optionLabel: @escaping (Int) -> String,
+        selectedLabel: (Int) -> String
+    ) -> some View {
+        let isActive = selection.wrappedValue != nil
+        return Menu {
+            Button {
+                selection.wrappedValue = nil
+            } label: {
+                if isActive {
+                    Text("すべて")
+                } else {
+                    Label("すべて", systemImage: "checkmark")
+                }
+            }
+            ForEach(options, id: \.self) { option in
+                Button {
+                    selection.wrappedValue = (selection.wrappedValue == option) ? nil : option
+                } label: {
+                    if selection.wrappedValue == option {
+                        Label(optionLabel(option), systemImage: "checkmark")
+                    } else {
+                        Text(optionLabel(option))
+                    }
+                }
+            }
+        } label: {
+            HStack(spacing: 3) {
+                Text(selection.wrappedValue.map(selectedLabel) ?? unsetLabel)
+                    .font(.system(size: 12, weight: isActive ? .semibold : .regular))
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 9, weight: .semibold))
+            }
+            .foregroundStyle(isActive ? Color.mhAccent : Color.mhTextSecondary)
+        }
+    }
+
     @ViewBuilder
     private var armorPieceRows: some View {
         let rows = armorRows
         ForEach(Array(rows.enumerated()), id: \.element.id) { index, row in
-            HStack(spacing: 10) {
-                RarityBadge(rarity: row.rarity)
-                Image(MHFormat.pieceIconName(row.pieceKind))
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 22, height: 22)
-                    .accessibilityLabel(MHFormat.pieceLabel(row.pieceKind))
-                Text(row.name)
-                    .font(.system(size: 15))
-                    .foregroundStyle(Color.mhTextPrimary)
-                Spacer()
-                Text(MHFormat.slotSymbols(row.slots))
-                    .font(.system(size: 14))
-                    .foregroundStyle(Color.mhTextSecondary)
-                if let level = row.level {
-                    Text("Lv\(level)")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(Color.mhAccent)
+            Button {
+                detailPiece = row.piece
+            } label: {
+                HStack(spacing: 10) {
+                    RarityBadge(rarity: row.rarity)
+                    Image(MHFormat.pieceIconName(row.pieceKind))
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 22, height: 22)
+                        .accessibilityLabel(MHFormat.pieceLabel(row.pieceKind))
+                    Text(row.name)
+                        .font(.system(size: 15))
+                        .foregroundStyle(Color.mhTextPrimary)
+                    Spacer()
+                    Text(MHFormat.slotSymbols(row.slots))
+                        .font(.system(size: 14))
+                        .foregroundStyle(Color.mhTextSecondary)
+                    if let level = row.level {
+                        Text("Lv\(level)")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(Color.mhAccent)
+                    }
                 }
+                .padding(.horizontal, 16)
+                .frame(minHeight: 40)
+                .contentShape(Rectangle())
             }
-            .padding(.horizontal, 16)
-            .frame(minHeight: 40)
+            .buttonStyle(.plain)
             if index < rows.count - 1 { separator }
         }
     }

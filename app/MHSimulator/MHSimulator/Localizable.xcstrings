@@ -3093,6 +3093,46 @@
         }
       }
     },
+    "スキルLv": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fertigkeits-Lv"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skill Lv"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nv. de habilidad"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niv. de talent"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "스킬 Lv"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nv. de habilidade"
+          }
+        }
+      }
+    },
     "スキルを追加": {
       "localizations": {
         "de": {
@@ -4899,6 +4939,46 @@
         }
       }
     },
+    "レア度": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seltenheit"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rarity"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rareza"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rareté"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "레어도"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raridade"
+          }
+        }
+      }
+    },
     "レア度%lld": {
       "localizations": {
         "de": {
@@ -6180,6 +6260,46 @@
         }
       }
     },
+    "同シリーズの防具": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rüstungen desselben Sets"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Armor in This Set"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Armaduras de la misma serie"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Armures de la même série"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "같은 시리즈의 방어구"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Armaduras do mesmo conjunto"
+          }
+        }
+      }
+    },
     "固定する防具": {
       "localizations": {
         "de": {
@@ -7140,6 +7260,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Este é um aplicativo não oficial feito por fãs, sem qualquer relação com a Capcom Co., Ltd. ou suas afiliadas.\nOs direitos autorais do conteúdo derivado do jogo (dados, ícones etc.) pertencem à Capcom Co., Ltd.\nSe um detentor de direitos apresentar reclamação, este aplicativo será retirado imediatamente."
+          }
+        }
+      }
+    },
+    "条件に一致する防具はありません": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Rüstungsteile entsprechen den Filtern"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No armor matches the filters"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ninguna armadura coincide con los filtros"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune pièce d'armure ne correspond aux filtres"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "조건과 일치하는 방어구가 없습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhuma armadura corresponde aos filtros"
           }
         }
       }
@@ -10558,6 +10718,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Excluir esta armadura"
+          }
+        }
+      }
+    },
+    "防具詳細": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rüstungsdetails"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Armor Details"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detalles de la armadura"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Détails de l'armure"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "방어구 상세"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detalhes da armadura"
           }
         }
       }
