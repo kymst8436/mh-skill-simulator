@@ -41,8 +41,34 @@ struct SearchSettingsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     Group {
-                        MHSectionHeader(title: String(localized: "固定(必ず使う)"))
+                        MHSectionHeader(title: String(localized: "限界突破"))
                             .padding(.top, 4)
+                        MHCard {
+                            VStack(alignment: .leading, spacing: 0) {
+                                Toggle(isOn: $filters.considerLimitBreak) {
+                                    Text("防具の限界突破を考慮")
+                                        .font(.system(size: 15))
+                                        .foregroundStyle(Color.mhTextPrimary)
+                                }
+                                .tint(Color.mhAccent)
+                                .padding(.horizontal, 16)
+                                .frame(minHeight: 48)
+                                Text("レア5・6防具のスロットが拡張された状態で検索します")
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(Color.mhTextTertiary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .padding(.horizontal, 16)
+                                    .padding(.bottom, 12)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 6)
+                    }
+                    .mhEntrance(1)
+
+                    Group {
+                        MHSectionHeader(title: String(localized: "固定(必ず使う)"))
+                            .padding(.top, 20)
                         MHCard {
                             VStack(spacing: 0) {
                                 ForEach(ArmorPieceKind.allCases, id: \.self) { kind in
@@ -55,7 +81,7 @@ struct SearchSettingsView: View {
                         .padding(.horizontal, 16)
                         .padding(.top, 6)
                     }
-                    .mhEntrance(1)
+                    .mhEntrance(2)
 
                     Group {
                         MHSectionHeader(title: String(localized: "除外(使わない)"))
@@ -84,12 +110,12 @@ struct SearchSettingsView: View {
                         .padding(.horizontal, 16)
                         .padding(.top, 6)
                     }
-                    .mhEntrance(2)
+                    .mhEntrance(3)
                 }
                 .padding(.bottom, 24)
             }
             okButtonBar
-                .mhEntrance(3)
+                .mhEntrance(4)
         }
         .background(Color.mhBackgroundElevated)
         .presentationDragIndicator(.visible)
@@ -311,7 +337,8 @@ struct SearchSettingsView: View {
                 master: master,
                 mode: .pin(kind),
                 selectedId: filters.pinnedPieceId(for: kind),
-                excludedIds: []
+                excludedIds: [],
+                considerLimitBreak: filters.considerLimitBreak
             ) { pieceId in
                 filters.setPinnedPiece(pieceId, for: kind)
             }
@@ -320,7 +347,8 @@ struct SearchSettingsView: View {
                 master: master,
                 mode: .exclude,
                 selectedId: nil,
-                excludedIds: Set(filters.excludedPieces)
+                excludedIds: Set(filters.excludedPieces),
+                considerLimitBreak: filters.considerLimitBreak
             ) { pieceId in
                 if let pieceId {
                     if filters.excludedPieces.contains(pieceId) {
@@ -532,6 +560,8 @@ private struct ArmorPiecePickerView: View {
     let mode: Mode
     let selectedId: Int64?
     let excludedIds: Set<Int64>
+    /// スロット表示を限界突破後にするか(同sheetのトグル状態に連動。2026-08-31追加)
+    let considerLimitBreak: Bool
     let onSelect: (Int64?) -> Void
 
     @State private var searchText = ""
@@ -542,11 +572,13 @@ private struct ArmorPiecePickerView: View {
         case exclude
     }
 
-    init(master: MasterDatabase, mode: Mode, selectedId: Int64?, excludedIds: Set<Int64>, onSelect: @escaping (Int64?) -> Void) {
+    init(master: MasterDatabase, mode: Mode, selectedId: Int64?, excludedIds: Set<Int64>,
+         considerLimitBreak: Bool, onSelect: @escaping (Int64?) -> Void) {
         self.master = master
         self.mode = mode
         self.selectedId = selectedId
         self.excludedIds = excludedIds
+        self.considerLimitBreak = considerLimitBreak
         self.onSelect = onSelect
         if case .pin(let kind) = mode {
             _kindFilter = State(initialValue: kind)
@@ -694,7 +726,7 @@ private struct ArmorPiecePickerView: View {
                     }
                 }
                 Spacer()
-                Text(MHFormat.slotSymbols(piece.slots))
+                Text(MHFormat.slotSymbols(considerLimitBreak ? piece.limitBreakSlots : piece.slots))
                     .font(.system(size: 14))
                     .foregroundStyle(Color.mhTextSecondary)
                 if isMarked {

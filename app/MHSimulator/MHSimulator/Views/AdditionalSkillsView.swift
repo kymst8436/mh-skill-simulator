@@ -23,7 +23,9 @@ struct AdditionalSkillsView: View {
         .onAppear { viewModel.start() }
         .onDisappear { viewModel.cancel() }
         .sheet(item: $detailSkill) { skill in
-            SkillDetailView(master: viewModel.master, skill: skill)
+            SkillDetailView(
+                master: viewModel.master, skill: skill,
+                considerLimitBreak: viewModel.dependencies.searchFilters.considerLimitBreak)
         }
     }
 

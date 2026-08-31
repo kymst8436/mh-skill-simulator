@@ -14,6 +14,8 @@ nonisolated struct EquipmentFilters: Codable, Equatable {
     var excludedCharmIds: [Int32] = []
     /// 除外する装飾品のid(簡易所持数管理=F-7拡張。2026-08-29追加)
     var excludedDecorations: [Int32] = []
+    /// 防具の限界突破を考慮する(レア5・6のスロット拡張。既定ON。2026-08-30追加)
+    var considerLimitBreak: Bool = true
 
     init() {}
 
@@ -25,12 +27,15 @@ nonisolated struct EquipmentFilters: Codable, Equatable {
         pinnedCharmId = try container.decodeIfPresent(Int32.self, forKey: .pinnedCharmId)
         excludedCharmIds = try container.decodeIfPresent([Int32].self, forKey: .excludedCharmIds) ?? []
         excludedDecorations = try container.decodeIfPresent([Int32].self, forKey: .excludedDecorations) ?? []
+        considerLimitBreak = try container.decodeIfPresent(Bool.self, forKey: .considerLimitBreak) ?? true
     }
 
+    /// 既定値のままか(検索設定バッジ・永続化省略の判定)。限界突破OFFは非既定として扱う
     var isEmpty: Bool {
         pinnedPieces.isEmpty && excludedPieces.isEmpty
             && pinnedCharmId == nil && excludedCharmIds.isEmpty
             && excludedDecorations.isEmpty
+            && considerLimitBreak
     }
 
     func pinnedPieceId(for kind: ArmorPieceKind) -> Int64? {

@@ -83,12 +83,57 @@ class TestBundledDb(unittest.TestCase):
         self.assertEqual(over, 0)
 
     def test_slots_are_valid_json_arrays(self):
-        for (slots,) in self.db.execute("SELECT slots FROM ArmorPiece"):
-            parsed = json.loads(slots)
-            self.assertIsInstance(parsed, list)
-            self.assertLessEqual(len(parsed), 3)
-            for s in parsed:
-                self.assertIn(s, (1, 2, 3))
+        for (slots, lb_slots) in self.db.execute(
+                "SELECT slots, limitBreakSlots FROM ArmorPiece"):
+            for text in (slots, lb_slots):
+                parsed = json.loads(text)
+                self.assertIsInstance(parsed, list)
+                self.assertLessEqual(len(parsed), 3)
+                for s in parsed:
+                    self.assertIn(s, (1, 2, 3))
+
+    # --- 限界突破スロット(仕様4.1。レア5=全3スロ+1 / レア6=左2スロ+1 / 上限3) ---
+
+    def test_limit_break_spot_checks(self):
+        cases = [
+            ("ホープマスクα", [1], [2, 1, 1]),        # レア5: 空き枠も①新設
+            ("ミツネヘルムα", [3], [3, 1]),           # レア6: ③は上限で頭打ち
+            ("ミツネヘルムβ", [3, 2], [3, 3]),        # レア6: 左2スロのみ
+            ("鬼の数珠α", [2, 2, 1], [2, 2, 1]),      # 豪鬼α: 限界突破対象外
+        ]
+        for name, base, expected in cases:
+            row = self.db.execute(
+                "SELECT slots, limitBreakSlots FROM ArmorPiece WHERE nameJa = ?",
+                (name,)).fetchone()
+            self.assertIsNotNone(row, name)
+            self.assertEqual(json.loads(row[0]), base, name)
+            self.assertEqual(json.loads(row[1]), expected, name)
+
+    def test_limit_break_unchanged_outside_rare_5_6(self):
+        # レア5・6(豪鬼α除く)以外は slots と一致すること
+        diff = self.count(
+            "SELECT COUNT(*) FROM ArmorPiece p JOIN ArmorSeries s ON p.seriesId = s.id"
+            " WHERE p.slots != p.limitBreakSlots"
+            " AND (s.rarity NOT IN (5, 6) OR s.id = 3633)")
+        self.assertEqual(diff, 0)
+
+    def test_limit_break_matches_wikidb_harvest(self):
+        # wiki-db実測381部位との突き合わせ(_meta.excluded は既知のwiki-db側ミス)
+        fixture = json.loads(
+            (Path(__file__).resolve().parent / "testdata"
+             / "wikidb_limitbreak_slots.json").read_text(encoding="utf-8"))
+        excluded = set(fixture["_meta"]["excluded"])
+        by_name = dict(self.db.execute("SELECT nameJa, limitBreakSlots FROM ArmorPiece"))
+        checked = 0
+        for plus_name, value in fixture["slots"].items():
+            if plus_name in excluded:
+                continue
+            base_name = plus_name[:-1]  # 末尾の「+」を除去
+            self.assertIn(base_name, by_name, plus_name)
+            expected = [int(x) for x in value.split("-") if x != "0"]
+            self.assertEqual(json.loads(by_name[base_name]), expected, plus_name)
+            checked += 1
+        self.assertEqual(checked, 380)
 
     def test_fixed_charm_skill_count_per_rank(self):
         over = self.count(
@@ -125,7 +170,7 @@ class TestBundledDb(unittest.TestCase):
     def test_meta(self):
         row = self.db.execute(
             "SELECT schemaVersion, sourceCommit FROM Meta").fetchone()
-        self.assertEqual(row[0], 2)
+        self.assertEqual(row[0], 3)
         self.assertNotEqual(row[1], "unknown")
 
     # --- 抽選規則テーブル(2026-08-22改訂: アプリは規則から実行時計算する) ---

@@ -31,7 +31,19 @@ public struct ArmorPiece: Sendable {
     public let defenseMax: Int
     public let resistances: [Int]  // fire, water, thunder, ice, dragon
     public let slots: [Int]        // サイズの配列(降順とは限らない)
+    /// 限界突破後のスロット(レア5=全3スロ+1 / レア6=左2スロ+1 / 上限3。対象外はslotsと同値。仕様4.1)
+    public let limitBreakSlots: [Int]
     public let skills: [SkillId: Int]
+
+    /// 限界突破を考慮した検索用のコピー(slotsを限界突破後の値に差し替える)。
+    /// 結果スナップショットにも差し替え後が残るため、表示は検索時の設定と常に一致する
+    func applyingLimitBreak() -> ArmorPiece {
+        guard slots != limitBreakSlots else { return self }
+        return ArmorPiece(
+            id: id, seriesId: seriesId, kind: kind, name: name,
+            defenseMax: defenseMax, resistances: resistances,
+            slots: limitBreakSlots, limitBreakSlots: limitBreakSlots, skills: skills)
+    }
 }
 
 public struct ArmorSeriesBonus: Sendable {
@@ -153,6 +165,8 @@ public struct SearchCondition: Sendable {
     public let excludedFixedCharmIds: Set<Int32>
     /// 除外する装飾品のid集合(割り当て候補から外す。簡易所持数管理=F-7拡張 2026-08-29)
     public let excludedDecorationIds: Set<Int32>
+    /// 防具の限界突破を考慮する(レア5・6のスロット拡張。既定ON。2026-08-30追加)
+    public let considerLimitBreak: Bool
 
     public init(
         requiredSkills: [SkillId: Int],
@@ -160,7 +174,8 @@ public struct SearchCondition: Sendable {
         excludedPieceIds: Set<Int64> = [],
         pinnedFixedCharmId: Int32? = nil,
         excludedFixedCharmIds: Set<Int32> = [],
-        excludedDecorationIds: Set<Int32> = []
+        excludedDecorationIds: Set<Int32> = [],
+        considerLimitBreak: Bool = true
     ) {
         self.requiredSkills = requiredSkills
         self.pinnedPieceIds = pinnedPieceIds
@@ -168,6 +183,7 @@ public struct SearchCondition: Sendable {
         self.pinnedFixedCharmId = pinnedFixedCharmId
         self.excludedFixedCharmIds = excludedFixedCharmIds
         self.excludedDecorationIds = excludedDecorationIds
+        self.considerLimitBreak = considerLimitBreak
     }
 }
 
@@ -224,7 +240,23 @@ public enum SearchError: Error, Equatable, Sendable {
 // 自動合成は型宣言と同一ファイルのextensionでのみ働くため、ここにまとめて置く
 
 extension ArmorPieceKind: Codable {}
-extension ArmorPiece: Codable {}
+extension ArmorPiece: Codable {
+    // 後方互換デコード: limitBreakSlots追加(2026-08-30)前に保存されたマイセットはslotsで埋める
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        let slots = try c.decode([Int].self, forKey: .slots)
+        self.init(
+            id: try c.decode(Int64.self, forKey: .id),
+            seriesId: try c.decode(Int32.self, forKey: .seriesId),
+            kind: try c.decode(ArmorPieceKind.self, forKey: .kind),
+            name: try c.decode(String.self, forKey: .name),
+            defenseMax: try c.decode(Int.self, forKey: .defenseMax),
+            resistances: try c.decode([Int].self, forKey: .resistances),
+            slots: slots,
+            limitBreakSlots: try c.decodeIfPresent([Int].self, forKey: .limitBreakSlots) ?? slots,
+            skills: try c.decode([SkillId: Int].self, forKey: .skills))
+    }
+}
 extension DecorationTarget: Codable {}
 extension Decoration: Codable {}
 extension Charm.Source: Codable {}

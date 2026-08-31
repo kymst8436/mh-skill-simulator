@@ -38,7 +38,7 @@ public final class MasterDatabase {
         try db.query("SELECT schemaVersion, charmRulesVersion, sourceCommit FROM Meta") { row in
             meta = (Int(row.int(0)), row.string(1), row.string(2))
         }
-        guard meta.0 == 2 else {
+        guard meta.0 == 3 else {
             throw LoadError.unexpectedSchema("schemaVersion=\(meta.0)")
         }
         schemaVersion = meta.0
@@ -89,7 +89,7 @@ public final class MasterDatabase {
         var pieces: [ArmorPiece] = []
         try db.query("""
             SELECT id, seriesId, kind, name\(sfx), defenseMax,
-                   resFire, resWater, resThunder, resIce, resDragon, slots
+                   resFire, resWater, resThunder, resIce, resDragon, slots, limitBreakSlots
             FROM ArmorPiece
             """) { row in
             pieces.append(ArmorPiece(
@@ -100,6 +100,7 @@ public final class MasterDatabase {
                 defenseMax: Int(row.int(4)),
                 resistances: (5...9).map { Int(row.int($0)) },
                 slots: Self.decodeSlots(row.string(10)),
+                limitBreakSlots: Self.decodeSlots(row.string(11)),
                 skills: pieceSkills[row.int(0)] ?? [:]))
         }
         self.armorPieces = pieces

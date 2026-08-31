@@ -7,6 +7,8 @@ struct SkillDetailView: View {
     @Environment(\.dismiss) private var dismiss
     let master: MasterDatabase
     let skill: Skill
+    /// 防具一覧のスロット表示を限界突破後にするか(検索設定トグルと連動。2026-08-31追加)
+    var considerLimitBreak: Bool = true
 
     var body: some View {
         VStack(spacing: 0) {
@@ -200,7 +202,7 @@ struct SkillDetailView: View {
                     pieceOrder: pieceOrder[piece.kind] ?? 0,
                     pieceKind: piece.kind,
                     name: piece.name,
-                    slots: piece.slots,
+                    slots: considerLimitBreak ? piece.limitBreakSlots : piece.slots,
                     level: skill.kind == .armor || skill.kind == .weapon
                         ? piece.skills[skill.id] : nil)
             }

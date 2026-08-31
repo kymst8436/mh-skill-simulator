@@ -19,7 +19,7 @@ import sys
 import unicodedata
 from pathlib import Path
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 # 対応言語とSQLite列サフィックス(ja以外は欠損時jaへフォールバック)
 LANGUAGES = [
@@ -33,6 +33,26 @@ LANGUAGES = [
 ]
 
 PIECE_KINDS = ["head", "chest", "arms", "waist", "legs"]
+
+# 限界突破(TU4・HR100解放)の対象外シリーズ(2026-08-30 wiki-db実測でα+/β+が存在しない)
+# 3633 = 豪鬼α(コラボ装備)
+LIMIT_BREAK_EXCLUDED_SERIES = {3633}
+
+
+def limit_break_slots(rarity, slots, series_id):
+    """限界突破後のスロット(仕様4.1)。
+
+    レア5: 3スロット全てに+1(空き枠は①新設)、レア6: 左2スロットに+1、サイズ上限3。
+    レア7・8と下位防具は変化なし(防御力のみ)。
+    ルールは mhwilds.wiki-db.com の限界突破装備381部位の実測と一致(380/381、
+    唯一の不一致チェーンヘッドαはwiki-db側のベーススロット入力ミス)。
+    """
+    if rarity not in (5, 6) or series_id in LIMIT_BREAK_EXCLUDED_SERIES:
+        return list(slots)
+    upgraded = (list(slots) + [0, 0, 0])[:3]
+    for i in range(3 if rarity == 5 else 2):
+        upgraded[i] = min(3, upgraded[i] + 1)
+    return [s for s in upgraded if s > 0]
 
 WEAPON_FILES = [
     "Bow", "ChargeBlade", "DualBlades", "GreatSword", "Gunlance", "Hammer",
@@ -91,7 +111,8 @@ CREATE TABLE ArmorPiece (
   resThunder INTEGER NOT NULL,
   resIce INTEGER NOT NULL,
   resDragon INTEGER NOT NULL,
-  slots TEXT NOT NULL
+  slots TEXT NOT NULL,
+  limitBreakSlots TEXT NOT NULL
 );
 CREATE TABLE ArmorPieceSkill (
   armorPieceId INTEGER NOT NULL REFERENCES ArmorPiece(id),
@@ -307,12 +328,13 @@ def convert(source_dir, out_path):
             pname = ja(piece["names"], f"ArmorPiece {name}/{kind}")
             res = piece["resistances"]
             db.execute(
-                f"INSERT INTO ArmorPiece VALUES ({_ph(11 + len(LANGUAGES))})",
+                f"INSERT INTO ArmorPiece VALUES ({_ph(12 + len(LANGUAGES))})",
                 (
                     pid, sid, kind, *texts(piece["names"], f"ArmorPiece {name}/{kind}"),
                     piece["defense"]["base"], piece["defense"]["max"],
                     res["fire"], res["water"], res["thunder"], res["ice"], res["dragon"],
                     json.dumps(piece["slots"]),
+                    json.dumps(limit_break_slots(series["rarity"], piece["slots"], sid)),
                 ),
             )
             for skill_id, level in (piece.get("skills") or {}).items():

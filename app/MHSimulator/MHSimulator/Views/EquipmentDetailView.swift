@@ -52,7 +52,9 @@ struct EquipmentDetailView: View {
             }
         }
         .sheet(item: $detailSkill) { skill in
-            SkillDetailView(master: master, skill: skill)
+            SkillDetailView(
+                master: master, skill: skill,
+                considerLimitBreak: dependencies.searchFilters.considerLimitBreak)
         }
         .alert("マイセットに保存", isPresented: $showsSaveAlert) {
             TextField("セット名", text: $saveName)
