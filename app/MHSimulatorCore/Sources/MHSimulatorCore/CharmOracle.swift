@@ -22,13 +22,21 @@ public final class CharmOracle {
         }
 
         public let kind: Kind
-        /// false = キャンセル(時間予算超過)や葉予算で探索を打ち切った途中結果。
-        /// 「真のゼロ件」と「時間内に見つからなかった」をUIで区別するために持つ(2026-08-26)
-        public let isExhaustive: Bool
+        /// 時間予算(タスクキャンセル)による打ち切りがあったか。
+        /// 探索は決定的なので、予算を延長した再試行で結果が改善し得る
+        public let timeTruncated: Bool
+        /// 容量上限(状態数・葉予算などの発散防止キャップ)による打ち切りがあったか。
+        /// 時間を延長しても完全判定には到達しない=再試行を促しても意味がない(2026-08-31)
+        public let capacityTruncated: Bool
 
-        public init(kind: Kind, isExhaustive: Bool) {
+        /// false = 何らかの打ち切りがあった途中結果。
+        /// 「真のゼロ件」と「探しきれなかった」をUIで区別するために持つ(2026-08-26)
+        public var isExhaustive: Bool { !timeTruncated && !capacityTruncated }
+
+        public init(kind: Kind, timeTruncated: Bool = false, capacityTruncated: Bool = false) {
             self.kind = kind
-            self.isExhaustive = isExhaustive
+            self.timeTruncated = timeTruncated
+            self.capacityTruncated = capacityTruncated
         }
     }
 
@@ -61,7 +69,7 @@ public final class CharmOracle {
             return try relaxationFallback(condition: condition, weapon: weapon, ownedCharms: ownedCharms)
         }
 
-        let (requirements, exhaustive) = try collectRequirements(
+        let (requirements, timeTruncated, capacityTruncated) = try collectRequirements(
             condition: condition, weapon: weapon, options: options)
 
         var suggestions: [CharmSuggestion] = []
@@ -74,7 +82,10 @@ public final class CharmOracle {
             // 候補ゼロが打ち切りによるものなら、fallbackの結果も網羅とは言えない
             let fallback = try relaxationFallback(
                 condition: condition, weapon: weapon, ownedCharms: ownedCharms)
-            return Outcome(kind: fallback.kind, isExhaustive: fallback.isExhaustive && exhaustive)
+            return Outcome(
+                kind: fallback.kind,
+                timeTruncated: fallback.timeTruncated || timeTruncated,
+                capacityTruncated: fallback.capacityTruncated || capacityTruncated)
         }
 
         // 入手しやすさ(レア度昇順)→要求の緩さ(仕様3.2 手順4)
@@ -84,7 +95,7 @@ public final class CharmOracle {
         }
         return Outcome(
             kind: .charms(Array(suggestions.prefix(options.maxSuggestions))),
-            isExhaustive: exhaustive)
+            timeTruncated: timeTruncated, capacityTruncated: capacityTruncated)
     }
 
     private func laxness(_ req: CharmRules.Requirement) -> Int {
@@ -114,15 +125,16 @@ public final class CharmOracle {
     /// 護石ワイルドカードの緩和探索で、到達可能な最良状態から護石要求を逆算する。
     /// 部位ごとに(充足量・ボーナス部位数・スロット構成)へ集約するDPで、
     /// 同一寄与の組合せを1状態に潰し、スロット構成は優越除去する。
-    /// 戻り値のexhaustive: キャンセル・葉予算による打ち切りなしに全探索できたか
+    /// 戻り値: timeTruncated=キャンセル(時間予算)による打ち切り、
+    /// capacityTruncated=容量上限(状態数・葉予算)による打ち切り(2026-08-31)
     private func collectRequirements(
         condition: SearchCondition,
         weapon: Weapon?,
         options: Options
-    ) throws -> (requirements: Set<CharmRules.Requirement>, exhaustive: Bool) {
+    ) throws -> (requirements: Set<CharmRules.Requirement>, timeTruncated: Bool, capacityTruncated: Bool) {
         guard let prepared = try engine.prepare(
             condition: condition, weapon: weapon, ownedCharms: [], charmWildcard: true) else {
-            return ([], true)  // ボーナススキル到達不能: 護石では埋まらない(探索不要の確定)
+            return ([], false, false)  // ボーナススキル到達不能: 護石では埋まらない(探索不要の確定)
         }
 
         let skillOrder = Array(prepared.additiveNeeds.keys).sorted()
@@ -161,7 +173,8 @@ public final class CharmOracle {
         var requirements: Set<CharmRules.Requirement> = []
         var leafCount = 0
         var nodeCount = 0
-        var aborted = false
+        var timeTruncated = false
+        var capacityTruncated = false
         var planCache: [PlanKey: Plan?] = [:]
         // 抽選規則上あり得ない要求を変種生成の段階で弾くための上限
         let slotCombos = master.charmRules.patterns.flatMap(\.slotCombos)
@@ -377,11 +390,11 @@ public final class CharmOracle {
                 transitions: for (key, slotVariants) in current {
                     for piece in pieces {
                         if cancelled() {
-                            aborted = true
+                            timeTruncated = true
                             return false
                         }
                         if next.count > layerStateCap {
-                            aborted = true
+                            capacityTruncated = true
                             break transitions
                         }
                         var have = key.have
@@ -409,7 +422,7 @@ public final class CharmOracle {
                 }
                 current = next
                 if Task.isCancelled {
-                    aborted = true
+                    timeTruncated = true
                     return false
                 }
             }
@@ -468,7 +481,7 @@ public final class CharmOracle {
                 var reach: [SIMD16<UInt8>]?
                 for entry in groups[slotCounts]! {
                     if Task.isCancelled {
-                        aborted = true
+                        timeTruncated = true
                         return false
                     }
                     var deficits: [SkillId: Int] = [:]
@@ -477,7 +490,7 @@ public final class CharmOracle {
                     }
                     leafCount += 1
                     if leafCount > options.leafBudget {
-                        aborted = true
+                        capacityTruncated = true
                         return false
                     }
                     guard leafCanBeCovered(deficits, slotCounts, weaponClassCounts) else { continue }
@@ -493,14 +506,16 @@ public final class CharmOracle {
                             start: needs, skillOrder: skillOrder, slots: slots,
                             catalog: prepared.catalog,
                             shouldAbort: { Task.isCancelled })
-                        if result.truncated {
-                            aborted = true  // 集合が不完全=残不足を過大評価し得るため網羅と主張しない
+                        switch result.truncation {
+                        case .cancelled: timeTruncated = true
+                        case .stateLimit: capacityTruncated = true  // 集合が不完全=残不足を過大評価し得る
+                        case nil: break
                         }
                         reach = result.residuals
                     }
                     evaluateLeaf(deficits, reach!)
                     if leafCount >= options.leafBudget {
-                        aborted = true
+                        capacityTruncated = true
                         return false
                     }
                 }
@@ -514,7 +529,7 @@ public final class CharmOracle {
         if prepared.weaponCandidates.isEmpty {
             _ = runDP(weapon: nil)
         }
-        return (requirements, !aborted)
+        return (requirements, timeTruncated, capacityTruncated)
     }
 
     /// 不足スキルを装飾品で賄う場合の必要スロット(最小サイズ×個数)
@@ -556,7 +571,7 @@ public final class CharmOracle {
         var removable: [SkillId] = []
         var aborted = false
         guard condition.requiredSkills.count > 1 else {
-            return Outcome(kind: .none, isExhaustive: true)
+            return Outcome(kind: .none)
         }
         // 必要レベルの大きい順に検証する(決定的な順序+外せば組める可能性が高く検索が
         // 速く終わりやすい候補を先に。時間切れでも有望な結果から残る。2026-08-31)
@@ -582,6 +597,6 @@ public final class CharmOracle {
             }
         }
         let kind: Outcome.Kind = removable.isEmpty ? .none : .relaxations(removable.sorted())
-        return Outcome(kind: kind, isExhaustive: !aborted)
+        return Outcome(kind: kind, timeTruncated: aborted)
     }
 }

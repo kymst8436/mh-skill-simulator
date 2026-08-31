@@ -11722,6 +11722,86 @@
           }
         }
       }
+    },
+    "条件が複雑すぎるため、狙える護石を判定できませんでした。条件のスキルを減らすと判定できる場合があります": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Bedingungen sind zu komplex, um erhältliche Talismane zu bestimmen. Mit weniger Fertigkeiten ist die Prüfung eventuell möglich"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These conditions are too complex to determine which charms are obtainable. Removing some skills may allow the check to complete"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las condiciones son demasiado complejas para determinar los amuletos posibles. Quitar algunas habilidades podría permitir el análisis"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conditions trop complexes pour déterminer les talismans possibles. Retirer des talents peut permettre l'analyse"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "조건이 너무 복잡해서 노릴 수 있는 호석을 판정하지 못했습니다. 조건의 스킬을 줄이면 판정이 가능할 수 있습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As condições são complexas demais para determinar os amuletos que você pode obter. Remover algumas habilidades pode permitir a análise"
+          }
+        }
+      }
+    },
+    "条件が複雑なため探索の一部を打ち切りました。他にも候補がある可能性があります": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Teil der Suche wurde wegen der komplexen Bedingungen abgebrochen; es kann weitere Kandidaten geben"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Part of the search was cut short due to the complex conditions, so there may be more candidates"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parte de la búsqueda se ha interrumpido por la complejidad de las condiciones; puede haber más candidatos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une partie de la recherche a été interrompue en raison de la complexité des conditions ; il peut exister d'autres candidats"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "조건이 복잡하여 탐색을 일부 중단했으므로 다른 후보가 있을 수 있습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parte da busca foi interrompida pela complexidade das condições; pode haver mais candidatos"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

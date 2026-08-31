@@ -168,7 +168,12 @@ struct DecorationAssigner {
     /// 逆引きは条件全体の必要量からこれをスロット構成ごとに1回計算し、
     /// 各葉(充足状態)へはオフセット付き飽和減算で最小残不足を引く。
     /// スキル17個以上は空を返す(護石で埋まる規模を大きく超え、呼び出し側が安全側にフォールバック)。
-    /// truncated: 状態数上限・中断による打ち切りで集合が不完全(残不足を過大評価し得る)
+    /// truncation: 打ち切りで集合が不完全(残不足を過大評価し得る)な場合にその理由
+    enum ReachTruncation {
+        case cancelled   // 協調キャンセル(時間予算)
+        case stateLimit  // 状態数上限(発散防止)
+    }
+
     static func reachableResiduals(
         start: [Int],
         skillOrder: [SkillId],
@@ -176,9 +181,9 @@ struct DecorationAssigner {
         catalog: Catalog,
         stateLimit: Int = 1_000_000,
         shouldAbort: () -> Bool = { false }
-    ) -> (residuals: [SIMD16<UInt8>], truncated: Bool) {
-        guard skillOrder.count <= 16, skillOrder.count == start.count else { return ([], false) }
-        var truncated = false
+    ) -> (residuals: [SIMD16<UInt8>], truncation: ReachTruncation?) {
+        guard skillOrder.count <= 16, skillOrder.count == start.count else { return ([], nil) }
+        var truncation: ReachTruncation?
         var startVector = SIMD16<UInt8>()
         for (i, value) in start.enumerated() { startVector[i] = UInt8(min(63, max(0, value))) }
         let zero = SIMD16<UInt8>()
@@ -205,7 +210,7 @@ struct DecorationAssigner {
             var frontier = Array(states)
             for _ in 0..<slotCount {
                 if shouldAbort() {
-                    truncated = true
+                    truncation = .cancelled
                     break outer
                 }
                 var added: [SIMD16<UInt8>] = []
@@ -213,7 +218,7 @@ struct DecorationAssigner {
                     for vector in vectors {
                         let reduced = state &- pointwiseMin(state, vector)
                         if reduced == zero {
-                            return ([zero], false)  // 装飾品だけで全充足可能(確定)
+                            return ([zero], nil)  // 装飾品だけで全充足可能(確定)
                         }
                         if states.insert(reduced).inserted { added.append(reduced) }
                     }
@@ -221,11 +226,11 @@ struct DecorationAssigner {
                 if added.isEmpty { break }  // 不動点: 同クラスのスロットを増やしても変化なし
                 frontier = added
                 if states.count > stateLimit {  // 発散防止(高次元条件の安全弁)
-                    truncated = true
+                    truncation = .stateLimit
                     break outer
                 }
             }
         }
-        return (Array(states), truncated)
+        return (Array(states), truncation)
     }
 }
