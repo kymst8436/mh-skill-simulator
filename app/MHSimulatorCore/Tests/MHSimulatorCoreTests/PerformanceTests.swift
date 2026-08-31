@@ -80,4 +80,28 @@ final class PerformanceTests: XCTestCase {
         print("逆引き時間: \(String(format: "%.2f", elapsed))s")
         XCTAssertLessThan(elapsed, 2.0, "性能予算超過(仕様6.1: 2秒以内)")
     }
+
+    func testReverseLookupHeavyConditionIsExhaustive() throws {
+        // 高レベル5スキルの逆引きが「打ち切りなしで」完了すること(状態DP化の回帰検証。2026-08-31)。
+        // 旧実装(葉の全列挙)は葉予算で必ず打ち切られ、予算を延長しても非網羅のままだった。
+        // Mac debugビルドで約7秒・releaseで約0.2秒。極端な劣化検出として15秒を上限にする
+        let condition = SearchCondition(requiredSkills: [
+            TestSupport.skill(named: "攻撃").id: 5,
+            TestSupport.skill(named: "弱点特効").id: 3,
+            TestSupport.skill(named: "超会心").id: 3,
+            TestSupport.skill(named: "渾身").id: 3,
+            TestSupport.skill(named: "挑戦者").id: 5,
+        ])
+        let oracle = CharmOracle(engine: engine)
+        let start = Date()
+        let outcome = try oracle.reverseLookup(condition: condition)
+        let elapsed = Date().timeIntervalSince(start)
+        print("重条件逆引き時間: \(String(format: "%.2f", elapsed))s")
+        XCTAssertTrue(outcome.isExhaustive, "重条件の逆引きが打ち切られている(状態DPの劣化疑い)")
+        guard case .charms(let suggestions) = outcome.kind else {
+            return XCTFail("護石候補が提示されるべき: \(outcome)")
+        }
+        XCTAssertFalse(suggestions.isEmpty)
+        XCTAssertLessThan(elapsed, 15.0, "逆引き時間の回帰(全列挙時代の水準に逆戻りの疑い)")
+    }
 }
