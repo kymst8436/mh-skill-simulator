@@ -1,6 +1,166 @@
 {
   "sourceLanguage": "ja",
   "strings": {
+    "この条件では装備を組めません": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Ausrüstung erfüllt diese Bedingungen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No equipment can meet these conditions"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ningún equipo puede cumplir estas condiciones"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun équipement ne peut remplir ces conditions"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 조건으로는 장비를 조합할 수 없습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não é possível montar um equipamento com estas condições"
+          }
+        }
+      }
+    },
+    "シリーズ・グループスキルの発動に必要な部位数が防具の上限を超えています(必要%lld・最大%lld)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set-/Gruppenfertigkeiten erfordern mehr Rüstungsteile als möglich (benötigt: %1$lld, max.: %2$lld)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These set bonus/group skills need %1$lld armor pieces, but the max is %2$lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las habilidades de conjunto/grupo requieren más piezas de armadura de las permitidas (necesarias: %1$lld, máx.: %2$lld)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trop de pièces requises pour activer les talents de set/groupe (requis : %1$lld, max. : %2$lld)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시리즈·그룹 스킬 발동에 필요한 부위 수가 방어구 상한을 초과했습니다(필요 %1$lld·최대 %2$lld)"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As peças necessárias para ativar as habilidades de conjunto/grupo excedem o limite de peças (necessárias: %1$lld, máx.: %2$lld)"
+          }
+        }
+      }
+    },
+    "武器スキルの合計Lv%lldが、武器スロットと護石で賄える上限Lv%lldを超えています": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waffenfertigkeiten (gesamt Lv%1$lld) übersteigen das Limit von Lv%2$lld aus Waffen-Slots und einem Talisman"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weapon skills total Lv%1$lld, but weapon slots and a charm can only cover up to Lv%2$lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las habilidades de arma suman Nv. %1$lld y superan el límite de Nv. %2$lld que pueden cubrir los huecos del arma y un amuleto"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le total des talents d'arme (Niv. %1$lld) dépasse le maximum (Niv. %2$lld) couvert par les emplacements de l'arme et un talisman"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "무기 스킬 합계(Lv%1$lld)가 무기 슬롯과 호석으로 채울 수 있는 상한(Lv%2$lld)을 초과했습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As habilidades de arma somam Nv. %1$lld e excedem o limite de Nv. %2$lld que os slots da arma e um amuleto podem cobrir"
+          }
+        }
+      }
+    },
+    "不足分(武器スキルLv%lld・防具スキルLv%lld)は護石1個では補えません": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein einzelner Talisman kann die fehlenden Stufen (Waffe Lv%1$lld, Rüstung Lv%2$lld) nicht abdecken"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A single charm can't cover the shortfall (weapon skills Lv%1$lld, armor skills Lv%2$lld)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un solo amuleto no puede cubrir lo que falta (habilidades de arma Nv. %1$lld, habilidades de armadura Nv. %2$lld)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un seul talisman ne suffit pas à combler le manque (talents d'arme Niv. %1$lld, talents d'armure Niv. %2$lld)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "부족분(무기 스킬 Lv%1$lld·방어구 스킬 Lv%2$lld)은 호석 1개로는 채울 수 없습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um único amuleto não pode cobrir o que falta (habilidades de arma Nv. %1$lld, habilidades de armadura Nv. %2$lld)"
+          }
+        }
+      }
+    },
     "": {
       "localizations": {
         "de": {
