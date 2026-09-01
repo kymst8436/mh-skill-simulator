@@ -35,11 +35,10 @@ struct CoachMarkOverlay: View {
         }
     }
 
-    /// 対象枠(global)を余白付きでオーバーレイのローカル座標へ変換する
+    /// 対象枠(global)をオーバーレイのローカル座標へ変換する
     private func highlightRect(for id: CoachMarkID, in bounds: CGRect) -> CGRect? {
         guard let frame = center.frames[id], !frame.isEmpty else { return nil }
         return frame
-            .insetBy(dx: -6, dy: -6)
             .offsetBy(dx: -bounds.minX, dy: -bounds.minY)
             .intersection(CGRect(origin: .zero, size: bounds.size))
     }
