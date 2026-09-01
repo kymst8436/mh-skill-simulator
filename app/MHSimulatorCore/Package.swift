@@ -11,7 +11,12 @@ let package = Package(
         .library(name: "MHSimulatorCore", targets: ["MHSimulatorCore"]),
     ],
     targets: [
-        .target(name: "MHSimulatorCore"),
+        // Debugビルドでも最適化する: 検索・逆引きは-Ononeだと実測18倍遅く、
+        // 実機Debug確認で時間予算(最大256秒)に届かないため(2026-09-01)。
+        // Coreをブレークポイントで追いたいときはこの行を一時的に外す
+        .target(
+            name: "MHSimulatorCore",
+            swiftSettings: [.unsafeFlags(["-O"], .when(configuration: .debug))]),
         .testTarget(name: "MHSimulatorCoreTests", dependencies: ["MHSimulatorCore"]),
     ]
 )

@@ -127,11 +127,17 @@ final class SearchResultsViewModel {
     }
 
     /// ステージ別の時間予算(検索/逆引きで独立。設計判断2026-08-26)。
-    /// 再試行ごとに2倍(検索5→10→20秒、逆引き4→8→16秒。上限4倍)
+    /// 再試行ごとに2倍(検索5→…→320秒、逆引き4→…→256秒。上限64倍)。
+    /// 旧上限4倍(逆引き16秒)は重い条件の完全探索(実測: 15スキル級で
+    /// release約10秒・debug約184秒)に届かず、何度押しても同じ結果になる
+    /// ため引き上げた。時間で解決しない打ち切り(容量上限)は
+    /// capacityTruncatedとしてUI側が再試行ボタン自体を出さないため、
+    /// 予算の指数延長は「完了して確定」か「容量上限の確定案内」の
+    /// どちらかに必ず収束する(2026-09-01)
     private enum StageBudget {
         static let searchSeconds = 5
         static let reverseLookupSeconds = 4
-        static let maxRetryAttempt = 2
+        static let maxRetryAttempt = 6
     }
 
     /// 再試行回数(予算延長用。入力が変わる再検索でリセット)
