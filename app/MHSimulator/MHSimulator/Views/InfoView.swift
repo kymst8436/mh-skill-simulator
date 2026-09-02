@@ -24,6 +24,9 @@ struct InfoView: View {
                             .padding(.top, 20)
                             .mhEntrance(0)
 
+                        supportSection
+                            .mhEntrance(1)
+
                         Group {
                             MHSectionHeader(title: String(localized: "このアプリについて"))
                                 .padding(.top, 20)
@@ -39,7 +42,7 @@ struct InfoView: View {
                             .padding(.horizontal, 16)
                             .padding(.top, 7)
                         }
-                        .mhEntrance(1)
+                        .mhEntrance(2)
 
                         MHCard {
                             NavigationLink {
@@ -60,24 +63,77 @@ struct InfoView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, 20)
-                        .mhEntrance(2)
+                        .mhEntrance(3)
 
                         Text("本アプリは非公式のファンメイドアプリです")
                             .font(.system(size: 12))
                             .foregroundStyle(Color.mhTextTertiary)
                             .padding(.horizontal, 32)
                             .padding(.top, 10)
-                            .mhEntrance(3)
+                            .mhEntrance(4)
 
                         #if DEBUG
                         developerSection
-                            .mhEntrance(4)
+                            .mhEntrance(5)
                         #endif
                     }
                     .padding(.bottom, 24)
                 }
             }
             .mhNavigationTitle(String(localized: "情報"))
+        }
+    }
+
+    // MARK: - お問合せ・レビュー
+
+    private var supportSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("機能追加・改善要望・不具合報告はこちらから")
+                .font(.system(size: 12))
+                .foregroundStyle(Color.mhTextTertiary)
+                .padding(.horizontal, 32)
+                .padding(.top, 20)
+            MHCard {
+                VStack(spacing: 0) {
+                    linkRow(String(localized: "お問合せ"), url: SupportLinks.contactURL)
+                    separator
+                    linkRow(String(localized: "レビューを書く"), url: SupportLinks.writeReviewURL)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 7)
+        }
+    }
+
+    /// 外部リンク行。URL未設定の間は「準備中」表示になる(LegalLinksと同じ方式)
+    @ViewBuilder
+    private func linkRow(_ title: String, url: URL?) -> some View {
+        if let url {
+            Link(destination: url) {
+                HStack {
+                    Text(title)
+                        .font(.system(size: 15))
+                        .foregroundStyle(Color.mhTextPrimary)
+                    Spacer()
+                    Image(systemName: "arrow.up.right")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Color.mhTextTertiary)
+                }
+                .padding(.horizontal, 16)
+                .frame(minHeight: 44)
+            }
+        } else {
+            HStack {
+                Text(title)
+                    .font(.system(size: 15))
+                    .foregroundStyle(Color.mhTextSecondary)
+                Spacer()
+                Text("準備中")
+                    .font(.system(size: 13))
+                    .foregroundStyle(Color.mhTextTertiary)
+            }
+            .padding(.horizontal, 16)
+            .frame(minHeight: 44)
         }
     }
 

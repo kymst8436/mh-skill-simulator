@@ -106,7 +106,7 @@ struct ProPurchaseView: View {
         }
     }
 
-    // MARK: - 規約リンク(作成中。LegalLinksにURLを入れると開けるようになる)
+    // MARK: - 規約リンク
 
     private var legalSection: some View {
         VStack(alignment: .leading, spacing: 0) {

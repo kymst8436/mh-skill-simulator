@@ -153,11 +153,24 @@ final class ProStore {
     }
 }
 
-/// プライバシーポリシー・利用規約のリンク先(作成中。公開後にURL文字列を入れるだけで有効になる)
+/// プライバシーポリシー・利用規約のリンク先
 enum LegalLinks {
-    static let privacyPolicy = ""  // 例: "https://example.com/privacy"
-    static let termsOfUse = ""  // 例: "https://example.com/terms"
+    static let privacyPolicy = "https://yssdev.com/privacy/mh-simulator"
+    static let termsOfUse = "https://yssdev.com/terms/mh-simulator"
 
     static var privacyPolicyURL: URL? { URL(string: privacyPolicy) }
     static var termsOfUseURL: URL? { URL(string: termsOfUse) }
+}
+
+/// お問合せ・レビューのリンク先
+enum SupportLinks {
+    static let contact = "https://yssdev.com/contact"
+    /// App StoreのアプリID(App Store ConnectのApple ID)
+    static let appStoreId = "6806522942"
+
+    static var contactURL: URL? { URL(string: contact) }
+    static var writeReviewURL: URL? {
+        guard !appStoreId.isEmpty else { return nil }
+        return URL(string: "https://apps.apple.com/app/id\(appStoreId)?action=write-review")
+    }
 }
