@@ -212,7 +212,7 @@ struct EquipmentDetailView: View {
                                 .foregroundStyle(colors[index])
                             Text("\(entry.1)")
                                 .font(.system(size: 14))
-                                .foregroundStyle(Color.mhTextPrimary)
+                                .foregroundStyle(colors[index])
                         }
                     }
                 }
