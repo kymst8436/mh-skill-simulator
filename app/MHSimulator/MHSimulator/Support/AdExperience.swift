@@ -67,12 +67,12 @@ final class AdFreeCenter {
 }
 
 /// インタースティシャル広告の頻度制御(画面設計§2 2026-08-29追加)。
-/// 「検索する」3回に1回、かつ前回表示から5分以上経過しているとき、
+/// 「検索する」5回に1回、かつ前回表示から5分以上経過しているとき、
 /// 検索結果から検索条件に戻るタイミングで表示する(検索中・結果表示は妨げない)
 final class InterstitialAdCoordinator {
     static let shared = InterstitialAdCoordinator()
 
-    private static let searchesPerAd = 3
+    private static let searchesPerAd = 5
     private static let minInterval: TimeInterval = 5 * 60
     private static let countKey = "interstitial.searchCount"
     private static let lastShownKey = "interstitial.lastShownAt"
