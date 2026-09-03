@@ -262,11 +262,11 @@
 			);
 			name = "Copy bundled.db";
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/bundled.db",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/bundled.db",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nSRC=\"${SRCROOT}/../../data/generated/bundled.db\"\nif [ ! -f \"$SRC\" ]; then\n  echo \"error: bundled.db not found. Run: python3 tools/convert/convert.py\" >&2\n  exit 1\nfi\nmkdir -p \"${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\ncp \"$SRC\" \"${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/bundled.db\"\n";
+			shellScript = "set -e\nSRC=\"${SRCROOT}/../../data/generated/bundled.db\"\nif [ ! -f \"$SRC\" ]; then\n  echo \"error: bundled.db not found. Run: python3 tools/convert/convert.py\" >&2\n  exit 1\nfi\nmkdir -p \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\ncp \"$SRC\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/bundled.db\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
