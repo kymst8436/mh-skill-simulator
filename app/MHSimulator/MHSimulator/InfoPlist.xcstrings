@@ -5,14 +5,49 @@
       "comment": "Bundle display name",
       "extractionState": "extracted_with_value",
       "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MHWilds Skill Simulator"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MHWilds Skill Simulator"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MHWilds Skill Simulator"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MHWilds Skill Simulator"
+          }
+        },
         "ja": {
           "stringUnit": {
-            "state": "new",
-            "value": "MHSimulator"
+            "state": "translated",
+            "value": "MHWildsスキルシミュレーター"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MHWilds 스킬 시뮬레이터"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MHWilds Skill Simulator"
           }
         }
-      },
-      "shouldTranslate": false
+      }
     },
     "CFBundleName": {
       "comment": "Bundle name",
