@@ -7384,42 +7384,42 @@
         }
       }
     },
-    "本アプリは非公式のファンメイドアプリです。株式会社カプコンおよび関連会社とは一切関係ありません。\nゲームデータ・アイコン等のゲーム由来コンテンツの著作権は株式会社カプコンに帰属します。\n権利者からの申し立てがあった場合、本アプリは速やかに公開を停止します。": {
+    "本アプリは非公式のファンメイドアプリです。ゲームの開発元・販売元および関連会社とは一切関係ありません。\nゲームデータ・アイコン等のゲーム由来コンテンツの著作権は各権利者に帰属します。\n権利者からの申し立てがあった場合、本アプリは速やかに公開を停止します。": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dies ist eine inoffizielle Fan-App und steht in keinerlei Verbindung zu Capcom Co., Ltd. oder verbundenen Unternehmen.\nDas Urheberrecht an spielbezogenen Inhalten wie Spieldaten und Icons liegt bei Capcom Co., Ltd.\nBei Beanstandungen durch Rechteinhaber wird diese App umgehend zurückgezogen."
+            "value": "Diese App ist eine inoffizielle, von Fans erstellte App. Sie steht in keinerlei Verbindung zum Entwickler und Publisher des Spiels oder deren verbundenen Unternehmen.\nDie Urheberrechte an Spieldaten, Icons und sonstigen aus dem Spiel stammenden Inhalten liegen bei den jeweiligen Rechteinhabern.\nAuf Verlangen der Rechteinhaber wird die Veröffentlichung dieser App umgehend eingestellt."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This is an unofficial fan-made app and is not affiliated with Capcom Co., Ltd. or its affiliates in any way.\nThe copyright of game-derived content such as game data and icons belongs to Capcom Co., Ltd.\nIf a rights holder files a complaint, this app will be promptly withdrawn."
+            "value": "This is an unofficial fan-made app and is not affiliated with the game's developer, publisher, or any of their affiliated companies in any way.\nThe copyright of game-derived content, such as game data and icons, belongs to the respective rights holders.\nIf a rights holder files a complaint, this app will be promptly withdrawn."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta es una aplicación no oficial hecha por fans y no tiene ninguna relación con Capcom Co., Ltd. ni sus filiales.\nLos derechos de autor del contenido derivado del juego (datos, iconos, etc.) pertenecen a Capcom Co., Ltd.\nSi un titular de derechos presenta una reclamación, esta aplicación se retirará de inmediato."
+            "value": "Esta es una aplicación no oficial hecha por fans y no tiene ninguna relación con el desarrollador ni el editor del juego, ni con sus empresas afiliadas.\nLos derechos de autor del contenido derivado del juego (datos, iconos, etc.) pertenecen a sus respectivos titulares de derechos.\nSi un titular de derechos presenta una reclamación, esta aplicación se retirará de inmediato."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ceci est une application non officielle créée par des fans, sans aucun lien avec Capcom Co., Ltd. ni ses sociétés affiliées.\nLes droits d'auteur du contenu issu du jeu (données, icônes, etc.) appartiennent à Capcom Co., Ltd.\nEn cas de réclamation d'un ayant droit, cette application sera retirée sans délai."
+            "value": "Cette application est une application non officielle créée par des fans. Elle n'est en aucun cas affiliée au développeur ou à l'éditeur du jeu, ni à leurs sociétés affiliées.\nLes contenus issus du jeu (données de jeu, icônes, etc.) demeurent la propriété exclusive de leurs ayants droit respectifs.\nEn cas de réclamation de la part des ayants droit, la distribution de cette application sera immédiatement suspendue."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "본 앱은 비공식 팬메이드 앱으로, 주식회사 캡콤 및 관련 회사와 일절 관계가 없습니다.\n게임 데이터·아이콘 등 게임 유래 콘텐츠의 저작권은 주식회사 캡콤에 귀속됩니다.\n권리자의 이의 제기가 있을 경우 본 앱은 즉시 공개를 중단합니다."
+            "value": "본 앱은 비공식 팬메이드 앱입니다. 게임의 개발사·유통사 및 그 관계사와는 일절 관련이 없습니다.\n게임 데이터, 아이콘 등 게임에서 유래한 콘텐츠의 저작권은 각 권리자에게 귀속됩니다.\n권리자로부터 이의 제기가 있을 경우, 본 앱은 신속히 공개를 중단합니다."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este é um aplicativo não oficial feito por fãs, sem qualquer relação com a Capcom Co., Ltd. ou suas afiliadas.\nOs direitos autorais do conteúdo derivado do jogo (dados, ícones etc.) pertencem à Capcom Co., Ltd.\nSe um detentor de direitos apresentar reclamação, este aplicativo será retirado imediatamente."
+            "value": "Este é um aplicativo não oficial feito por fãs, sem qualquer relação com a desenvolvedora e a publicadora do jogo ou suas afiliadas.\nOs direitos autorais do conteúdo derivado do jogo (dados, ícones etc.) pertencem aos seus respectivos detentores de direitos.\nCaso um detentor de direitos apresente uma reclamação, este aplicativo será prontamente retirado do ar."
           }
         }
       }
