@@ -5,14 +5,49 @@
       "comment": "Bundle display name",
       "extractionState": "extracted_with_value",
       "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MH Skill Sim"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MH Skill Sim"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MH Skill Sim"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MH Skill Sim"
+          }
+        },
         "ja": {
           "stringUnit": {
-            "state": "new",
-            "value": "MHSimulator"
+            "state": "translated",
+            "value": "MHスキルシミュ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MH 스킬 시뮬"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MH Skill Sim"
           }
         }
-      },
-      "shouldTranslate": false
+      }
     },
     "CFBundleName": {
       "comment": "Bundle name",
