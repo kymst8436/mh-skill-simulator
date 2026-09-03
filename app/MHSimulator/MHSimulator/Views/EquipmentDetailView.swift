@@ -204,11 +204,16 @@ struct EquipmentDetailView: View {
                         .foregroundStyle(Color.mhTextPrimary)
                 }
                 Spacer()
-                HStack(spacing: 9) {
+                HStack(alignment: .top, spacing: 12) {
                     ForEach(Array(resistances.enumerated()), id: \.offset) { index, entry in
-                        Text("\(entry.0) \(entry.1)")
-                            .font(.system(size: 14))
-                            .foregroundStyle(colors[index])
+                        VStack(spacing: 2) {
+                            Text(entry.0)
+                                .font(.system(size: 11))
+                                .foregroundStyle(colors[index])
+                            Text("\(entry.1)")
+                                .font(.system(size: 14))
+                                .foregroundStyle(Color.mhTextPrimary)
+                        }
                     }
                 }
             }
