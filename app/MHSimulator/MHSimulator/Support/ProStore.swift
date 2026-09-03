@@ -21,35 +21,9 @@ final class ProStore {
         case restoring
     }
 
-    #if DEBUG
-    /// 開発者ツールのPro状態モード(DEBUGビルド限定。本番ビルドにはこの型ごと存在しない)
-    enum DebugProMode: String, CaseIterable {
-        /// StoreKitの購入状態をそのまま参照(本番と同じ動作)
-        case storeKit
-        /// StoreKitによらずPro版として動作
-        case forcePro
-        /// StoreKitによらず無料版として動作
-        case forceFree
-    }
-
-    private static let debugProModeKey = "debug.proMode"
-
-    var debugProMode: DebugProMode = .storeKit {
-        didSet { UserDefaults.standard.set(debugProMode.rawValue, forKey: Self.debugProModeKey) }
-    }
-    #endif
-
-    /// Pro版が有効か。本番ビルドではStoreKit由来のentitledProのみを参照する
-    /// (DEBUGビルドでは開発者ツールの上書きを反映)
+    /// Pro版が有効か(StoreKit由来のentitledProを参照)
     var isPro: Bool {
-        #if DEBUG
-        switch debugProMode {
-        case .forcePro: return true
-        case .forceFree: return false
-        case .storeKit: break
-        }
-        #endif
-        return entitledPro
+        entitledPro
     }
 
     /// StoreKitの購入状態(キャッシュ+検証結果)
@@ -62,12 +36,6 @@ final class ProStore {
 
     private init() {
         entitledPro = UserDefaults.standard.bool(forKey: Self.purchasedKey)
-        #if DEBUG
-        if let raw = UserDefaults.standard.string(forKey: Self.debugProModeKey),
-           let mode = DebugProMode(rawValue: raw) {
-            debugProMode = mode
-        }
-        #endif
         // 返金(失効)や別端末での購入・承認待ち完了はここで反映される
         updatesTask = Task { [weak self] in
             for await update in Transaction.updates {

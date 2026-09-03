@@ -72,10 +72,6 @@ struct InfoView: View {
                             .padding(.top, 10)
                             .mhEntrance(4)
 
-                        #if DEBUG
-                        developerSection
-                            .mhEntrance(5)
-                        #endif
                     }
                     .padding(.bottom, 24)
                 }
@@ -173,74 +169,6 @@ struct InfoView: View {
             )
         }
     }
-
-    #if DEBUG
-    /// 開発者ツール(DEBUGビルド限定。本番ビルドにはセクションごと存在せず、常にStoreKitの購入状態が参照される)
-    private var developerSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            MHSectionHeader(title: "開発者ツール(デバッグビルドのみ)")
-                .padding(.top, 28)
-            MHCard {
-                VStack(spacing: 0) {
-                    debugModeRow("StoreKitの購入状態を参照", mode: .storeKit)
-                    separator
-                    debugModeRow("Pro版として動作", mode: .forcePro)
-                    separator
-                    debugModeRow("無料版として動作", mode: .forceFree)
-                    separator
-                    infoRow("StoreKit購入状態", proStore.entitledPro ? "Pro版" : "未購入")
-                    separator
-                    coachMarkResetRow
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 7)
-            Text("本番ビルドではこの設定は存在せず、常にStoreKitの購入状態のみが参照されます")
-                .font(.system(size: 11))
-                .foregroundStyle(Color.mhTextTertiary)
-                .padding(.horizontal, 32)
-                .padding(.top, 6)
-        }
-    }
-
-    /// コーチマーク表示済みフラグを消す(該当タブを開き直すと再表示される)
-    private var coachMarkResetRow: some View {
-        Button {
-            CoachMarkCenter.shared.resetAll()
-        } label: {
-            HStack {
-                Text("コーチマークをリセット")
-                    .font(.system(size: 15))
-                    .foregroundStyle(Color.mhTextPrimary)
-                Spacer()
-            }
-            .padding(.horizontal, 16)
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
-        }
-    }
-
-    private func debugModeRow(_ title: String, mode: ProStore.DebugProMode) -> some View {
-        Button {
-            proStore.debugProMode = mode
-        } label: {
-            HStack {
-                Text(title)
-                    .font(.system(size: 15))
-                    .foregroundStyle(Color.mhTextPrimary)
-                Spacer()
-                if proStore.debugProMode == mode {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(Color.mhAccent)
-                }
-            }
-            .padding(.horizontal, 16)
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
-        }
-    }
-    #endif
 
     private var separator: some View {
         Rectangle().fill(Color.mhHairlineFaint).frame(height: 1).padding(.leading, 16)

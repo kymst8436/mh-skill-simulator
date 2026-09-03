@@ -76,13 +76,6 @@ final class CoachMarkCenter {
         stepIndex = 0
     }
 
-    #if DEBUG
-    /// 表示済みフラグを消す(開発者ツール用。該当タブを開き直すと再表示される)
-    func resetAll() {
-        for tour in CoachMarkTour.allCases { defaults.removeObject(forKey: tour.doneKey) }
-    }
-    #endif
-
     private func makeSteps(_ tour: CoachMarkTour) -> [CoachMarkStep] {
         switch tour {
         case .search:
