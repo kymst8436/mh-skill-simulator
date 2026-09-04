@@ -324,10 +324,11 @@ final class EquipmentCompareViewModel {
         levelLine(baseLevel: row.baseLevel, compareLevel: row.compareLevel)
     }
 
+    /// 「<ベースのセット名> Lv3 ・ <比較のセット名> Lv2」。列名ではなくマイセット名で示す(2026-09-04ユーザー決定)
     private func levelLine(baseLevel: Int?, compareLevel: Int?) -> String {
-        let baseText = String(localized: "ベース") + " " + Self.levelText(baseLevel)
-        guard compare != nil else { return baseText }
-        return baseText + String(localized: "・") + String(localized: "比較") + " " + Self.levelText(compareLevel)
+        let baseText = (base?.name ?? String(localized: "ベース")) + " " + Self.levelText(baseLevel)
+        guard let compare else { return baseText }
+        return baseText + String(localized: "・") + compare.name + " " + Self.levelText(compareLevel)
     }
 
     private static func levelText(_ level: Int?) -> String {
