@@ -80,7 +80,7 @@ struct ToolListView: View {
                 }
             }
             .mhNavigationTitle(String(localized: "ツール"))
-            .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.toolsBannerUnitId) }
+            // バナーは滞在時間の長い比較画面(EquipmentCompareResultView)に置く(画面設計§2 2026-09-04)
             .toolbar {
                 AdFreeToolbarButton { showsAdFreeSheet = true }
             }

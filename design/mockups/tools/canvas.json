@@ -2,8 +2,8 @@
   "artboards": [
     { "file": "ToolList.dc.html", "x": 0, "y": 0, "w": 390, "h": 844, "title": "ツール一覧(ツールタブ ルート)" },
     { "file": "Pick.dc.html", "x": 470, "y": 0, "w": 390, "h": 844, "title": "装備比較①: ベースのマイセット選択" },
-    { "file": "CompareEmpty.dc.html", "x": 940, "y": 0, "w": 390, "h": 1320, "title": "装備比較②: 比較側が未選択(スクロール展開)" },
-    { "file": "Main.dc.html", "x": 1410, "y": 0, "w": 390, "h": 1430, "title": "装備比較②: 2つを比較中(スクロール展開)" },
+    { "file": "CompareEmpty.dc.html", "x": 940, "y": 0, "w": 390, "h": 1370, "title": "装備比較②: 比較側が未選択(スクロール展開)" },
+    { "file": "Main.dc.html", "x": 1410, "y": 0, "w": 390, "h": 1480, "title": "装備比較②: 2つを比較中(スクロール展開)" },
     { "file": "PickSheet.dc.html", "x": 1880, "y": 0, "w": 390, "h": 700, "title": "マイセット選択(sheet。比較側の選択)" }
   ],
   "annotations": [

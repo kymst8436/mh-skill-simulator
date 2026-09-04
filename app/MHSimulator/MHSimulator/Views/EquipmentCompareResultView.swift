@@ -53,6 +53,7 @@ struct EquipmentCompareResultView: View {
             }
         }
         .mhNavigationTitle(String(localized: "装備比較"))
+        .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.toolsBannerUnitId) }
         .navigationBarBackButtonHidden(true)
         .toolbar {
             MHBackButton { dismiss() }

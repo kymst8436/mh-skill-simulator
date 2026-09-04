@@ -59,6 +59,8 @@ final class EquipmentCompareViewModel {
     var pendingExclusive: PendingExclusive?
 
     private let defaults = UserDefaults.standard
+    /// restore()中はitemsのdidSet経由のpersist()を抑止する(未読込のbase/compare=nilで上書きしないため)
+    private var isRestoring = false
     private enum Keys {
         static let baseId = "tools.equipmentCompare.baseId"
         static let compareId = "tools.equipmentCompare.compareId"
@@ -342,6 +344,7 @@ final class EquipmentCompareViewModel {
     // MARK: - 永続化(UserDefaults)
 
     private func persist() {
+        guard !isRestoring else { return }
         defaults.set(base?.id.uuidString, forKey: Keys.baseId)
         defaults.set(compare?.id.uuidString, forKey: Keys.compareId)
         defaults.set(conditions.map(\.rawValue).sorted(), forKey: Keys.conditions)
@@ -352,6 +355,11 @@ final class EquipmentCompareViewModel {
     }
 
     private func restore() {
+        isRestoring = true
+        defer { isRestoring = false }
+        // 選択中マイセットはIDだけ復元し、load()で実体に差し替える(itemsの代入より先に読む)
+        pendingBaseId = defaults.string(forKey: Keys.baseId).flatMap(UUID.init(uuidString:))
+        pendingCompareId = defaults.string(forKey: Keys.compareId).flatMap(UUID.init(uuidString:))
         let rawConditions = defaults.stringArray(forKey: Keys.conditions) ?? []
         conditions = Set(rawConditions.compactMap(Calc.Condition.init(rawValue:)))
         if let data = defaults.data(forKey: Keys.items),
@@ -364,9 +372,6 @@ final class EquipmentCompareViewModel {
            let decoded = try? JSONDecoder().decode([Side: ManualWeapon].self, from: data) {
             manualWeapons = decoded
         }
-        // 選択中マイセットはIDだけ復元し、load()で実体に差し替える
-        pendingBaseId = defaults.string(forKey: Keys.baseId).flatMap(UUID.init(uuidString:))
-        pendingCompareId = defaults.string(forKey: Keys.compareId).flatMap(UUID.init(uuidString:))
     }
 
     /// ベース未選択(①で選び直す状態)か
