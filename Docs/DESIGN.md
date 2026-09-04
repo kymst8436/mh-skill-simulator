@@ -73,7 +73,7 @@ SwiftUIでは `Color` 拡張としてコード定義する(単一テーマのた
 | タップ領域 | 最小44pt(リスト行は48pt基準) |
 | ナビバー | `mhBackgroundElevated` + 下ヘアライン。タイトルは`MHFont.screenTitle`+左に4pt菱形(`mhAccent`) |
 | ナビバーのボタン | **OS標準スタイルは使わない**(iOS 26のガラスカプセルが角丸規約と衝突するため。2026-08-24改訂)。テキストは`MHToolbarButton`(無地・`mhAccent`)、戻るは`MHBackButton`(無地シェブロン)で統一 |
-| タブバー | **OS標準TabBarは使わない**(浮遊カプセル形状のため。2026-08-24改訂)。`MHTabBar`(全幅フラット・`mhBackgroundElevated`+上ヘアライン)。活性 `mhAccent` / 非活性 `mhTextTertiary` |
+| タブバー | **OS標準TabBarは使わない**(浮遊カプセル形状のため。2026-08-24改訂)。`MHTabBar`(全幅フラット・`mhBackgroundElevated`+上ヘアライン)。活性 `mhAccent` / 非活性 `mhTextTertiary`(アセットアイコンは柄を残し、選択中のみ`GearIcon`でアクセント着色。非選択は原色=`mhTextTertiary`/`mhTextSecondary`の2トーン。2026-09-04) |
 | 広告バナー | 各タブの**ナビバー直下・本文の上**に固定(2026-08-24改訂。検索タブ・護石タブのみ。情報タブには置かない)。読み込み失敗時は畳む |
 | シート | `mhBackgroundElevated`。グラバーは `mhHairline` |
 

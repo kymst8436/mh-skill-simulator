@@ -397,10 +397,8 @@ struct MHTabBar: View {
                         Image(systemName: name)
                             .font(.system(size: 20, weight: .regular))
                     case .asset(let name):
-                        Image(name)
-                            .renderingMode(.template)
-                            .resizable()
-                            .scaledToFit()
+                        // 柄(2トーン)を残し、選択中だけアクセント色で着色(2026-09-04)
+                        GearIcon(assetName: name, tint: selection == tab ? Color.mhAccent : nil, size: 24)
                     }
                 }
                 .frame(width: 24, height: 24)
@@ -417,15 +415,27 @@ struct MHTabBar: View {
 /// 色相・彩度だけをレア度色に置き換え(blendMode .color)、明度=SVGの濃淡を残す。rarityがnilなら原色のまま
 struct GearIcon: View {
     let assetName: String
-    var rarity: Int? = nil
+    /// 着色(色相・彩度)。nilなら原色のまま
+    var tint: Color? = nil
     var size: CGFloat = 26
+
+    init(assetName: String, tint: Color? = nil, size: CGFloat = 26) {
+        self.assetName = assetName
+        self.tint = tint
+        self.size = size
+    }
+
+    /// レア度色で着色(レア度不明なら原色)
+    init(assetName: String, rarity: Int?, size: CGFloat = 26) {
+        self.init(assetName: assetName, tint: rarity.map(Color.mhRarity), size: size)
+    }
 
     var body: some View {
         let image = Image(assetName).resizable().scaledToFit()
         Group {
-            if let rarity {
+            if let tint {
                 image
-                    .overlay(Color.mhRarity(rarity).blendMode(.color))
+                    .overlay(tint.blendMode(.color))
                     .mask(image)
             } else {
                 image
