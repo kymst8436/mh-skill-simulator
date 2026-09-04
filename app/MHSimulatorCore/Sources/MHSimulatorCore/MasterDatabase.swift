@@ -149,12 +149,13 @@ public final class MasterDatabase {
             weaponSkills[row.int(0), default: [:]][SkillId(row.int(1))] = Int(row.int(2))
         }
         var weapons: [Weapon] = []
-        try db.query("SELECT id, kind, name\(sfx), rarity, slots FROM Weapon") { row in
+        try db.query("SELECT id, kind, name\(sfx), rarity, slots, attackRaw, affinity FROM Weapon") { row in
             weapons.append(Weapon(
                 id: row.int(0), kind: row.string(1), name: row.string(2),
                 rarity: Int(row.int(3)),
                 slots: Self.decodeSlots(row.string(4)),
-                skills: weaponSkills[row.int(0)] ?? [:]))
+                skills: weaponSkills[row.int(0)] ?? [:],
+                attackRaw: Int(row.int(5)), affinity: Int(row.int(6))))
         }
         self.weapons = weapons
 

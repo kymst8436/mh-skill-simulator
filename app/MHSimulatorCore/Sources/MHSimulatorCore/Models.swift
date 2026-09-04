@@ -108,14 +108,23 @@ public struct Weapon: Sendable {
     public let rarity: Int
     public let slots: [Int]
     public let skills: [SkillId: Int]
+    /// 基礎攻撃力(武器係数なし。bundled.db Weapon.attackRaw。装備比較F-11で使用。2026-09-04追加)
+    public let attackRaw: Int
+    /// 会心率(%)。bundled.db Weapon.affinity
+    public let affinity: Int
 
-    public init(id: Int64, kind: String, name: String, rarity: Int, slots: [Int], skills: [SkillId: Int]) {
+    public init(
+        id: Int64, kind: String, name: String, rarity: Int, slots: [Int], skills: [SkillId: Int],
+        attackRaw: Int = 0, affinity: Int = 0
+    ) {
         self.id = id
         self.kind = kind
         self.name = name
         self.rarity = rarity
         self.slots = slots
         self.skills = skills
+        self.attackRaw = attackRaw
+        self.affinity = affinity
     }
 }
 
@@ -261,7 +270,26 @@ extension DecorationTarget: Codable {}
 extension Decoration: Codable {}
 extension Charm.Source: Codable {}
 extension Charm: Codable {}
-extension Weapon: Codable {}
+extension Weapon: Codable {
+    private enum CodingKeys: String, CodingKey {
+        case id, kind, name, rarity, slots, skills, attackRaw, affinity
+    }
+
+    /// attackRaw/affinityは2026-09-04追加。それ以前に保存したマイセットのスナップショットには
+    /// キーが無いため0として読む(表示時は武器IDでマスタを再参照する)
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(
+            id: try c.decode(Int64.self, forKey: .id),
+            kind: try c.decode(String.self, forKey: .kind),
+            name: try c.decode(String.self, forKey: .name),
+            rarity: try c.decode(Int.self, forKey: .rarity),
+            slots: try c.decode([Int].self, forKey: .slots),
+            skills: try c.decode([SkillId: Int].self, forKey: .skills),
+            attackRaw: try c.decodeIfPresent(Int.self, forKey: .attackRaw) ?? 0,
+            affinity: try c.decodeIfPresent(Int.self, forKey: .affinity) ?? 0)
+    }
+}
 extension DecorationAssignment.SlotOwner: Codable {}
 extension DecorationAssignment: Codable {}
 extension EquipmentSet: Codable {}
