@@ -1,0 +1,224 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #D9A036; } a:hover { color: #E8B95A; }
+    .mincho { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
+    .sep { height: 1px; background: #2A2620; margin-left: 16px; }
+    .seclabel { font-size: 12px; letter-spacing: 1px; color: #6F675A; padding: 0 32px; margin: 20px 0 7px 0; }
+    .card { background: #1E1B14; border: 1px solid #3A342A; border-radius: 2px; }
+    .row { display: flex; align-items: center; min-height: 48px; padding: 0 16px; gap: 10px; }
+    .label { flex-grow: 1; font-size: 16px; color: #EDE6D4; }
+    .field { min-width: 72px; text-align: right; font-size: 16px; color: #EDE6D4; padding: 6px 0; }
+    .unit { font-size: 15px; color: #A89F87; }
+    .step { width: 30px; height: 30px; border: 1px solid #3A342A; border-radius: 2px; display: flex; align-items: center; justify-content: center; color: #A89F87; font-size: 16px; }
+    .kind { font-size: 11px; padding: 1px 5px; border: 1px solid #3A342A; border-radius: 2px; color: #A89F87; }
+    .kind-w { border-color: #8A6F30; color: #E3C87F; }
+    .toggle { width: 44px; height: 26px; border-radius: 13px; background: #3A342A; position: relative; flex-shrink: 0; }
+    .toggle.on { background: #D9A036; }
+    .knob { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 10px; background: #EDE6D4; }
+    .toggle.on .knob { left: 21px; background: #1A1204; }
+    .badge { font-size: 10px; padding: 1px 5px; background: rgba(217,160,54,0.10); color: #E3C87F; border-radius: 2px; white-space: nowrap; }
+    .col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 12px 12px; }
+    .colhead { font-size: 12px; letter-spacing: 1px; color: #6F675A; display: flex; justify-content: space-between; align-items: baseline; }
+    .eq { display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 1.3; color: #EDE6D4; }
+    .cell { flex: 1 1 0; min-width: 0; font-size: 14px; color: #EDE6D4; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+    .stat { display: flex; justify-content: space-between; font-size: 13px; color: #A89F87; }
+  </style>
+</helmet>
+<div style="width: 390px; height: 1700px; background: #14120D; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="background: #191712; border-bottom: 1px solid #3A342A; padding: 14px 16px 10px 16px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="width: 64px; display: flex; align-items: center;"><svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M9 1L2 9l7 8" stroke="#D9A036" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+    <div style="display: flex; align-items: center; gap: 7px;">
+      <svg width="8" height="8" viewBox="0 0 10 10"><rect x="2" y="2" width="6" height="6" transform="rotate(45 5 5)" fill="#D9A036"></rect></svg>
+      <div class="mincho" style="font-size: 17px; font-weight: 600; color: #E8D9A8; letter-spacing: 1.5px;">装備比較</div>
+    </div>
+    <div style="width: 64px;"></div>
+  </div>
+  <div style="height: 50px; background: #191712; border-bottom: 1px dashed #3A342A; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #6F675A;">広告バナー(ツールタブ用ユニット)</div>
+
+  <div style="flex-grow: 1; overflow: hidden;">
+    <div class="seclabel">対象装備</div>
+    <div class="card" style="margin: 0 16px; display: flex; align-items: stretch;">
+    <div class="col">
+      <div class="colhead"><span>ベース</span><span style="font-size: 12px; letter-spacing: 0; color: #D9A036;">変更</span></div>
+      <div style="font-size: 15px; font-weight: 600; color: #EDE6D4; margin-bottom: 2px;">会心特化</div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 20l9-9M13 11l6-6 1 3-6 6z" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path><path d="M9 15l-2 2M6 14l4 4" stroke="#A89F87" stroke-width="1.8" stroke-linecap="round"></path></svg><div style="min-width: 0;">暁光の断剣</div></div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 13a7 7 0 0 1 14 0v6H5z" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path><path d="M5 15h14" stroke="#A89F87" stroke-width="1.8"></path></svg><div style="min-width: 0;">レダゼルトヘルムα</div></div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 4h10l3 5-2 11H6L4 9z" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path><path d="M9 4v4h6V4" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path></svg><div style="min-width: 0;">ゴアメイルβ</div></div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 4h8v9l-2 7H10l-2-7z" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path><path d="M8 11h8" stroke="#A89F87" stroke-width="1.8"></path></svg><div style="min-width: 0;">ダハディアームβ</div></div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 8h14l-1 10H6z" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path><path d="M10 8v3h4V8" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path></svg><div style="min-width: 0;">レダゼルトコイルα</div></div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 4h10v6l-2 10h-3l-1-8-1 8H8L7 10z" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path></svg><div style="min-width: 0;">ゴアグリーヴβ</div></div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="14" r="6" stroke="#A89F87" stroke-width="1.8"></circle><path d="M9.5 5.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.7" stroke="#A89F87" stroke-width="1.8" stroke-linecap="round"></path></svg><div style="min-width: 0;">見切りの護石Ⅲ</div></div>
+    </div>
+      <div style="width: 1px; background: #2A2620;"></div>
+    <div class="col">
+      <div class="colhead"><span>比較</span><span style="font-size: 12px; letter-spacing: 0; color: #D9A036;">変更</span></div>
+      <div style="font-size: 15px; font-weight: 600; color: #EDE6D4; margin-bottom: 2px;">攻撃特化</div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 20l9-9M13 11l6-6 1 3-6 6z" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path><path d="M9 15l-2 2M6 14l4 4" stroke="#A89F87" stroke-width="1.8" stroke-linecap="round"></path></svg><div style="min-width: 0;">暁光の断剣</div></div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 13a7 7 0 0 1 14 0v6H5z" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path><path d="M5 15h14" stroke="#A89F87" stroke-width="1.8"></path></svg><div style="min-width: 0;">アルシュヘルムα</div></div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 4h10l3 5-2 11H6L4 9z" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path><path d="M9 4v4h6V4" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path></svg><div style="min-width: 0;">ダハディメイルβ</div></div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 4h8v9l-2 7H10l-2-7z" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path><path d="M8 11h8" stroke="#A89F87" stroke-width="1.8"></path></svg><div style="min-width: 0;">レダゼルトアームα</div></div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 8h14l-1 10H6z" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path><path d="M10 8v3h4V8" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path></svg><div style="min-width: 0;">ダハディコイルβ</div></div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 4h10v6l-2 10h-3l-1-8-1 8H8L7 10z" stroke="#A89F87" stroke-width="1.8" stroke-linejoin="round"></path></svg><div style="min-width: 0;">アルシュグリーヴβ</div></div>
+      <div class="eq"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="14" r="6" stroke="#A89F87" stroke-width="1.8"></circle><path d="M9.5 5.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.7" stroke="#A89F87" stroke-width="1.8" stroke-linecap="round"></path></svg><div style="min-width: 0;">攻撃の護石Ⅲ</div></div>
+    </div>
+    </div>
+
+    <div class="seclabel">期待値</div>
+    <div class="card" style="margin: 0 16px; display: flex; align-items: stretch;">
+    <div class="col">
+      <div style="font-size: 12px; letter-spacing: 1px; color: #6F675A;">会心込み攻撃力</div>
+      <div style="display: flex; align-items: baseline; gap: 8px;"><div class="mincho" style="font-size: 28px; font-weight: 600; color: #EDE6D4; line-height: 1.15;">259.9</div></div>
+      <div class="stat"><span>攻撃力</span><span style="color: #EDE6D4;">230</span></div>
+      <div class="stat"><span>会心率</span><span style="color: #EDE6D4;">42%</span></div>
+      <div class="stat"><span>会心倍率</span><span style="color: #EDE6D4;">×1.31</span></div>
+    </div>
+      <div style="width: 1px; background: #2A2620;"></div>
+    <div class="col">
+      <div style="font-size: 12px; letter-spacing: 1px; color: #6F675A;">会心込み攻撃力</div>
+      <div style="display: flex; align-items: baseline; gap: 8px;"><div class="mincho" style="font-size: 28px; font-weight: 600; color: #EDE6D4; line-height: 1.15;">265.5</div><div style="display: flex; align-items: center; gap: 3px;"><svg width="10" height="10" viewBox="0 0 12 12"><path d="M6 1l5 10H1z" fill="#D9A036"></path></svg><span class="mincho" style="font-size: 14px; font-weight: 600; color: #D9A036;">+2.2%</span></div></div>
+      <div class="stat"><span>攻撃力</span><span style="color: #EDE6D4;">240</span></div>
+      <div class="stat"><span>会心率</span><span style="color: #EDE6D4;">38%</span></div>
+      <div class="stat"><span>会心倍率</span><span style="color: #EDE6D4;">×1.28</span></div>
+    </div>
+    </div>
+
+    <div class="seclabel">スキルの発動状態</div>
+    <div class="card" style="margin: 0 16px;">
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px;">
+        <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+          <div class="cell"><span>攻撃</span><span style="font-size: 10px; padding: 1px 5px; border: 1px solid #3A342A; border-radius: 2px; color: #A89F87; white-space: nowrap;">常時発動</span></div>
+          <div style="font-size: 12px; color: #6F675A;">会心特化 Lv3 ・ 攻撃特化 Lv5</div>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px;">
+        <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+          <div class="cell"><span>見切り</span><span style="font-size: 10px; padding: 1px 5px; border: 1px solid #3A342A; border-radius: 2px; color: #A89F87; white-space: nowrap;">常時発動</span></div>
+          <div style="font-size: 12px; color: #6F675A;">会心特化 Lv3 ・ 攻撃特化 Lv2</div>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px;">
+        <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+          <div class="cell"><span>超会心</span><span style="font-size: 10px; padding: 1px 5px; border: 1px solid #3A342A; border-radius: 2px; color: #A89F87; white-space: nowrap;">常時発動</span></div>
+          <div style="font-size: 12px; color: #6F675A;">会心特化 Lv2 ・ 攻撃特化 Lv1</div>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px;">
+        <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+          <div class="cell"><span>弱点特効</span><span class="badge">発動中</span></div>
+          <div style="font-size: 12px; color: #6F675A;">会心特化 Lv3 ・ 攻撃特化 Lv3</div>
+        </div>
+        <div class="toggle on"><div class="knob"></div></div>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px;">
+        <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+          <div class="cell"><span>傷口(弱点特効)</span></div>
+          
+        </div>
+        <div class="toggle"><div class="knob"></div></div>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px;">
+        <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+          <div class="cell"><span>挑戦者</span></div>
+          <div style="font-size: 12px; color: #6F675A;">会心特化 — ・ 攻撃特化 Lv3</div>
+        </div>
+        <div class="toggle"><div class="knob"></div></div>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px;">
+        <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+          <div class="cell"><span>渾身</span></div>
+          <div style="font-size: 12px; color: #6F675A;">会心特化 Lv2 ・ 攻撃特化 —</div>
+        </div>
+        <div class="toggle"><div class="knob"></div></div>
+      </div>
+    </div>
+
+    <div class="seclabel">その他の状態</div>
+    <div class="card" style="margin: 0 16px;">
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 16px;">
+        <div class="cell"><span>力の護符</span><span class="badge">発動中</span></div>
+        <div class="toggle on"><div class="knob"></div></div>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 16px;">
+        <div class="cell"><span>鬼人の粉塵</span></div>
+        <div class="toggle"><div class="knob"></div></div>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 16px;">
+        <div class="cell" style="flex: 0 0 auto;"><span>鬼人薬</span><svg width="10" height="7" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="#6F675A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+        <div class="cell" style="justify-content: flex-end; color: #EDE6D4;"><span>鬼人薬グレート</span><span class="badge">発動中</span></div>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 16px;">
+        <div class="cell" style="flex: 0 0 auto;"><span>怪力の種・丸薬</span><svg width="10" height="7" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="#6F675A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+        <div class="cell" style="justify-content: flex-end; color: #6F675A;"><span>なし</span></div>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 16px;">
+        <div class="cell" style="flex: 0 0 auto;"><span>お食事ムラ気術</span><svg width="10" height="7" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="#6F675A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+        <div class="cell" style="justify-content: flex-end; color: #6F675A;"><span>なし</span></div>
+      </div>
+      <div class="sep"></div>
+      <div class="row">
+        <div class="label">その他の攻撃力加算</div>
+        <div class="field">0</div>
+        
+      </div>
+      <div class="sep"></div>
+      <div class="row">
+        <div class="label">その他の会心率加算</div>
+        <div class="field">0</div>
+        <div class="unit">%</div>
+      </div>
+    </div>
+    <div style="font-size: 12px; line-height: 1.5; color: #6F675A; padding: 0 32px; margin-top: 7px;">装衣・狩猟笛・未計上スキルの分</div>
+    <div style="font-size: 12px; line-height: 1.5; color: #6F675A; padding: 0 32px; margin: 6px 0 20px 0;">物理のみ。属性・斬れ味・肉質・モーション値は比較に影響しないため含めていません</div>
+  </div>
+
+  <div style="background: #191712; border-top: 1px solid #3A342A; display: flex; padding: 6px 0 14px 0;">
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="#6F675A" stroke-width="2"></circle><path d="M15.5 15.5L21 21" stroke="#6F675A" stroke-width="2" stroke-linecap="round"></path></svg>
+      <div style="font-size: 10px; color: #6F675A;">検索</div>
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M7 4h10l3 5-2 11H6L4 9z" stroke="#6F675A" stroke-width="2" stroke-linejoin="round"></path><path d="M9 4v4h6V4" stroke="#6F675A" stroke-width="2" stroke-linejoin="round"></path></svg>
+      <div style="font-size: 10px; color: #6F675A;">マイセット</div>
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="14" r="6" stroke="#6F675A" stroke-width="2"></circle><path d="M9.5 5.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.7" stroke="#6F675A" stroke-width="2" stroke-linecap="round"></path></svg>
+      <div style="font-size: 10px; color: #6F675A;">護石</div>
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M14.5 6.5a3.5 3.5 0 0 0 4.2 4.2L21 13l-2 2-2.3-2.3-8.2 8.2-2.4-2.4 8.2-8.2L12 8l2.5-1.5z" stroke="#D9A036" stroke-width="2" stroke-linejoin="round"></path><path d="M4 4l4 4" stroke="#D9A036" stroke-width="2" stroke-linecap="round"></path></svg>
+      <div style="font-size: 10px; color: #D9A036;">ツール</div>
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#6F675A" stroke-width="2"></circle><path d="M12 11v5" stroke="#6F675A" stroke-width="2" stroke-linecap="round"></path><circle cx="12" cy="8" r="1.2" fill="#6F675A"></circle></svg>
+      <div style="font-size: 10px; color: #6F675A;">情報</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":1700}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

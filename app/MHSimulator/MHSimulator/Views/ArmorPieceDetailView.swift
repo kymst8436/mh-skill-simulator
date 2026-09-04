@@ -102,10 +102,7 @@ struct ArmorPieceDetailView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 10) {
                     RarityBadge(rarity: master.armorSeries[piece.seriesId]?.rarity ?? 0)
-                    Image(MHFormat.pieceIconName(piece.kind))
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 22, height: 22)
+                    GearIcon(assetName: MHFormat.pieceIconName(piece.kind), rarity: master.armorSeries[piece.seriesId]?.rarity, size: 22)
                         .accessibilityLabel(MHFormat.pieceLabel(piece.kind))
                     Text(piece.name)
                         .font(.system(size: 17, weight: .semibold))

@@ -357,7 +357,7 @@ extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
 
 /// アプリのタブ
 enum MHTab: Hashable {
-    case search, mySets, charms, info
+    case search, mySets, charms, tools, info
 }
 
 /// 自作タブバー(全幅フラット。OS標準TabBarは使わない。DESIGN.md §4)
@@ -375,6 +375,7 @@ struct MHTabBar: View {
             item(.search, icon: .system("magnifyingglass"), label: String(localized: "検索"))
             item(.mySets, icon: .asset(MHFormat.pieceIconName(.chest)), label: String(localized: "マイセット"))
             item(.charms, icon: .asset(MHFormat.charmIconName), label: String(localized: "護石"))
+            item(.tools, icon: .system("wrench.and.screwdriver"), label: String(localized: "ツール"))
             item(.info, icon: .system("info.circle"), label: String(localized: "情報"))
         }
         .padding(.top, 7)
@@ -396,10 +397,8 @@ struct MHTabBar: View {
                         Image(systemName: name)
                             .font(.system(size: 20, weight: .regular))
                     case .asset(let name):
-                        Image(name)
-                            .renderingMode(.template)
-                            .resizable()
-                            .scaledToFit()
+                        // 柄(2トーン)を残し、選択中だけアクセント色で着色(2026-09-04)
+                        GearIcon(assetName: name, tint: selection == tab ? Color.mhAccent : nil, size: 24)
                     }
                 }
                 .frame(width: 24, height: 24)
@@ -409,6 +408,40 @@ struct MHTabBar: View {
             .foregroundStyle(selection == tab ? Color.mhAccent : Color.mhTextTertiary)
             .frame(maxWidth: .infinity, minHeight: 44)
         }
+    }
+}
+
+/// 装備アイコン(武器種・部位・護石のSVG)。2トーンの柄を保ったままレア度色で着色する(2026-09-04追加)。
+/// 色相・彩度だけをレア度色に置き換え(blendMode .color)、明度=SVGの濃淡を残す。rarityがnilなら原色のまま
+struct GearIcon: View {
+    let assetName: String
+    /// 着色(色相・彩度)。nilなら原色のまま
+    var tint: Color? = nil
+    var size: CGFloat = 26
+
+    init(assetName: String, tint: Color? = nil, size: CGFloat = 26) {
+        self.assetName = assetName
+        self.tint = tint
+        self.size = size
+    }
+
+    /// レア度色で着色(レア度不明なら原色)
+    init(assetName: String, rarity: Int?, size: CGFloat = 26) {
+        self.init(assetName: assetName, tint: rarity.map(Color.mhRarity), size: size)
+    }
+
+    var body: some View {
+        let image = Image(assetName).resizable().scaledToFit()
+        Group {
+            if let tint {
+                image
+                    .overlay(tint.blendMode(.color))
+                    .mask(image)
+            } else {
+                image
+            }
+        }
+        .frame(width: size, height: size)
     }
 }
 

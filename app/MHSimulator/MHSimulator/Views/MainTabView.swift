@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// 4タブ構成(画面設計§2)。タブバーは自作MHTabBar(DESIGN.md §4)
+/// 5タブ構成(画面設計§2。2026-09-04: ツールタブ追加)。タブバーは自作MHTabBar(DESIGN.md §4)
 struct MainTabView: View {
     let dependencies: AppDependencies
     @State private var selection: MHTab = .search
@@ -27,6 +27,10 @@ struct MainTabView: View {
 
                 CharmListView(dependencies: dependencies)
                     .tag(MHTab.charms)
+                    .toolbar(.hidden, for: .tabBar)
+
+                ToolListView(dependencies: dependencies)
+                    .tag(MHTab.tools)
                     .toolbar(.hidden, for: .tabBar)
 
                 InfoView(dependencies: dependencies)
