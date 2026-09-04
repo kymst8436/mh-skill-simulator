@@ -1,206 +1,6 @@
 {
   "sourceLanguage": "ja",
   "strings": {
-    "この条件では装備を組めません": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Ausrüstung erfüllt diese Bedingungen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No equipment can meet these conditions"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ningún equipo puede cumplir estas condiciones"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aucun équipement ne peut remplir ces conditions"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이 조건으로는 장비를 조합할 수 없습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Não é possível montar um equipamento com estas condições"
-          }
-        }
-      }
-    },
-    "シリーズ・グループスキルの発動に必要な部位数が防具の上限を超えています(必要%lld・最大%lld)": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Set-/Gruppenfertigkeiten erfordern mehr Rüstungsteile als möglich (benötigt: %1$lld, max.: %2$lld)"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "These set bonus/group skills need %1$lld armor pieces, but the max is %2$lld"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Las habilidades de conjunto/grupo requieren más piezas de armadura de las permitidas (necesarias: %1$lld, máx.: %2$lld)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trop de pièces requises pour activer les talents de set/groupe (requis : %1$lld, max. : %2$lld)"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "시리즈·그룹 스킬 발동에 필요한 부위 수가 방어구 상한을 초과했습니다(필요 %1$lld·최대 %2$lld)"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "As peças necessárias para ativar as habilidades de conjunto/grupo excedem o limite de peças (necessárias: %1$lld, máx.: %2$lld)"
-          }
-        }
-      }
-    },
-    "武器スキルの合計Lv%lldが、武器スロットと護石で賄える上限Lv%lldを超えています": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waffenfertigkeiten (gesamt Lv%1$lld) übersteigen das Limit von Lv%2$lld aus Waffen-Slots und einem Talisman"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Weapon skills total Lv%1$lld, but weapon slots and a charm can only cover up to Lv%2$lld"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Las habilidades de arma suman Nv. %1$lld y superan el límite de Nv. %2$lld que pueden cubrir los huecos del arma y un amuleto"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Le total des talents d'arme (Niv. %1$lld) dépasse le maximum (Niv. %2$lld) couvert par les emplacements de l'arme et un talisman"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "무기 스킬 합계(Lv%1$lld)가 무기 슬롯과 호석으로 채울 수 있는 상한(Lv%2$lld)을 초과했습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "As habilidades de arma somam Nv. %1$lld e excedem o limite de Nv. %2$lld que os slots da arma e um amuleto podem cobrir"
-          }
-        }
-      }
-    },
-    "不足分(武器スキルLv%lld・防具スキルLv%lld)は護石1個では補えません": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ein einzelner Talisman kann die fehlenden Stufen (Waffe Lv%1$lld, Rüstung Lv%2$lld) nicht abdecken"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A single charm can't cover the shortfall (weapon skills Lv%1$lld, armor skills Lv%2$lld)"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Un solo amuleto no puede cubrir lo que falta (habilidades de arma Nv. %1$lld, habilidades de armadura Nv. %2$lld)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Un seul talisman ne suffit pas à combler le manque (talents d'arme Niv. %1$lld, talents d'armure Niv. %2$lld)"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "부족분(무기 스킬 Lv%1$lld·방어구 스킬 Lv%2$lld)은 호석 1개로는 채울 수 없습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Um único amuleto não pode cobrir o que falta (habilidades de arma Nv. %1$lld, habilidades de armadura Nv. %2$lld)"
-          }
-        }
-      }
-    },
-    "": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ""
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ""
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ""
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ""
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ""
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ""
-          }
-        }
-      }
-    },
     " ほか": {
       "localizations": {
         "de": {
@@ -607,6 +407,47 @@
         }
       }
     },
+    "%@(%@)": {
+      "comment": "スキル名(条件)",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ (%2$@)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ (%2$@)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ (%2$@)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ (%2$@)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@(%2$@)"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ (%2$@)"
+          }
+        }
+      }
+    },
     "%@Lv%lld": {
       "comment": "スキル名+レベルの併記(例: 攻撃Lv3)",
       "localizations": {
@@ -656,10 +497,10 @@
     },
     "%@の珠【%lld】いずれか": {
       "localizations": {
-        "ja": {
+        "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@の珠【%2$lld】いずれか"
+            "value": "Beliebiges Juwel mit %1$@ [%2$lld]"
           }
         },
         "en": {
@@ -668,34 +509,34 @@
             "value": "Any %1$@ jewel [%2$lld]"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "N'importe quel joyau avec %1$@ [%2$lld]"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Beliebiges Juwel mit %1$@ [%2$lld]"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Cualquier joya con %1$@ [%2$lld]"
           }
         },
-        "pt-BR": {
+        "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Qualquer joia com %1$@ [%2$lld]"
+            "value": "N'importe quel joyau avec %1$@ [%2$lld]"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@の珠【%2$lld】いずれか"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ 장식품【%2$lld】 중 하나"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qualquer joia com %1$@ [%2$lld]"
           }
         }
       }
@@ -914,6 +755,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld/%2$lld peças"
+          }
+        }
+      }
+    },
+    "%lld%%(上限)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld %% (max.)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%% (capped)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld %% (máx.)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld %% (max)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%%(상한)"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%% (máx.)"
           }
         }
       }
@@ -1406,6 +1287,210 @@
           "stringUnit": {
             "state": "translated",
             "value": "★ Condição"
+          }
+        }
+      }
+    },
+    "1回": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1×"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "once"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 vez"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 fois"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1회"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 vez"
+          }
+        }
+      }
+    },
+    "2つのマイセットを並べて、怒り・有効部位などの状態やアイテム効果ごとの期待値を比較": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwei Sets nebeneinander vergleichen: erwarteter Schaden je nach Zustand (wütend, Schwachpunkt usw.) und Item-Effekten"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compare two sets side by side: expected damage by state (enraged, weak points, etc.) and item effects"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compara dos conjuntos: daño esperado según el estado (enfurecido, puntos débiles, etc.) y los objetos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparez deux sets côte à côte : dégâts attendus selon l'état (rage, points faibles, etc.) et les objets"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "마이 세트 2개를 나란히 놓고 분노·유효 부위 등의 상태와 아이템 효과별 기대치를 비교"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compare dois conjuntos lado a lado: dano esperado por estado (enfurecido, pontos fracos etc.) e itens"
+          }
+        }
+      }
+    },
+    "2回": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2×"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "twice"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 veces"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 fois"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2회"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 vezes"
+          }
+        }
+      }
+    },
+    "4発目以降": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ab dem 4. Schuss"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4th shot onward"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "desde el 4.º disparo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "à partir du 4e tir"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4발째 이후"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a partir do 4.º tiro"
+          }
+        }
+      }
+    },
+    "5回継続後": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nach 5 Treffern in Folge"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "after 5 hits"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tras 5 golpes"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "après 5 coups consécutifs"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5회 연속 적중 후"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "após 5 acertos"
           }
         }
       }
@@ -2010,6 +2095,46 @@
         }
       }
     },
+    "アイテム・食事": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Items & Mahlzeiten"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Items & Meals"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Objetos y comidas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Objets et repas"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아이템·식사"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Itens e refeições"
+          }
+        }
+      }
+    },
     "アプリの再インストールをお試しください": {
       "localizations": {
         "de": {
@@ -2210,6 +2335,46 @@
         }
       }
     },
+    "お問合せ": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kontakt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contact Us"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contacto"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nous contacter"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문의하기"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fale conosco"
+          }
+        }
+      }
+    },
     "お支払いは1回のみです(買い切り)": {
       "localizations": {
         "de": {
@@ -2246,6 +2411,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pagamento único (compra vitalícia)"
+          }
+        }
+      }
+    },
+    "お食事ムラ気術": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Willkür-Mahlzeit"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caprice Meal"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menú de capricho"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repas caprice"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "식사 변덕술"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refeição Capricho"
+          }
+        }
+      }
+    },
+    "お食事ムラ気術【大】": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Willkür-Mahlzeit II"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caprice Meal (Hi)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menú de capricho II"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repas caprice +"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "식사 변덕술【대】"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refeição Capricho (Sup)"
+          }
+        }
+      }
+    },
+    "お食事ムラ気術【小】": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Willkür-Mahlzeit I"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caprice Meal (Lo)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menú de capricho I"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repas caprice"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "식사 변덕술【소】"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refeição Capricho (Inf)"
           }
         }
       }
@@ -2772,6 +3057,46 @@
         }
       }
     },
+    "この条件では装備を組めません": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Ausrüstung erfüllt diese Bedingungen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No equipment can meet these conditions"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ningún equipo puede cumplir estas condiciones"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun équipement ne peut remplir ces conditions"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 조건으로는 장비를 조합할 수 없습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não é possível montar um equipamento com estas condições"
+          }
+        }
+      }
+    },
     "この構成で設定": {
       "localizations": {
         "de": {
@@ -2972,6 +3297,47 @@
         }
       }
     },
+    "ジャストガード後": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nach perfekter Blockung"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "after Perfect Guard"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tras una guardia perfecta"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "après une garde parfaite"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "저스트 가드 후"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "após bloqueio perfeito"
+          }
+        }
+      }
+    },
     "シリーズ": {
       "comment": "スキル分類",
       "localizations": {
@@ -3013,6 +3379,46 @@
         }
       }
     },
+    "シリーズ・グループスキルの発動に必要な部位数が防具の上限を超えています(必要%lld・最大%lld)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set-/Gruppenfertigkeiten erfordern mehr Rüstungsteile als möglich (benötigt: %1$lld, max.: %2$lld)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These set bonus/group skills need %1$lld armor pieces, but the max is %2$lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las habilidades de conjunto/grupo requieren más piezas de armadura de las permitidas (necesarias: %1$lld, máx.: %2$lld)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trop de pièces requises pour activer les talents de set/groupe (requis : %1$lld, max. : %2$lld)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시리즈·그룹 스킬 발동에 필요한 부위 수가 방어구 상한을 초과했습니다(필요 %1$lld·최대 %2$lld)"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As peças necessárias para ativar as habilidades de conjunto/grupo excedem o limite de peças (necessárias: %1$lld, máx.: %2$lld)"
+          }
+        }
+      }
+    },
     "シリーズスキル(1部位分として加算)": {
       "localizations": {
         "de": {
@@ -3049,6 +3455,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Habilidade de conjunto (conta como uma peça)"
+          }
+        }
+      }
+    },
+    "スキップ": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Überspringen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Omitir"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorer"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "건너뛰기"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pular"
           }
         }
       }
@@ -3533,6 +3979,47 @@
         }
       }
     },
+    "スタミナ満タン": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "volle Ausdauer"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "full stamina"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "resistencia llena"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "endurance pleine"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "스태미나 최대"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vigor cheio"
+          }
+        }
+      }
+    },
     "すべて": {
       "localizations": {
         "de": {
@@ -3649,6 +4136,47 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mostrar tudo"
+          }
+        }
+      }
+    },
+    "スライディング後": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nach dem Rutschen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "after sliding"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tras deslizarse"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "après une glissade"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "슬라이딩 후"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "após deslizar"
           }
         }
       }
@@ -3934,6 +4462,86 @@
         }
       }
     },
+    "その他の会心率加算": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonstiger Affinitätsbonus"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other affinity bonus"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otros bonus de afinidad"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autres bonus d'affinité"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기타 회심률 가산"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outro bônus de afinidade"
+          }
+        }
+      }
+    },
+    "その他の攻撃力加算": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonstiger Angriffsbonus"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other attack bonus"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otros bonus de ataque"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autres bonus d'attaque"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기타 공격력 가산"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outro bônus de ataque"
+          }
+        }
+      }
+    },
     "タップすると条件に追加して再検索します": {
       "localizations": {
         "de": {
@@ -3970,6 +4578,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Toque para adicionar às condições e buscar novamente"
+          }
+        }
+      }
+    },
+    "ダメージ": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schaden"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Damage"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daño"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dégâts"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "대미지"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dano"
           }
         }
       }
@@ -4011,6 +4659,86 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lâmina Carregada"
+          }
+        }
+      }
+    },
+    "ツール": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tools"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tools"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Herramientas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outils"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "도구"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ferramentas"
+          }
+        }
+      }
+    },
+    "ツールは今後追加していきます": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weitere Tools folgen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More tools are on the way"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Habrá más herramientas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "D'autres outils arriveront prochainement"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "도구는 앞으로 추가될 예정입니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mais ferramentas em breve"
           }
         }
       }
@@ -4171,6 +4899,47 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nenhum"
+          }
+        }
+      }
+    },
+    "ニアー": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nah"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Near"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proche"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "근거리"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perto"
           }
         }
       }
@@ -4336,6 +5105,47 @@
         }
       }
     },
+    "ファー": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fern"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Far"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remota"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loin"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원거리"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Longe"
+          }
+        }
+      }
+    },
     "フィルター": {
       "localizations": {
         "de": {
@@ -4412,6 +5222,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "Política de privacidade"
+          }
+        }
+      }
+    },
+    "ベース": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Basis"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Base"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Base"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Base"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "베이스"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Base"
+          }
+        }
+      }
+    },
+    "ベースとなる装備を選ぶ": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Basis-Set wählen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose the base set"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige el conjunto base"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez le set de base"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "베이스 장비를 선택"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha o conjunto base"
+          }
+        }
+      }
+    },
+    "ベースに選んだ装備は選べません": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Basis-Set kann hier nicht gewählt werden"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The base set can't be selected here"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El conjunto base no se puede seleccionar aquí"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le set de base ne peut pas être sélectionné ici"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "베이스로 선택한 장비는 선택할 수 없습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O conjunto base não pode ser selecionado aqui"
           }
         }
       }
@@ -5099,6 +6029,46 @@
         }
       }
     },
+    "レア5・6防具のスロットが拡張された状態で検索します": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sucht mit erweiterten Slots für Rüstungen der Seltenheit 5–6."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searches with the decoration slots of rarity 5–6 armor expanded."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Busca suponiendo que las ranuras de las armaduras de rareza 5 y 6 están ampliadas."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recherche avec les emplacements renforcés des armures de rareté 5 et 6."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "레어 5·6 방어구의 슬롯이 확장된 상태로 검색합니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A busca considera as armaduras de raridade 5 e 6 com os slots expandidos."
+          }
+        }
+      }
+    },
     "レア度": {
       "localizations": {
         "de": {
@@ -5255,6 +6225,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Raridade (decrescente)"
+          }
+        }
+      }
+    },
+    "レビューを書く": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rezension schreiben"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Write a Review"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escribir una reseña"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rédiger un avis"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "리뷰 작성"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escrever avaliação"
           }
         }
       }
@@ -5419,6 +6429,86 @@
         }
       }
     },
+    "不足分(武器スキルLv%lld・防具スキルLv%lld)は護石1個では補えません": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein einzelner Talisman kann die fehlenden Stufen (Waffe Lv%1$lld, Rüstung Lv%2$lld) nicht abdecken"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A single charm can't cover the shortfall (weapon skills Lv%1$lld, armor skills Lv%2$lld)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un solo amuleto no puede cubrir lo que falta (habilidades de arma Nv. %1$lld, habilidades de armadura Nv. %2$lld)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un seul talisman ne suffit pas à combler le manque (talents d'arme Niv. %1$lld, talents d'armure Niv. %2$lld)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "부족분(무기 스킬 Lv%1$lld·방어구 스킬 Lv%2$lld)은 호석 1개로는 채울 수 없습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um único amuleto não pode cobrir o que falta (habilidades de arma Nv. %1$lld, habilidades de armadura Nv. %2$lld)"
+          }
+        }
+      }
+    },
+    "両立しないため%@がOFFになります": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ wird deaktiviert, da nicht kombinierbar"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ will be turned off since both can't be active at once"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ se desactivará porque no es compatible"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ sera désactivé, car incompatible"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "양립할 수 없으므로 %@이(가) OFF가 됩니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ será desativado por ser incompatível"
+          }
+        }
+      }
+    },
     "並び替え": {
       "localizations": {
         "de": {
@@ -5495,6 +6585,289 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aparece em amuletos desta raridade ou superior"
+          }
+        }
+      }
+    },
+    "会心倍率": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Krit.-Multiplikator"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crit multiplier"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Multiplicador de crítico"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Multiplicateur critique"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "회심 배율"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Multiplicador crítico"
+          }
+        }
+      }
+    },
+    "会心率": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Affinität"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Affinity"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afinidad"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Affinité"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "회심률"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afinidade"
+          }
+        }
+      }
+    },
+    "会心込み攻撃力": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Angriff inkl. Krit."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attack incl. crits"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ataque con críticos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attaque (critiques inclus)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "회심 포함 공격력"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ataque com críticos"
+          }
+        }
+      }
+    },
+    "体力わずか": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wenig HP"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "low health"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "salud muy baja"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vie très basse"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "체력 35% 이하"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vida baixa"
+          }
+        }
+      }
+    },
+    "体力減少": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HP reduziert"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "red health"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "salud reducida"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vie réduite"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "체력 감소"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vida reduzida"
+          }
+        }
+      }
+    },
+    "体力満タン": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "volle HP"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "full health"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "salud completa"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vie au max"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "체력 최대"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vida cheia"
+          }
+        }
+      }
+    },
+    "使用したい武器を選択します。": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wählen Sie die Waffe aus, die Sie verwenden möchten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select the weapon you want to use."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selecciona el arma que quieras usar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez l'arme que vous souhaitez utiliser."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "사용할 무기를 선택합니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selecione a arma que deseja usar."
           }
         }
       }
@@ -5615,6 +6988,47 @@
           "stringUnit": {
             "state": "translated",
             "value": "Salvo"
+          }
+        }
+      }
+    },
+    "傷口": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wunde"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wound"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "herida"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "blessure"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "상처"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ferimento"
           }
         }
       }
@@ -6179,6 +7593,46 @@
         }
       }
     },
+    "力の護符": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kraftamulett"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Powercharm"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Amuleto de poder"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Amulette de force"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "힘의 부적"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Amuleto do Poder"
+          }
+        }
+      }
+    },
     "双剣": {
       "comment": "武器種",
       "localizations": {
@@ -6216,6 +7670,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lâminas Duplas"
+          }
+        }
+      }
+    },
+    "同シリーズの防具": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rüstungen desselben Sets"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Armor in This Set"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Armaduras de la misma serie"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Armures de la même série"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "같은 시리즈의 방어구"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Armaduras do mesmo conjunto"
           }
         }
       }
@@ -6300,6 +7794,47 @@
         }
       }
     },
+    "吹き飛ばされた後": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nach Wegschleudern"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "after being knocked back"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tras ser derribado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "après avoir été projeté"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "날아간 후"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "após sofrer um empurrão"
+          }
+        }
+      }
+    },
     "商品情報を取得できませんでした。通信環境をご確認のうえ再度お試しください": {
       "localizations": {
         "de": {
@@ -6336,6 +7871,47 @@
           "stringUnit": {
             "state": "translated",
             "value": "Não foi possível obter as informações do produto. Verifique sua conexão e tente novamente"
+          }
+        }
+      }
+    },
+    "回避成功後": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nach erfolgreichem Ausweichen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "after a successful dodge"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tras esquivar con éxito"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "après une esquive réussie"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "회피 성공 후"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "após esquiva bem-sucedida"
           }
         }
       }
@@ -6380,6 +7956,46 @@
         }
       }
     },
+    "固定したい装備や、除外したい装備・装飾品がある場合は、こちらで検索設定を行います。": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn Sie bestimmte Ausrüstung fixieren oder Ausrüstung und Dekorationen ausschließen möchten, nutzen Sie hier die Sucheinstellungen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To pin certain equipment or exclude equipment and decorations, adjust the Search Settings here."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si quieres fijar ciertas piezas de equipo o excluir equipo y joyas, configúralo aquí en los ajustes de búsqueda."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour fixer certains équipements ou exclure des équipements et des joyaux, utilisez les réglages de recherche ici."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "고정하고 싶은 장비나 제외하고 싶은 장비·장식품이 있다면 여기에서 검색 설정을 할 수 있습니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se quiser fixar certos equipamentos ou excluir equipamentos e joias, ajuste aqui as configurações de busca."
+          }
+        }
+      }
+    },
     "固定する護石": {
       "localizations": {
         "de": {
@@ -6416,46 +8032,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Amuleto fixado"
-          }
-        }
-      }
-    },
-    "同シリーズの防具": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rüstungen desselben Sets"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Armor in This Set"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Armaduras de la misma serie"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Armures de la même série"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "같은 시리즈의 방어구"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Armaduras do mesmo conjunto"
           }
         }
       }
@@ -6500,6 +8076,46 @@
         }
       }
     },
+    "基礎攻撃力": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Basisangriff"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Base attack"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ataque base"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attaque de base"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기초 공격력"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ataque base"
+          }
+        }
+      }
+    },
     "報酬は3回分までスタックでき、最大24時間まで延長できます。": {
       "localizations": {
         "de": {
@@ -6536,6 +8152,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "As recompensas acumulam até 3 vezes, estendendo até 24 horas."
+          }
+        }
+      }
+    },
+    "変更": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändern"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cambiar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "변경"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alterar"
           }
         }
       }
@@ -6622,6 +8278,86 @@
         }
       }
     },
+    "完了": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fertig"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminé"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "완료"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concluído"
+          }
+        }
+      }
+    },
+    "対象装備": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausgewählte Sets"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selected Sets"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conjuntos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sets comparés"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "대상 장비"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conjuntos"
+          }
+        }
+      }
+    },
     "巨撃アーティア等、データ未収録の武器を仮定するための機能です": {
       "localizations": {
         "de": {
@@ -6698,6 +8434,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Anúncio"
+          }
+        }
+      }
+    },
+    "広告が煩わしい場合は、こちらから一定時間非表示にすることができます。": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falls die Anzeigen stören, können Sie sie hier vorübergehend ausblenden."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If the ads bother you, tap here to hide them for a while."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si los anuncios te molestan, puedes ocultarlos temporalmente desde aquí."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si les publicités vous dérangent, vous pouvez les masquer temporairement ici."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "광고가 거슬린다면 여기에서 일정 시간 동안 숨길 수 있습니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se os anúncios incomodarem, você pode ocultá-los temporariamente aqui."
           }
         }
       }
@@ -6903,6 +8679,167 @@
         }
       }
     },
+    "怒り中": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wütend"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "enraged"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "enfurecido"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "en rage"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "분노 중"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "enfurecido"
+          }
+        }
+      }
+    },
+    "怪力の丸薬": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Machtpille"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Might Pill"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Píldora de poder"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Philtre du diable"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "괴력의 환약"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pílula de Força"
+          }
+        }
+      }
+    },
+    "怪力の種": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Machtsamen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Might Seed"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Semilla de poder"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Graine de force"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "괴력씨앗"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grão de Força"
+          }
+        }
+      }
+    },
+    "怪力の種・丸薬": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Machtsamen/-pille"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Might Seed/Pill"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Semilla/Píldora de poder"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Graine/Philtre"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "괴력씨앗·환약"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grão/Pílula de Força"
+          }
+        }
+      }
+    },
     "情報": {
       "localizations": {
         "de": {
@@ -6943,6 +8880,46 @@
         }
       }
     },
+    "所持している護石を登録します。\nゲーム画面をカメラでスキャンすることでも登録できます。": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registrieren Sie Ihre Talismane.\nSie können sie auch registrieren, indem Sie den Spielbildschirm mit der Kamera scannen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Register the charms you own.\nYou can also register them by scanning the game screen with your camera."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registra los amuletos que tengas.\nTambién puedes registrarlos escaneando la pantalla del juego con la cámara."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrez les talismans que vous possédez.\nVous pouvez aussi les enregistrer en scannant l'écran de jeu avec l'appareil photo."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "소지한 호석을 등록합니다.\n게임 화면을 카메라로 스캔하여 등록할 수도 있습니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registre os amuletos que você possui.\nVocê também pode registrá-los escaneando a tela do jogo com a câmera."
+          }
+        }
+      }
+    },
     "所持護石": {
       "localizations": {
         "de": {
@@ -6979,6 +8956,47 @@
           "stringUnit": {
             "state": "translated",
             "value": "Amuletos obtidos"
+          }
+        }
+      }
+    },
+    "抜刀攻撃": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziehangriff"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "draw attack"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ataque al desenfundar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "attaque au dégainage"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "발도 공격"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ataque ao sacar"
           }
         }
       }
@@ -7144,6 +9162,46 @@
         }
       }
     },
+    "攻撃力": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Angriff"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attack"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ataque"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attaque"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "공격력"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ataque"
+          }
+        }
+      }
+    },
     "時間の都合で探索を打ち切ったため、他にも候補がある可能性があります": {
       "localizations": {
         "de": {
@@ -7264,6 +9322,87 @@
         }
       }
     },
+    "有効部位": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schwachpunkt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "weak point"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "punto débil"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "point faible"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "유효 부위"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ponto fraco"
+          }
+        }
+      }
+    },
+    "期待値": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erwartungswert"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expected Value"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valor esperado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valeur attendue"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기대치"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valor esperado"
+          }
+        }
+      }
+    },
     "未発動のシリーズ・グループスキル": {
       "localizations": {
         "de": {
@@ -7300,6 +9439,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Habilidades de conjunto/grupo não ativadas"
+          }
+        }
+      }
+    },
+    "未計上: %@。その他の攻撃力加算で入力できます": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht berücksichtigt: %@. Unter „Sonstiger Angriffsbonus“ eintragen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not included: %@. Enter it under Other attack bonus"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No incluido: %@. Introdúcelo en Otros bonus de ataque"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non pris en compte : %@. Saisissez-le dans Autres bonus d'attaque"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "미반영: %@. 기타 공격력 가산에 입력할 수 있습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não incluído: %@. Informe em “Outro bônus de ataque”"
           }
         }
       }
@@ -7420,6 +9599,86 @@
           "stringUnit": {
             "state": "translated",
             "value": "Este é um aplicativo não oficial feito por fãs, sem qualquer relação com a desenvolvedora e a publicadora do jogo ou suas afiliadas.\nOs direitos autorais do conteúdo derivado do jogo (dados, ícones etc.) pertencem aos seus respectivos detentores de direitos.\nCaso um detentor de direitos apresente uma reclamação, este aplicativo será prontamente retirado do ar."
+          }
+        }
+      }
+    },
+    "条件が複雑すぎるため、狙える護石を判定できませんでした。条件のスキルを減らすと判定できる場合があります": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Bedingungen sind zu komplex, um erhältliche Talismane zu bestimmen. Mit weniger Fertigkeiten ist die Prüfung eventuell möglich"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These conditions are too complex to determine which charms are obtainable. Removing some skills may allow the check to complete"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las condiciones son demasiado complejas para determinar los amuletos posibles. Quitar algunas habilidades podría permitir el análisis"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conditions trop complexes pour déterminer les talismans possibles. Retirer des talents peut permettre l'analyse"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "조건이 너무 복잡해서 노릴 수 있는 호석을 판정하지 못했습니다. 조건의 스킬을 줄이면 판정이 가능할 수 있습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As condições são complexas demais para determinar os amuletos que você pode obter. Remover algumas habilidades pode permitir a análise"
+          }
+        }
+      }
+    },
+    "条件が複雑なため探索の一部を打ち切りました。他にも候補がある可能性があります": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Teil der Suche wurde wegen der komplexen Bedingungen abgebrochen; es kann weitere Kandidaten geben"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Part of the search was cut short due to the complex conditions, so there may be more candidates"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parte de la búsqueda se ha interrumpido por la complejidad de las condiciones; puede haber más candidatos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une partie de la recherche a été interrompue en raison de la complexité des conditions ; il peut exister d'autres candidats"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "조건이 복잡하여 탐색을 일부 중단했으므로 다른 후보가 있을 수 있습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parte da busca foi interrompida pela complexidade das condições; pode haver mais candidatos"
           }
         }
       }
@@ -7580,6 +9839,86 @@
           "stringUnit": {
             "state": "translated",
             "value": "Buscar"
+          }
+        }
+      }
+    },
+    "検索して装備詳細からもう1つ保存すると比較できます": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche ein weiteres Set und speichere es über die Set-Details, um zu vergleichen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search and save one more set from Set Details to compare"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Busca y guarda otro conjunto desde el detalle del conjunto para compararlos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recherchez et enregistrez un autre set depuis le détail de l'équipement pour comparer"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "검색 후 장비 상세에서 하나 더 저장하면 비교할 수 있습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Busque e salve mais um conjunto em “Detalhes do conjunto” para comparar"
+          }
+        }
+      }
+    },
+    "検索して装備詳細から保存すると、ここで装備を比較できます": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche Sets und speichere sie über die Set-Details, um sie hier zu vergleichen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search and save sets from Set Details to compare them here"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Busca y guarda conjuntos desde el detalle del conjunto para compararlos aquí"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recherchez et enregistrez des sets depuis le détail de l'équipement pour les comparer ici"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "검색 후 장비 상세에서 저장하면 여기서 장비를 비교할 수 있습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Busque e salve conjuntos em “Detalhes do conjunto” para compará-los aqui"
           }
         }
       }
@@ -7984,6 +10323,86 @@
         }
       }
     },
+    "機能追加・改善要望・不具合報告はこちらから": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für Funktionswünsche, Verbesserungsvorschläge und Fehlerberichte"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send feature requests, improvement ideas, or bug reports"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solicitudes de funciones, sugerencias e informes de errores"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demandes de fonctionnalités, suggestions et signalements de bugs"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기능 추가·개선 요청 및 오류 신고는 아래에서"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envie sugestões de recursos, melhorias e relatos de problemas por aqui"
+          }
+        }
+      }
+    },
+    "次へ": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiter"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siguiente"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suivant"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avançar"
+          }
+        }
+      }
+    },
     "欲しいスキル": {
       "localizations": {
         "de": {
@@ -8020,6 +10439,86 @@
           "stringUnit": {
             "state": "translated",
             "value": "Habilidades desejadas"
+          }
+        }
+      }
+    },
+    "欲しいスキルを選択します。\nスキルを長押しすると対象スキルの詳細が確認できます。": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wählen Sie die gewünschten Fertigkeiten aus.\nHalten Sie eine Fertigkeit gedrückt, um Details anzuzeigen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select the skills you want.\nPress and hold a skill to view its details."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selecciona las habilidades que quieras.\nMantén pulsada una habilidad para ver sus detalles."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez les talents souhaités.\nMaintenez un talent appuyé pour en afficher les détails."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원하는 스킬을 선택합니다.\n스킬을 길게 누르면 해당 스킬의 상세 정보를 확인할 수 있습니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selecione as habilidades que deseja.\nToque e segure uma habilidade para ver os detalhes."
+          }
+        }
+      }
+    },
+    "欲しい護石はウィッシュリストに登録しておきましょう。": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fügen Sie gewünschte Talismane zu Ihrer Wunschliste hinzu."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add the charms you want to your wishlist."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añade los amuletos que quieras a tu lista de deseos."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutez les talismans que vous convoitez à votre liste de souhaits."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원하는 호석은 위시리스트에 등록해 두세요."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicione os amuletos que quiser à sua lista de desejos."
           }
         }
       }
@@ -8152,6 +10651,46 @@
         }
       }
     },
+    "武器スキルの合計Lv%lldが、武器スロットと護石で賄える上限Lv%lldを超えています": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waffenfertigkeiten (gesamt Lv%1$lld) übersteigen das Limit von Lv%2$lld aus Waffen-Slots und einem Talisman"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weapon skills total Lv%1$lld, but weapon slots and a charm can only cover up to Lv%2$lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las habilidades de arma suman Nv. %1$lld y superan el límite de Nv. %2$lld que pueden cubrir los huecos del arma y un amuleto"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le total des talents d'arme (Niv. %1$lld) dépasse le maximum (Niv. %2$lld) couvert par les emplacements de l'arme et un talisman"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "무기 스킬 합계(Lv%1$lld)가 무기 슬롯과 호석으로 채울 수 있는 상한(Lv%2$lld)을 초과했습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As habilidades de arma somam Nv. %1$lld e excedem o limite de Nv. %2$lld que os slots da arma e um amuleto podem cobrir"
+          }
+        }
+      }
+    },
     "武器スロ": {
       "comment": "護石要求の武器スロット略記",
       "localizations": {
@@ -8229,6 +10768,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Com slot de arma"
+          }
+        }
+      }
+    },
+    "武器の攻撃力を入力": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waffenangriff eingeben"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter weapon attack"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Introduce el ataque del arma"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saisir l'attaque de l'arme"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "무기 공격력 입력"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informe o ataque da arma"
           }
         }
       }
@@ -8393,6 +10972,207 @@
         }
       }
     },
+    "毒・麻痺中の相手": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziel vergiftet/gelähmt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "target poisoned/paralyzed"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "objetivo envenenado/paralizado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cible empoisonnée/paralysée"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "독·마비 상태의 상대"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "alvo envenenado/paralisado"
+          }
+        }
+      }
+    },
+    "比較": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vergleich"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compare"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparé"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비교"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparar"
+          }
+        }
+      }
+    },
+    "比較する装備を選ぶ": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set zum Vergleichen wählen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a set to compare"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige un conjunto para comparar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez un set à comparer"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비교할 장비를 선택"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha um conjunto para comparar"
+          }
+        }
+      }
+    },
+    "比較する装備構成を選択": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set zum Vergleichen auswählen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a set to compare"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seleccionar conjunto a comparar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionner un set à comparer"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비교할 장비 구성 선택"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selecionar conjunto para comparar"
+          }
+        }
+      }
+    },
+    "比較できるマイセットがありません": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine weiteren Sets zum Vergleichen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No other sets to compare"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay otros conjuntos para comparar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun autre set à comparer"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비교할 수 있는 마이 세트가 없습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhum outro conjunto para comparar"
+          }
+        }
+      }
+    },
     "水": {
       "localizations": {
         "de": {
@@ -8433,6 +11213,47 @@
         }
       }
     },
+    "水濡れ": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nass"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wet"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mojado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mouillé"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물에 젖음"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "molhado"
+          }
+        }
+      }
+    },
     "氷": {
       "localizations": {
         "de": {
@@ -8469,6 +11290,47 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gelo"
+          }
+        }
+      }
+    },
+    "泡": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blasen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bubbleblight"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "plaga de burbujas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bulles"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거품"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bolhas"
           }
         }
       }
@@ -8674,6 +11536,209 @@
         }
       }
     },
+    "物理のみ。属性・斬れ味・肉質・モーション値は比較に影響しないため含めていません": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur physischer Schaden. Element, Schärfe, Trefferzonen und Bewegungswerte sind nicht enthalten, da sie den Vergleich nicht beeinflussen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raw damage only. Element, sharpness, hitzones and motion values are excluded as they don't affect the comparison"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo daño físico. Elemento, filo, zonas de golpe y valores de movimiento no se incluyen porque no afectan a la comparación"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dégâts bruts uniquement. Élément, tranchant, zones de coup et valeurs de mouvement ne sont pas inclus, car ils n'influent pas sur la comparaison"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물리만 계산. 속성·예리도·육질·모션값은 비교에 영향이 없어 포함하지 않습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apenas dano físico. Elemento, afiação, zonas de acerto e valores de movimento não são incluídos, pois não afetam a comparação"
+          }
+        }
+      }
+    },
+    "状態別": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach Zustand"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "By State"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Por estado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Par état"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "상태별"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Por estado"
+          }
+        }
+      }
+    },
+    "状態異常中": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bei Statuseffekt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "under abnormal status"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "con estado alterado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sous altération d'état"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "상태 이상 중"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "com status anormal"
+          }
+        }
+      }
+    },
+    "狂竜症克服中": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raserei geheilt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frenzy overcome"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cólera superada"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "frénésie surmontée"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "광룡증 극복 중"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cólera superada"
+          }
+        }
+      }
+    },
+    "狂竜症感染中": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raserei infiziert"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "infected with Frenzy"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "infectado de cólera"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "infecté par la frénésie"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "광룡증 감염 중"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "infectado pela Cólera"
+          }
+        }
+      }
+    },
     "狙える護石を探しています…": {
       "localizations": {
         "de": {
@@ -8875,6 +11940,88 @@
         }
       }
     },
+    "発動中": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiv"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activa"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actif"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "발동 중"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ativo"
+          }
+        }
+      }
+    },
+    "発動前": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vor Aktivierung"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "before activation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "antes de activarse"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "avant activation"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "발동 전"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "antes de ativar"
+          }
+        }
+      }
+    },
     "発動条件": {
       "localizations": {
         "de": {
@@ -8955,6 +12102,47 @@
         }
       }
     },
+    "相殺後": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nach Kraftduell/Konter"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "after a Power Clash/Offset"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tras un forcejeo/ataque interceptor"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "après un contre / choc de puissance"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "상쇄 후"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "após confronto de poder/contra-ataque"
+          }
+        }
+      }
+    },
     "破棄": {
       "localizations": {
         "de": {
@@ -8991,6 +12179,47 @@
           "stringUnit": {
             "state": "translated",
             "value": "Descartar"
+          }
+        }
+      }
+    },
+    "祭事期間中": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "während des Festivals"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "during the festival"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "durante el festival"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pendant le festival"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "축제 기간 중"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "durante o festival"
           }
         }
       }
@@ -9111,6 +12340,47 @@
           "stringUnit": {
             "state": "translated",
             "value": "Continuar"
+          }
+        }
+      }
+    },
+    "肉を食べた後": {
+      "comment": "状態",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nach Fleischverzehr"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "after eating meat"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tras comer carne"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "après avoir mangé de la viande"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "고기를 먹은 후"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "após comer carne"
           }
         }
       }
@@ -9399,6 +12669,86 @@
         }
       }
     },
+    "装備の組み合わせを検索します。": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sucht nach Ausrüstungskombinationen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search for equipment combinations."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Busca combinaciones de equipo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recherchez des combinaisons d'équipement."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "장비 조합을 검색합니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Busque combinações de equipamentos."
+          }
+        }
+      }
+    },
+    "装備比較": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set-Vergleich"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set Comparison"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparar conjuntos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparaison de sets"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "장비 비교"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparar conjuntos"
+          }
+        }
+      }
+    },
     "装備詳細": {
       "localizations": {
         "de": {
@@ -9435,6 +12785,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Detalhes do equipamento"
+          }
+        }
+      }
+    },
+    "装衣・狩猟笛・未計上スキルの分は「その他」に入れる": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mäntel, Jagdhorn-Melodien und nicht erfasste Fertigkeiten unter „Sonstiger Angriffs-/Affinitätsbonus“ eintragen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter mantle, Hunting Horn and unlisted skill bonuses under Other"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Introduce mantos, melodías de cornamusa y habilidades no incluidas en «Otros»"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saisissez les manteaux, les mélodies de corne de chasse et les talents non pris en compte dans « Autres bonus »"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "장의·수렵피리·미반영 스킬은 '기타'에 입력"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informe mantos, melodias do berrante e habilidades não incluídas em “Outro”"
           }
         }
       }
@@ -10075,6 +13465,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Estas condições não podem ser atendidas por um amuleto. Revise-as"
+          }
+        }
+      }
+    },
+    "護石なし": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Talisman"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No charm"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin amuleto"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sans talisman"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "호석 없음"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem amuleto"
           }
         }
       }
@@ -10842,6 +14272,46 @@
         }
       }
     },
+    "防具の限界突破を考慮": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transzendenz einbeziehen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Factor in armor transcendence"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Considerar la Trascendencia"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tenir compte de la Transcendance"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "방어구 한계 돌파 반영"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Considerar a transcendência"
+          }
+        }
+      }
+    },
     "防具を除外に追加": {
       "localizations": {
         "de": {
@@ -10882,46 +14352,6 @@
         }
       }
     },
-    "防具詳細": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rüstungsdetails"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Armor Details"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Detalles de la armadura"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Détails de l'armure"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "방어구 상세"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Detalhes da armadura"
-          }
-        }
-      }
-    },
     "防具名で検索": {
       "localizations": {
         "de": {
@@ -10958,6 +14388,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Buscar por nome de armadura"
+          }
+        }
+      }
+    },
+    "防具詳細": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rüstungsdetails"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Armor Details"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detalles de la armadura"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Détails de l'armure"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "방어구 상세"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detalhes da armadura"
           }
         }
       }
@@ -11038,6 +14508,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Por defesa"
+          }
+        }
+      }
+    },
+    "限界突破": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transzendenz"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcendence"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trascendencia"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcendance"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "한계 돌파"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcendência"
           }
         }
       }
@@ -11323,6 +14833,126 @@
         }
       }
     },
+    "鬼人の粉塵": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dämonenpulver"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demon Powder"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Polvo de demonio"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poudre du démon"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "귀인의 가루"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pó Demoníaco"
+          }
+        }
+      }
+    },
+    "鬼人薬": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dämonenmittel"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demondrug"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Droga demoníaca"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Potion du démon"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "귀인약"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pílula Demoníaca"
+          }
+        }
+      }
+    },
+    "鬼人薬グレート": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mega-Dämonenmittel"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mega Demondrug"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Megadroga demoníaca"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Potion du démon +"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그레이트 귀인약"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Megapílula Demoníaca"
+          }
+        }
+      }
+    },
     "龍": {
       "localizations": {
         "de": {
@@ -11359,726 +14989,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dragão"
-          }
-        }
-      }
-    },
-    "使用したい武器を選択します。": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Select the weapon you want to use."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sélectionnez l'arme que vous souhaitez utiliser."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wählen Sie die Waffe aus, die Sie verwenden möchten."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Selecciona el arma que quieras usar."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Selecione a arma que deseja usar."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "사용할 무기를 선택합니다."
-          }
-        }
-      }
-    },
-    "欲しいスキルを選択します。\nスキルを長押しすると対象スキルの詳細が確認できます。": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Select the skills you want.\nPress and hold a skill to view its details."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sélectionnez les talents souhaités.\nMaintenez un talent appuyé pour en afficher les détails."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wählen Sie die gewünschten Fertigkeiten aus.\nHalten Sie eine Fertigkeit gedrückt, um Details anzuzeigen."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Selecciona las habilidades que quieras.\nMantén pulsada una habilidad para ver sus detalles."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Selecione as habilidades que deseja.\nToque e segure uma habilidade para ver os detalhes."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "원하는 스킬을 선택합니다.\n스킬을 길게 누르면 해당 스킬의 상세 정보를 확인할 수 있습니다."
-          }
-        }
-      }
-    },
-    "固定したい装備や、除外したい装備・装飾品がある場合は、こちらで検索設定を行います。": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "To pin certain equipment or exclude equipment and decorations, adjust the Search Settings here."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pour fixer certains équipements ou exclure des équipements et des joyaux, utilisez les réglages de recherche ici."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn Sie bestimmte Ausrüstung fixieren oder Ausrüstung und Dekorationen ausschließen möchten, nutzen Sie hier die Sucheinstellungen."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Si quieres fijar ciertas piezas de equipo o excluir equipo y joyas, configúralo aquí en los ajustes de búsqueda."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Se quiser fixar certos equipamentos ou excluir equipamentos e joias, ajuste aqui as configurações de busca."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "고정하고 싶은 장비나 제외하고 싶은 장비·장식품이 있다면 여기에서 검색 설정을 할 수 있습니다."
-          }
-        }
-      }
-    },
-    "装備の組み合わせを検索します。": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search for equipment combinations."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recherchez des combinaisons d'équipement."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sucht nach Ausrüstungskombinationen."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Busca combinaciones de equipo."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Busque combinações de equipamentos."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "장비 조합을 검색합니다."
-          }
-        }
-      }
-    },
-    "広告が煩わしい場合は、こちらから一定時間非表示にすることができます。": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "If the ads bother you, tap here to hide them for a while."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Si les publicités vous dérangent, vous pouvez les masquer temporairement ici."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Falls die Anzeigen stören, können Sie sie hier vorübergehend ausblenden."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Si los anuncios te molestan, puedes ocultarlos temporalmente desde aquí."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Se os anúncios incomodarem, você pode ocultá-los temporariamente aqui."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "광고가 거슬린다면 여기에서 일정 시간 동안 숨길 수 있습니다."
-          }
-        }
-      }
-    },
-    "所持している護石を登録します。\nゲーム画面をカメラでスキャンすることでも登録できます。": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Register the charms you own.\nYou can also register them by scanning the game screen with your camera."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enregistrez les talismans que vous possédez.\nVous pouvez aussi les enregistrer en scannant l'écran de jeu avec l'appareil photo."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Registrieren Sie Ihre Talismane.\nSie können sie auch registrieren, indem Sie den Spielbildschirm mit der Kamera scannen."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Registra los amuletos que tengas.\nTambién puedes registrarlos escaneando la pantalla del juego con la cámara."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Registre os amuletos que você possui.\nVocê também pode registrá-los escaneando a tela do jogo com a câmera."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "소지한 호석을 등록합니다.\n게임 화면을 카메라로 스캔하여 등록할 수도 있습니다."
-          }
-        }
-      }
-    },
-    "欲しい護石はウィッシュリストに登録しておきましょう。": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add the charms you want to your wishlist."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ajoutez les talismans que vous convoitez à votre liste de souhaits."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fügen Sie gewünschte Talismane zu Ihrer Wunschliste hinzu."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Añade los amuletos que quieras a tu lista de deseos."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Adicione os amuletos que quiser à sua lista de desejos."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "원하는 호석은 위시리스트에 등록해 두세요."
-          }
-        }
-      }
-    },
-    "次へ": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Next"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Suivant"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Weiter"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Siguiente"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Avançar"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "다음"
-          }
-        }
-      }
-    },
-    "完了": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Done"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Terminé"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fertig"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Listo"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Concluído"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "완료"
-          }
-        }
-      }
-    },
-    "スキップ": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Skip"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ignorer"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Überspringen"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Omitir"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pular"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "건너뛰기"
-          }
-        }
-      }
-    },
-    "限界突破": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transcendence"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transcendance"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transzendenz"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trascendencia"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transcendência"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "한계 돌파"
-          }
-        }
-      }
-    },
-    "防具の限界突破を考慮": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Factor in armor transcendence"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tenir compte de la Transcendance"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transzendenz einbeziehen"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Considerar la Trascendencia"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Considerar a transcendência"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "방어구 한계 돌파 반영"
-          }
-        }
-      }
-    },
-    "レア5・6防具のスロットが拡張された状態で検索します": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Searches with the decoration slots of rarity 5–6 armor expanded."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recherche avec les emplacements renforcés des armures de rareté 5 et 6."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sucht mit erweiterten Slots für Rüstungen der Seltenheit 5–6."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Busca suponiendo que las ranuras de las armaduras de rareza 5 y 6 están ampliadas."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A busca considera as armaduras de raridade 5 e 6 com os slots expandidos."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "레어 5·6 방어구의 슬롯이 확장된 상태로 검색합니다."
-          }
-        }
-      }
-    },
-    "条件が複雑すぎるため、狙える護石を判定できませんでした。条件のスキルを減らすと判定できる場合があります": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die Bedingungen sind zu komplex, um erhältliche Talismane zu bestimmen. Mit weniger Fertigkeiten ist die Prüfung eventuell möglich"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "These conditions are too complex to determine which charms are obtainable. Removing some skills may allow the check to complete"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Las condiciones son demasiado complejas para determinar los amuletos posibles. Quitar algunas habilidades podría permitir el análisis"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Conditions trop complexes pour déterminer les talismans possibles. Retirer des talents peut permettre l'analyse"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "조건이 너무 복잡해서 노릴 수 있는 호석을 판정하지 못했습니다. 조건의 스킬을 줄이면 판정이 가능할 수 있습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "As condições são complexas demais para determinar os amuletos que você pode obter. Remover algumas habilidades pode permitir a análise"
-          }
-        }
-      }
-    },
-    "条件が複雑なため探索の一部を打ち切りました。他にも候補がある可能性があります": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ein Teil der Suche wurde wegen der komplexen Bedingungen abgebrochen; es kann weitere Kandidaten geben"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Part of the search was cut short due to the complex conditions, so there may be more candidates"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Parte de la búsqueda se ha interrumpido por la complejidad de las condiciones; puede haber más candidatos"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Une partie de la recherche a été interrompue en raison de la complexité des conditions ; il peut exister d'autres candidats"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "조건이 복잡하여 탐색을 일부 중단했으므로 다른 후보가 있을 수 있습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Parte da busca foi interrompida pela complexidade das condições; pode haver mais candidatos"
-          }
-        }
-      }
-    },
-    "お問合せ": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Contact Us"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nous contacter"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kontakt"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Contacto"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fale conosco"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "문의하기"
-          }
-        }
-      }
-    },
-    "レビューを書く": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Write a Review"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rédiger un avis"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rezension schreiben"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Escribir una reseña"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Escrever avaliação"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "리뷰 작성"
-          }
-        }
-      }
-    },
-    "機能追加・改善要望・不具合報告はこちらから": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Send feature requests, improvement ideas, or bug reports"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Demandes de fonctionnalités, suggestions et signalements de bugs"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Für Funktionswünsche, Verbesserungsvorschläge und Fehlerberichte"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Solicitudes de funciones, sugerencias e informes de errores"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Envie sugestões de recursos, melhorias e relatos de problemas por aqui"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기능 추가·개선 요청 및 오류 신고는 아래에서"
           }
         }
       }

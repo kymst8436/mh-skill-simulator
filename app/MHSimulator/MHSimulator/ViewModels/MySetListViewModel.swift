@@ -49,10 +49,19 @@ final class MySetListViewModel {
 
     /// 保存時の条件スキルの1行表示(レベル降順→名前順)。条件がない保存データは発動スキル上位で代替
     func skillSummary(_ item: SavedEquipmentSet) -> String {
+        Self.skillSummary(item, master: dependencies.master)
+    }
+
+    func dateText(_ item: SavedEquipmentSet) -> String {
+        Self.dateText(item)
+    }
+
+    /// 装備比較のマイセット選択(画面設計4.17①)でも同じ行表示を使う
+    static func skillSummary(_ item: SavedEquipmentSet, master: MasterDatabase) -> String {
         let source = item.conditionSkills.isEmpty ? item.set.activeSkills : item.conditionSkills
         let lines = source
             .compactMap { id, level -> (name: String, level: Int)? in
-                guard let skill = dependencies.master.skills[id] else { return nil }
+                guard let skill = master.skills[id] else { return nil }
                 return (skill.name, level)
             }
             .sorted {
@@ -63,7 +72,7 @@ final class MySetListViewModel {
         return lines.joined(separator: String(localized: "・"))
     }
 
-    func dateText(_ item: SavedEquipmentSet) -> String {
-        Self.dateFormatter.string(from: item.createdAt)
+    static func dateText(_ item: SavedEquipmentSet) -> String {
+        dateFormatter.string(from: item.createdAt)
     }
 }
