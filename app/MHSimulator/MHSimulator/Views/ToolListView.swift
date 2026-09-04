@@ -80,7 +80,7 @@ struct ToolListView: View {
                 }
             }
             .mhNavigationTitle(String(localized: "ツール"))
-            // バナー広告はツールタブ用ユニットの取得(ロードマップ5.9-5)まで置かない(画面設計§8 未確定6)
+            .safeAreaInset(edge: .top, spacing: 0) { AdBannerView(adUnitId: AdConfig.toolsBannerUnitId) }
             .toolbar {
                 AdFreeToolbarButton { showsAdFreeSheet = true }
             }
