@@ -39,6 +39,8 @@ final class EquipmentCompareViewModel {
         let id: String
         let icon: Icon
         let name: String
+        /// レア度色での着色用(不明ならnil=原色)
+        var rarity: Int? = nil
     }
 
     let dependencies: AppDependencies
@@ -356,15 +358,18 @@ final class EquipmentCompareViewModel {
         guard let set = set(for: side)?.set else { return [] }
         var lines: [GearLine] = []
         if let weapon = set.weapon {
-            lines.append(GearLine(id: "weapon", icon: .weapon(MHFormat.weaponIconName(weapon.kind)), name: weapon.name))
+            lines.append(GearLine(id: "weapon", icon: .weapon(MHFormat.weaponIconName(weapon.kind)), name: weapon.name, rarity: weapon.rarity))
         } else {
             lines.append(GearLine(id: "weapon", icon: .weapon(nil), name: "—"))
         }
         for kind in ArmorPieceKind.allCases {
-            lines.append(GearLine(id: kind.rawValue, icon: .piece(kind), name: set.pieces[kind]?.name ?? "—"))
+            let piece = set.pieces[kind]
+            lines.append(GearLine(
+                id: kind.rawValue, icon: .piece(kind), name: piece?.name ?? "—",
+                rarity: piece.flatMap { dependencies.master.armorSeries[$0.seriesId]?.rarity }))
         }
         let charmName = set.charm.source == .none ? String(localized: "護石なし") : set.charm.name
-        lines.append(GearLine(id: "charm", icon: .charm, name: charmName))
+        lines.append(GearLine(id: "charm", icon: .charm, name: charmName, rarity: dependencies.charmRarity(set.charm)))
         return lines
     }
 

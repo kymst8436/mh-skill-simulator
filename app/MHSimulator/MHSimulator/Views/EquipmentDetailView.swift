@@ -228,7 +228,7 @@ struct EquipmentDetailView: View {
         if let weapon {
             row {
                 if let iconName = MHFormat.weaponIconName(weapon.kind) {
-                    icon(iconName, accessibility: String(localized: "武器"))
+                    icon(iconName, rarity: weapon.rarity, accessibility: String(localized: "武器"))
                 } else {
                     label(String(localized: "武器"))
                 }
@@ -246,7 +246,7 @@ struct EquipmentDetailView: View {
                     detailPiece = master.armorPieces.first { $0.id == piece.id } ?? piece
                 } label: {
                     row {
-                        icon(MHFormat.pieceIconName(kind), accessibility: MHFormat.pieceLabel(kind))
+                        icon(MHFormat.pieceIconName(kind), rarity: pieceRarity(piece), accessibility: MHFormat.pieceLabel(kind))
                         name(piece.name)
                         Spacer()
                         slot(MHFormat.slotSymbols(piece.slots))
@@ -258,7 +258,7 @@ struct EquipmentDetailView: View {
             }
         }
         row {
-            icon(MHFormat.charmIconName, accessibility: String(localized: "護石"))
+            icon(MHFormat.charmIconName, rarity: dependencies.charmRarity(equipment.charm), accessibility: String(localized: "護石"))
             name(charmText)
             Spacer()
             if equipment.charm.source != .none {
@@ -278,14 +278,15 @@ struct EquipmentDetailView: View {
         }
     }
 
-    /// 装備行の先頭アイコン(ラベル列と同じ幅44で名前の縦位置を揃える)
-    private func icon(_ assetName: String, accessibility: String) -> some View {
-        Image(assetName)
-            .resizable()
-            .scaledToFit()
-            .frame(width: 26, height: 26)
+    /// 装備行の先頭アイコン(ラベル列と同じ幅44で名前の縦位置を揃える)。レア度色で着色(GearIcon)
+    private func icon(_ assetName: String, rarity: Int?, accessibility: String) -> some View {
+        GearIcon(assetName: assetName, rarity: rarity, size: 26)
             .frame(width: 44, alignment: .leading)
             .accessibilityLabel(accessibility)
+    }
+
+    private func pieceRarity(_ piece: ArmorPiece) -> Int? {
+        master.armorSeries[piece.seriesId]?.rarity
     }
 
     private func label(_ text: String) -> some View {
@@ -428,26 +429,23 @@ struct EquipmentDetailView: View {
                 switch contributor {
                 case .weapon:
                     if let weapon, let iconName = MHFormat.weaponIconName(weapon.kind) {
-                        contributorIcon(iconName, accessibility: String(localized: "武器"))
+                        contributorIcon(iconName, rarity: weapon.rarity, accessibility: String(localized: "武器"))
                     } else {
                         Text("武")
                             .font(.system(size: 11))
                             .foregroundStyle(Color.mhTextTertiary)
                     }
                 case .piece(let kind):
-                    contributorIcon(MHFormat.pieceIconName(kind), accessibility: MHFormat.pieceLabel(kind))
+                    contributorIcon(MHFormat.pieceIconName(kind), rarity: equipment.pieces[kind].flatMap(pieceRarity), accessibility: MHFormat.pieceLabel(kind))
                 case .charm:
-                    contributorIcon(MHFormat.charmIconName, accessibility: String(localized: "護石"))
+                    contributorIcon(MHFormat.charmIconName, rarity: dependencies.charmRarity(equipment.charm), accessibility: String(localized: "護石"))
                 }
             }
         }
     }
 
-    private func contributorIcon(_ assetName: String, accessibility: String) -> some View {
-        Image(assetName)
-            .resizable()
-            .scaledToFit()
-            .frame(width: 18, height: 18)
+    private func contributorIcon(_ assetName: String, rarity: Int?, accessibility: String) -> some View {
+        GearIcon(assetName: assetName, rarity: rarity, size: 18)
             .accessibilityLabel(accessibility)
     }
 

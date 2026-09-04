@@ -26,6 +26,15 @@ struct AppDependencies {
             .joined(separator: String(localized: "・"))
     }
 
+    /// 装備アイコンの着色に使う護石のレア度(固定護石はマスタ、鑑定護石はuser.dbの登録値。不明ならnil)
+    func charmRarity(_ charm: Charm) -> Int? {
+        switch charm.source {
+        case .none: return nil
+        case .fixed(let id, _): return master.fixedCharmRarities[id]
+        case .owned(let id): return ((try? userStore.loadCharms()) ?? []).first { $0.id == id }?.rarity
+        }
+    }
+
     /// 検索エンジンに渡す所持護石一覧
     func loadOwnedCharmsForSearch() -> [Charm] {
         let charms = (try? userStore.loadCharms()) ?? []

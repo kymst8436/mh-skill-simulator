@@ -11,6 +11,8 @@ public final class MasterDatabase {
     public let armorPieces: [ArmorPiece]
     public let decorations: [Decoration]
     public let fixedCharms: [Charm]      // 最終ランクのみ(全所持前提。Q-6)
+    /// 固定護石(最終ランク)のレア度(系統ID→レア度)。装備アイコンの着色用(2026-09-04追加)
+    public let fixedCharmRarities: [Int32: Int]
     public let weapons: [Weapon]
     /// 鑑定護石の名前(選択言語)。護石カメラ読み取りのアンカー照合に使う
     public let randomCharmNames: [String]
@@ -124,14 +126,15 @@ public final class MasterDatabase {
         try db.query("SELECT fixedCharmId, rankIndex, skillId, level FROM FixedCharmSkill") { row in
             charmSkills["\(row.int(0))/\(row.int(1))", default: [:]][SkillId(row.int(2))] = Int(row.int(3))
         }
-        var latestRank: [Int32: (rank: Int, name: String)] = [:]
-        try db.query("SELECT id, rankIndex, name\(sfx) FROM FixedCharm") { row in
+        var latestRank: [Int32: (rank: Int, name: String, rarity: Int)] = [:]
+        try db.query("SELECT id, rankIndex, name\(sfx), rarity FROM FixedCharm") { row in
             let id = Int32(row.int(0))
             let rank = Int(row.int(1))
             if latestRank[id] == nil || latestRank[id]!.rank < rank {
-                latestRank[id] = (rank, row.string(2))
+                latestRank[id] = (rank, row.string(2), Int(row.int(3)))
             }
         }
+        self.fixedCharmRarities = latestRank.mapValues { $0.rarity }
         self.fixedCharms = latestRank.map { id, entry in
             Charm(source: .fixed(id, entry.rank), name: entry.name,
                   skills: charmSkills["\(id)/\(entry.rank)"] ?? [:],

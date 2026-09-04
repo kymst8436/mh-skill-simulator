@@ -136,7 +136,7 @@ struct EquipmentCompareResultView: View {
                 .padding(.bottom, 2)
             ForEach(viewModel.gearLines(for: side)) { line in
                 HStack(spacing: 8) {
-                    gearIcon(line.icon)
+                    gearIcon(line.icon, rarity: line.rarity)
                         .frame(width: 20, height: 20)
                     Text(line.name)
                         .font(.system(size: 13))
@@ -153,22 +153,20 @@ struct EquipmentCompareResultView: View {
         .padding(12)
     }
 
+    /// 装備アイコン(柄を残してレア度色で着色。装備詳細と同じGearIcon)
     @ViewBuilder
-    private func gearIcon(_ icon: EquipmentCompareViewModel.GearLine.Icon) -> some View {
+    private func gearIcon(_ icon: EquipmentCompareViewModel.GearLine.Icon, rarity: Int?) -> some View {
         switch icon {
         case .weapon(let name?):
-            Image(name).renderingMode(.template).resizable().scaledToFit()
-                .foregroundStyle(Color.mhTextSecondary)
+            GearIcon(assetName: name, rarity: rarity, size: 20)
         case .weapon(nil):
             Image(systemName: "circle.dashed")
                 .font(.system(size: 16))
                 .foregroundStyle(Color.mhTextSecondary)
         case .piece(let kind):
-            Image(MHFormat.pieceIconName(kind)).renderingMode(.template).resizable().scaledToFit()
-                .foregroundStyle(Color.mhTextSecondary)
+            GearIcon(assetName: MHFormat.pieceIconName(kind), rarity: rarity, size: 20)
         case .charm:
-            Image(MHFormat.charmIconName).renderingMode(.template).resizable().scaledToFit()
-                .foregroundStyle(Color.mhTextSecondary)
+            GearIcon(assetName: MHFormat.charmIconName, rarity: rarity, size: 20)
         }
     }
 

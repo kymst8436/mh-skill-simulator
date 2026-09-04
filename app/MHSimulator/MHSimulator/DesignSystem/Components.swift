@@ -413,6 +413,28 @@ struct MHTabBar: View {
     }
 }
 
+/// 装備アイコン(武器種・部位・護石のSVG)。2トーンの柄を保ったままレア度色で着色する(2026-09-04追加)。
+/// 色相・彩度だけをレア度色に置き換え(blendMode .color)、明度=SVGの濃淡を残す。rarityがnilなら原色のまま
+struct GearIcon: View {
+    let assetName: String
+    var rarity: Int? = nil
+    var size: CGFloat = 26
+
+    var body: some View {
+        let image = Image(assetName).resizable().scaledToFit()
+        Group {
+            if let rarity {
+                image
+                    .overlay(Color.mhRarity(rarity).blendMode(.color))
+                    .mask(image)
+            } else {
+                image
+            }
+        }
+        .frame(width: size, height: size)
+    }
+}
+
 /// 武器種の横スクロールチップリスト(検索条件・武器選択の上部)。
 /// 抽出アイコン導入(Phase 5-2)までは武器種名のテキストチップで表現する
 struct WeaponKindChips: View {
