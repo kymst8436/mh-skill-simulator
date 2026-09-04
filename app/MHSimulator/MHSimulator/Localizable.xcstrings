@@ -15016,7 +15016,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Estado de las habilidades"
+            "value": "Estado de habilidades"
           }
         },
         "pt-BR": {
@@ -15102,7 +15102,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sempre ativa"
+            "value": "Sempre ativo"
           }
         },
         "ko": {
