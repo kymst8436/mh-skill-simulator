@@ -1332,46 +1332,6 @@
         }
       }
     },
-    "2つのマイセットを並べて、怒り・有効部位などの状態やアイテム効果ごとの期待値を比較": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zwei Sets nebeneinander vergleichen: erwarteter Schaden je nach Zustand (wütend, Schwachpunkt usw.) und Item-Effekten"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Compare two sets side by side: expected damage by state (enraged, weak points, etc.) and item effects"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Compara dos conjuntos: daño esperado según el estado (enfurecido, puntos débiles, etc.) y los objetos"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Comparez deux sets côte à côte : dégâts attendus selon l'état (rage, points faibles, etc.) et les objets"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "마이 세트 2개를 나란히 놓고 분노·유효 부위 등의 상태와 아이템 효과별 기대치를 비교"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Compare dois conjuntos lado a lado: dano esperado por estado (enfurecido, pontos fracos etc.) e itens"
-          }
-        }
-      }
-    },
     "2回": {
       "comment": "状態",
       "localizations": {
@@ -14989,6 +14949,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dragão"
+          }
+        }
+      }
+    },
+    "マイセットの装備構成から物理攻撃力の期待値を比較します。攻撃装備と会心装備の比較に便利です。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compares expected raw attack across your saved sets. Handy for weighing attack builds against affinity builds."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compare l'attaque brute attendue de vos sets. Pratique pour opposer un set attaque et un set affinité."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vergleicht den erwarteten Angriffswert deiner Sets. Praktisch für Angriffs- gegen Affinitäts-Sets."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compara el ataque físico esperado de tus conjuntos. Útil para comparar conjuntos de ataque y de afinidad."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compara o ataque físico esperado dos seus conjuntos. Útil para comparar conjuntos de ataque e de afinidade."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "마이 세트의 장비 구성으로 물리 공격력 기대치를 비교합니다. 공격 장비와 회심 장비의 비교에 편리합니다."
           }
         }
       }

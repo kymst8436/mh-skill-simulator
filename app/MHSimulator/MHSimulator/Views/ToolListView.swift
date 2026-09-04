@@ -21,7 +21,7 @@ enum ToolCatalog: CaseIterable, Identifiable {
 
     var summary: String {
         switch self {
-        case .equipmentCompare: String(localized: "2つのマイセットを並べて、怒り・有効部位などの状態やアイテム効果ごとの期待値を比較")
+        case .equipmentCompare: String(localized: "マイセットの装備構成から物理攻撃力の期待値を比較します。攻撃装備と会心装備の比較に便利です。")
         }
     }
 
@@ -112,7 +112,7 @@ struct ToolListView: View {
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(Color.mhTextPrimary)
                     Text(tool.summary)
-                        .font(.system(size: 13))
+                        .font(.system(size: 12))
                         .foregroundStyle(Color.mhTextSecondary)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
