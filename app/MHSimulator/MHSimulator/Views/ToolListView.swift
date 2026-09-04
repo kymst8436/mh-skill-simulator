@@ -112,7 +112,7 @@ struct ToolListView: View {
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(Color.mhTextPrimary)
                     Text(tool.summary)
-                        .font(.system(size: 12))
+                        .font(.system(size: 11))
                         .foregroundStyle(Color.mhTextSecondary)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
