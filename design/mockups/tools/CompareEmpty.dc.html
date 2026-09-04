@@ -33,7 +33,7 @@
     .stat { display: flex; justify-content: space-between; font-size: 13px; color: #A89F87; }
   </style>
 </helmet>
-<div style="width: 390px; height: 1370px; background: #14120D; display: flex; flex-direction: column; overflow: hidden;">
+<div style="width: 390px; height: 1590px; background: #14120D; display: flex; flex-direction: column; overflow: hidden;">
 
   <div style="background: #191712; border-bottom: 1px solid #3A342A; padding: 14px 16px 10px 16px; display: flex; align-items: center; justify-content: space-between;">
     <div style="width: 64px; display: flex; align-items: center;"><svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M9 1L2 9l7 8" stroke="#D9A036" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
@@ -85,8 +85,29 @@
     </div>
     </div>
 
-    <div class="seclabel">状態別</div>
+    <div class="seclabel">スキルの発動状態</div>
     <div class="card" style="margin: 0 16px;">
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px;">
+        <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+          <div class="cell"><span>攻撃</span><span style="font-size: 10px; padding: 1px 5px; border: 1px solid #3A342A; border-radius: 2px; color: #A89F87; white-space: nowrap;">常時発動</span></div>
+          <div style="font-size: 12px; color: #6F675A;">ベース Lv3</div>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px;">
+        <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+          <div class="cell"><span>見切り</span><span style="font-size: 10px; padding: 1px 5px; border: 1px solid #3A342A; border-radius: 2px; color: #A89F87; white-space: nowrap;">常時発動</span></div>
+          <div style="font-size: 12px; color: #6F675A;">ベース Lv3</div>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px;">
+        <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+          <div class="cell"><span>超会心</span><span style="font-size: 10px; padding: 1px 5px; border: 1px solid #3A342A; border-radius: 2px; color: #A89F87; white-space: nowrap;">常時発動</span></div>
+          <div style="font-size: 12px; color: #6F675A;">ベース Lv2</div>
+        </div>
+      </div>
+      <div class="sep"></div>
       <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px;">
         <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
           <div class="cell"><span>弱点特効</span><span class="badge">発動中</span></div>
@@ -110,7 +131,10 @@
         </div>
         <div class="toggle"><div class="knob"></div></div>
       </div>
-      <div style="padding: 10px 16px 14px 16px; border-top: 1px solid #2A2620; font-size: 12px; letter-spacing: 1px; color: #6F675A;">アイテム・食事</div>
+    </div>
+
+    <div class="seclabel">その他の状態</div>
+    <div class="card" style="margin: 0 16px;">
       <div style="display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 16px;">
         <div class="cell"><span>力の護符</span><span class="badge">発動中</span></div>
         <div class="toggle on"><div class="knob"></div></div>
@@ -176,7 +200,7 @@
   </div>
 </div>
 </x-dc>
-<script data-dc-script data-props='{"$preview":{"width":390,"height":1370}}'>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":1590}}'>
 class Component extends DCLogic {
   renderVals() { return {}; }
 }

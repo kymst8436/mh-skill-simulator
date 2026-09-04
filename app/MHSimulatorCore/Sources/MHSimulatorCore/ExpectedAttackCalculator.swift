@@ -257,6 +257,11 @@ public enum ExpectedAttackCalculator {
         ]
     }()
 
+    /// 常時発動(条件なし)で計上するスキル(攻撃・見切り・超会心。定数表の順)
+    public static var alwaysOnSkillIds: [SkillId] {
+        table.filter { $0.effects.keys.contains(nil) }.map(\.id)
+    }
+
     /// 効果量が確定できず未計上とするスキル(仕様3.7-8。その他の攻撃力加算で手入力)
     public static let uncountedSkillIds: [SkillId] = [SkillIds.seregiossTenacity, SkillIds.powerStone]
 

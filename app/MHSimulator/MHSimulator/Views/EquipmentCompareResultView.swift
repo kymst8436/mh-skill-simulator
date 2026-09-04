@@ -39,15 +39,22 @@ struct EquipmentCompareResultView: View {
                         .padding(.top, 7)
                         .mhEntrance(1)
 
-                    MHSectionHeader(title: String(localized: "状態別"))
+                    MHSectionHeader(title: String(localized: "スキルの発動状態"))
                         .padding(.top, 20)
-                    stateCard
+                    skillStateCard
                         .padding(.horizontal, 16)
                         .padding(.top, 7)
                         .mhEntrance(2)
 
-                    notes
+                    MHSectionHeader(title: String(localized: "その他の状態"))
+                        .padding(.top, 20)
+                    otherStateCard
+                        .padding(.horizontal, 16)
+                        .padding(.top, 7)
                         .mhEntrance(3)
+
+                    notes
+                        .mhEntrance(4)
                 }
                 .padding(.bottom, 24)
             }
@@ -283,23 +290,54 @@ struct EquipmentCompareResultView: View {
         }
     }
 
-    // MARK: - 状態別
+    // MARK: - スキルの発動状態(常時発動+条件トグル)
 
-    private var stateCard: some View {
+    private var skillStateCard: some View {
         MHCard {
             VStack(spacing: 0) {
-                ForEach(viewModel.rows) { row in
-                    conditionRow(row)
-                    separator
+                ForEach(Array(viewModel.alwaysOnRows.enumerated()), id: \.element.id) { index, row in
+                    if index > 0 { separator }
+                    alwaysOnRow(row)
                 }
-                Text("アイテム・食事")
+                ForEach(viewModel.rows) { row in
+                    separator
+                    conditionRow(row)
+                }
+            }
+        }
+    }
+
+    /// 常時発動スキル(攻撃・見切り・超会心)。トグルの代わりに「常時発動」バッジ
+    private func alwaysOnRow(_ row: EquipmentCompareViewModel.AlwaysOnRow) -> some View {
+        HStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 3) {
+                MHFlowLayout(spacing: 6) {
+                    Text(row.title)
+                        .font(.system(size: 15))
+                        .foregroundStyle(Color.mhTextPrimary)
+                    Text("常時発動")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(Color.mhTextSecondary)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 2)
+                        .overlay(RoundedRectangle(cornerRadius: 2).stroke(Color.mhHairline, lineWidth: 1))
+                }
+                Text(viewModel.levelLine(row))
                     .font(.system(size: 12))
-                    .tracking(1)
                     .foregroundStyle(Color.mhTextTertiary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    .padding(.bottom, 4)
+            }
+            Spacer(minLength: 8)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .frame(minHeight: 56)
+    }
+
+    // MARK: - その他の状態(アイテム・食事・その他加算)
+
+    private var otherStateCard: some View {
+        MHCard {
+            VStack(spacing: 0) {
                 toggleRow(String(localized: "力の護符"), isOn: Binding(
                     get: { viewModel.items.powercharm }, set: { viewModel.items.powercharm = $0 }))
                 separator

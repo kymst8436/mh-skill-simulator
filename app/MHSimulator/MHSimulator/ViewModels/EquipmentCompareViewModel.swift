@@ -228,6 +228,28 @@ final class EquipmentCompareViewModel {
 
     // MARK: - 状態行・未計上
 
+    /// 常時発動スキル(攻撃・見切り・超会心)の行。どちらかの装備が持つものだけ(画面設計4.17 #7a)
+    var alwaysOnRows: [AlwaysOnRow] {
+        Calc.alwaysOnSkillIds.compactMap { id in
+            let baseLevel = level(of: [id], in: base)
+            let compareLevel = level(of: [id], in: compare)
+            guard baseLevel != nil || compareLevel != nil, let skill = dependencies.master.skills[id] else { return nil }
+            return AlwaysOnRow(skillId: id, title: skill.name, baseLevel: baseLevel, compareLevel: compareLevel)
+        }
+    }
+
+    struct AlwaysOnRow: Identifiable {
+        let skillId: SkillId
+        let title: String
+        let baseLevel: Int?
+        let compareLevel: Int?
+        var id: SkillId { skillId }
+    }
+
+    func levelLine(_ row: AlwaysOnRow) -> String {
+        levelLine(baseLevel: row.baseLevel, compareLevel: row.compareLevel)
+    }
+
     var rows: [ConditionRow] {
         let sets = [base, compare].compactMap { $0?.set.activeSkills }
         return Calc.rows(for: sets).map { row in
@@ -299,9 +321,13 @@ final class EquipmentCompareViewModel {
 
     /// 「ベース Lv3 ・ 比較 —」の補助行。比較未選択ならベースだけ
     func levelLine(_ row: ConditionRow) -> String {
-        let baseText = String(localized: "ベース") + " " + Self.levelText(row.baseLevel)
+        levelLine(baseLevel: row.baseLevel, compareLevel: row.compareLevel)
+    }
+
+    private func levelLine(baseLevel: Int?, compareLevel: Int?) -> String {
+        let baseText = String(localized: "ベース") + " " + Self.levelText(baseLevel)
         guard compare != nil else { return baseText }
-        return baseText + String(localized: "・") + String(localized: "比較") + " " + Self.levelText(row.compareLevel)
+        return baseText + String(localized: "・") + String(localized: "比較") + " " + Self.levelText(compareLevel)
     }
 
     private static func levelText(_ level: Int?) -> String {

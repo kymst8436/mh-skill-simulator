@@ -5507,6 +5507,46 @@
         }
       }
     },
+    "マイセットの装備構成から物理攻撃力の期待値を比較します。攻撃装備と会心装備の比較に便利です。": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vergleicht den erwarteten Angriffswert deiner Sets. Praktisch für Angriffs- gegen Affinitäts-Sets."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compares expected raw attack across your saved sets. Handy for weighing attack builds against affinity builds."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compara el ataque físico esperado de tus conjuntos. Útil para comparar conjuntos de ataque y de afinidad."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compare l'attaque brute attendue de vos sets. Pratique pour opposer un set attaque et un set affinité."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "마이 세트의 장비 구성으로 물리 공격력 기대치를 비교합니다. 공격 장비와 회심 장비의 비교에 편리합니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compara o ataque físico esperado dos seus conjuntos. Útil para comparar conjuntos de ataque e de afinidade."
+          }
+        }
+      }
+    },
     "マイセットはまだありません": {
       "localizations": {
         "de": {
@@ -14953,42 +14993,122 @@
         }
       }
     },
-    "マイセットの装備構成から物理攻撃力の期待値を比較します。攻撃装備と会心装備の比較に便利です。": {
+    "スキルの発動状態": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compares expected raw attack across your saved sets. Handy for weighing attack builds against affinity builds."
+            "value": "Skill States"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compare l'attaque brute attendue de vos sets. Pratique pour opposer un set attaque et un set affinité."
+            "value": "État des talents"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vergleicht den erwarteten Angriffswert deiner Sets. Praktisch für Angriffs- gegen Affinitäts-Sets."
+            "value": "Fertigkeitszustände"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compara el ataque físico esperado de tus conjuntos. Útil para comparar conjuntos de ataque y de afinidad."
+            "value": "Estado de las habilidades"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compara o ataque físico esperado dos seus conjuntos. Útil para comparar conjuntos de ataque e de afinidade."
+            "value": "Estado das habilidades"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "마이 세트의 장비 구성으로 물리 공격력 기대치를 비교합니다. 공격 장비와 회심 장비의 비교에 편리합니다."
+            "value": "스킬 발동 상태"
+          }
+        }
+      }
+    },
+    "その他の状態": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other States"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autres états"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonstige Zustände"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otros estados"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outros estados"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기타 상태"
+          }
+        }
+      }
+    },
+    "常時発動": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Always active"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toujours actif"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Immer aktiv"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siempre activa"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sempre ativa"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "상시 발동"
           }
         }
       }
